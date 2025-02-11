@@ -1,0 +1,10 @@
+[DEFAULT]
+key = 45
+paranoid =
+location = ~/.pyfernet.coffer
+backup = .backup
+
+[game]
+key = 45
+paranoid =
+location = Documents/game.coffer
