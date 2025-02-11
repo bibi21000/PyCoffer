@@ -12,8 +12,9 @@ maintainers = [
 ]
 packages = ["pycoffer"]
 dependencies = [
-#  "fernetfile",
-#  "naclfile",
+  "pyzstd",
+  "fernetfile",
+  "naclfile",
 ]
 classifiers = [
   # How mature is this project? Common values are
@@ -45,9 +46,8 @@ pycoffer = "pycoffer.main:cli"
 [project.optional-dependencies]
 test = ["pytest", "coverage[toml]", "pytest-cov", "pytest-mock", "pytest-xdist", "pytest-random-order", "ruff", "bandit"]
 build = ["build", 'twine']
-zstd = ["pyzstd"]
-store = ["pyzstd", "filelock"]
-cli = ["pyzstd", "filelock", "click"]
+store = ["filelock"]
+cli = ["filelock", "click"]
 doc = ["sphinx"]
 dev = [
        "cofferfile@git+https://github.com/bibi21000/CofferFile",
