@@ -4,8 +4,10 @@
 venv:
 	python3 -m venv venv
 	./venv/bin/pip install .
+	./venv/bin/pip install .[dev]
 	./venv/bin/pip install .[test]
 	./venv/bin/pip install .[zstd]
+	./venv/bin/pip install .[cli]
 	./venv/bin/pip install .[store]
 
 build:

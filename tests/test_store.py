@@ -15,8 +15,9 @@ from cryptography.fernet import Fernet
 
 import cofferfile
 from cofferfile import META_CHUNK, META_SIZE
-from cofferfile.store import StoreInfo, FernetStore, TarZstdFernetFile, open as store_open
+from pycoffer.store import StoreInfo, FernetStore, open as store_open
 from fernetfile.zstd import open as zstd_open
+from fernetfile.tar import TarFile as TarZstdFernetFile
 
 import pytest
 

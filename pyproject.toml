@@ -12,8 +12,8 @@ maintainers = [
 ]
 packages = ["pycoffer"]
 dependencies = [
-  "fernetfile",
-  "naclfile",
+#  "fernetfile",
+#  "naclfile",
 ]
 classifiers = [
   # How mature is this project? Common values are
@@ -49,6 +49,11 @@ zstd = ["pyzstd"]
 store = ["pyzstd", "filelock"]
 cli = ["pyzstd", "filelock", "click"]
 doc = ["sphinx"]
+dev = [
+       "cofferfile@git+https://github.com/bibi21000/CofferFile",
+       "fernetfile@git+https://github.com/bibi21000/FernetFile",
+       "naclfile@git+https://github.com/bibi21000/NaclFile",
+       ]
 
 [project.urls]
 HomePage = "https://github.com/bibi21000/PyCoffer"

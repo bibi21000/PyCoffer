@@ -12,9 +12,7 @@ import zipfile
 import struct
 import shutil
 
-from cryptography.fernet import Fernet
-
-from cofferfile import cli
+from pycoffer import cli
 
 import pytest
 

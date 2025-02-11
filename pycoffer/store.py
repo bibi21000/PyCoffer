@@ -18,41 +18,42 @@ import io
 from filelock import FileLock
 
 from fernetfile.zstd import FernetFile as ZstdFernetFile
+from fernetfile.tar import TarFile as TarZstdFernetFile
 from fernetfile.zstd import CHUNK_SIZE, READ, WRITE, APPEND, EXCLUSIVE
 
 _open = open
 
-class TarZstdFernetFile(tarfile.TarFile):
-    """The container of the store. Based on TarFfile with encryption"""
+# ~ class TarZstdFernetFile(tarfile.TarFile):
+    # ~ """The container of the store. Based on TarFfile with encryption"""
 
-    def __init__(self, name, mode='r', fileobj=None, fernet_key=None, **kwargs):
-        """Init the TarZstdFernetFile"""
-        level_or_option = kwargs.pop('level_or_option', None)
-        zstd_dict = kwargs.pop('zstd_dict', None)
-        chunk_size = kwargs.pop('chunk_size', CHUNK_SIZE)
-        self.fernet_file = ZstdFernetFile(name, mode, fileobj=fileobj,
-            fernet_key=fernet_key, level_or_option=level_or_option,
-                zstd_dict=zstd_dict, chunk_size=chunk_size, **kwargs)
-        try:
-            super().__init__(fileobj=self.fernet_file, mode=mode.replace('b', ''), **kwargs)
+    # ~ def __init__(self, name, mode='r', fileobj=None, fernet_key=None, **kwargs):
+        # ~ """Init the TarZstdFernetFile"""
+        # ~ level_or_option = kwargs.pop('level_or_option', None)
+        # ~ zstd_dict = kwargs.pop('zstd_dict', None)
+        # ~ chunk_size = kwargs.pop('chunk_size', CHUNK_SIZE)
+        # ~ self.fernet_file = ZstdFernetFile(name, mode, fileobj=fileobj,
+            # ~ fernet_key=fernet_key, level_or_option=level_or_option,
+                # ~ zstd_dict=zstd_dict, chunk_size=chunk_size, **kwargs)
+        # ~ try:
+            # ~ super().__init__(fileobj=self.fernet_file, mode=mode.replace('b', ''), **kwargs)
 
-        except Exception:
-            self.fernet_file.close()
-            raise
+        # ~ except Exception:
+            # ~ self.fernet_file.close()
+            # ~ raise
 
-    def close(self):
-        """Close the TarZstdFernetFile"""
-        try:
-            super().close()
+    # ~ def close(self):
+        # ~ """Close the TarZstdFernetFile"""
+        # ~ try:
+            # ~ super().close()
 
-        finally:
-            if self.fernet_file is not None:
-                self.fernet_file.close()
+        # ~ finally:
+            # ~ if self.fernet_file is not None:
+                # ~ self.fernet_file.close()
 
-    def __repr__(self):
-        """ """
-        s = repr(self.fernet_file)
-        return '<TarZstdFernet ' + s[1:-1] + ' ' + hex(id(self)) + '>'
+    # ~ def __repr__(self):
+        # ~ """ """
+        # ~ s = repr(self.fernet_file)
+        # ~ return '<TarZstdFernet ' + s[1:-1] + ' ' + hex(id(self)) + '>'
 
 
 class StoreInfo():
