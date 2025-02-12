@@ -25,7 +25,6 @@ from naclfile.tar import TarFile as _TarZstdNaclFile
 from cofferfile.aes import AesFile
 from fernetfile.tar import TarFile as _TarZstdFernetFile
 from pycoffer.store import CofferStore
-from .test_chain import Bz2FernetFile, LzmaFernetFile, TarBz2FernetFile, TarLzmaFernetFile
 
 class ZstdFernetFile(_ZstdFernetFile):
     pass
