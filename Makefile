@@ -1,14 +1,23 @@
 #!/usr/bin/make -f
+-include makefile.local
+
+ifndef PYTHON
+PYTHON:=python3
+endif
+
 .PHONY: venv tests
 
 venv:
-	python3 -m venv venv
+	${PYTHON} -m venv venv
 	./venv/bin/pip install .
 	./venv/bin/pip install .[test]
 	./venv/bin/pip install .[cli]
 	./venv/bin/pip install .[store]
 	./venv/bin/pip install .[build]
 	./venv/bin/pip install .[doc]
+	./venv/bin/pip install ../FernetFile -e .
+	./venv/bin/pip install ../NaclFile -e .
+	./venv/bin/pip install ../CofferFile -e .
 
 build:
 	rm -rf dist
@@ -33,4 +42,5 @@ tests:
 	./venv/bin/pytest  --random-order -n auto --ignore=tests/test_benchmark.py tests/
 
 benchmark:
+	./venv/bin/pip install .[benchmark]
 	./venv/bin/pytest tests/test_benchmark.py

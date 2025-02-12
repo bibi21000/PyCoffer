@@ -49,11 +49,7 @@ build = ["build", 'twine']
 store = ["filelock"]
 cli = ["filelock", "click"]
 doc = ["sphinx"]
-dev = [
-       "cofferfile@git+https://github.com/bibi21000/CofferFile",
-       "fernetfile@git+https://github.com/bibi21000/FernetFile",
-       "naclfile@git+https://github.com/bibi21000/NaclFile",
-       ]
+benchmark = ["pytest-ordering"]
 
 [project.urls]
 HomePage = "https://github.com/bibi21000/PyCoffer"
