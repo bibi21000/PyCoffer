@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Test for file locking
+- Benchmark
 
 ### Changed
 
