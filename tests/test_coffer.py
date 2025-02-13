@@ -12,15 +12,11 @@ import pyzstd
 import struct
 
 from cryptography.fernet import Fernet
-from nacl import utils
-from nacl.secret import SecretBox
-from filelock import Timeout as filelockTimeout
 
 import cofferfile
 from cofferfile import META_CHUNK, META_SIZE
-from pycoffer import CofferInfo
-from pycoffer.store import CofferStore, open as store_open
-from naclfile.zstd import open as zstd_open
+from pycoffer import CofferInfo, Coffer, open as store_open
+from fernetfile.zstd import open as zstd_open
 from fernetfile.tar import TarFile as TarZstdFernetFile
 
 import pytest
@@ -90,33 +86,32 @@ def test_zstd_extract(random_path, random_name, buff_size, file_size):
 
 def test_store_info(random_path, random_name):
     sinfo = CofferInfo('titi', store_path=random_path)
-    assert repr(sinfo).startswith('<CofferInfo')
+    assert repr(sinfo).startswith('<Coffer')
     assert sinfo.mtime is None
 
 def test_store_open(random_path, random_name):
     key = Fernet.generate_key()
-    secret_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     data2a = randbytes(7415)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with store_open(dataf, mode='wb', fernet_key=key, secret_key=secret_key) as ff:
-        assert repr(ff).startswith('<CofferStore')
+    with store_open(dataf, mode='wb', container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        assert repr(ff).startswith('<Coffer')
         ff.write(data, 'file1%s.data'%random_name)
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
         assert not ff.readable
 
-    with store_open(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with store_open(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert not ff.writable
         assert ff.readable
 
     with open(dataf, "rb") as fdata:
-        with store_open(fdata, "rb", fernet_key=key, secret_key=secret_key) as ff:
+        with store_open(fdata, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
             assert data == ff.read('file1%s.data'%random_name)
             assert data2 == ff.read('file2%s.data'%random_name)
             assert not ff.writable
@@ -124,52 +119,51 @@ def test_store_open(random_path, random_name):
 
 def test_store_basic(random_path, random_name):
     key = Fernet.generate_key()
-    secret_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     data2a = randbytes(7415)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', fernet_key=key, secret_key=secret_key) as ff:
-        assert repr(ff).startswith('<CofferStore')
+    with Coffer(dataf, mode='wb', container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        assert repr(ff).startswith('<Coffer')
         ff.write(data, 'file1%s.data'%random_name)
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
         assert not ff.readable
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert not ff.writable
         assert ff.readable
 
     data3 = randbytes(6589)
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         mtime2 = ff.mtime
 
     assert mtime2 > mtime
 
-    with CofferStore(dataf, "r", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "r", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert data3 == ff.read('file3%s.data'%random_name)
 
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         ff.delete('file3%s.data'%random_name)
         ff.append(data2a, 'file2%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         with pytest.raises(OSError):
             data = ff.read('file3%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 + data2a == ff.read('file2%s.data'%random_name)
 
     data4 = randbytes(54128)
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         ff.write(data4, '4/file%s.data'%random_name)
 
@@ -179,13 +173,13 @@ def test_store_basic(random_path, random_name):
     with open(dataf2, "rb") as ff:
         ddataf2 = ff.read()
 
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert ff.modified is False
         ff.add(dataf2, '5/file%s.data'%random_name)
         assert ff.modified is False
 
     fff = None
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         fff = ff
         assert data == ff.read('file1%s.data'%random_name)
         assert ff.modified is False
@@ -195,19 +189,18 @@ def test_store_basic(random_path, random_name):
     assert fff.closed is True
 
     with pytest.raises(OSError):
-        with CofferStore(dataf, "xb", fernet_key=key, secret_key=secret_key) as ff:
+        with Coffer(dataf, "xb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
             ff.write(data3, 'file3%s.data'%random_name)
             assert ff.closed is False
 
 def test_store_no_flush(random_path, random_name):
     key = Fernet.generate_key()
-    secret_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     data2a = randbytes(7415)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, mode='wb', container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         assert ff.modified is False
         ff.write(data, 'file1%s.data'%random_name)
         assert ff.modified is True
@@ -215,7 +208,7 @@ def test_store_no_flush(random_path, random_name):
         assert ff.writable
         assert not ff.readable
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         assert ff.modified is False
         assert data == ff.read('file1%s.data'%random_name)
         assert ff.modified is False
@@ -225,7 +218,7 @@ def test_store_no_flush(random_path, random_name):
         mtime = ff.mtime
 
     data3 = randbytes(6589)
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key, auto_flush=False,
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False,
             backup='.bak') as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         mtime2 = ff.mtime
@@ -242,14 +235,14 @@ def test_store_no_flush(random_path, random_name):
 
     assert os.path.isfile(dataf + '.bak')
 
-    with CofferStore(dataf, "r", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, "r", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         assert ff.modified is False
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert data3 == ff.read('file3%s.data'%random_name)
         assert ff.modified is False
 
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         assert ff.modified is False
         ff.delete('file3%s.data'%random_name)
         assert ff.modified is True
@@ -262,35 +255,35 @@ def test_store_no_flush(random_path, random_name):
     with open(dataf2, "rb") as ff:
         ddataf2 = ff.read()
 
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         assert ff.modified is False
         ff.add(dataf2, '5/file%s.data'%random_name)
         assert ff.modified is True
 
     with pytest.raises(FileExistsError):
-        with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+        with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
             ff.add(dataf2, '5/file%s.data'%random_name, replace=False)
 
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         assert ff.modified is False
         ff.add(dataf2, '5/file%s.data'%random_name)
         assert ff.modified is True
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         with pytest.raises(OSError):
             data = ff.read('file3%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 + data2a == ff.read('file2%s.data'%random_name)
 
     data4 = randbytes(54128)
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         ff.write(data4, '4/file%s.data'%random_name)
 
     fff = None
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         fff = ff
         assert data == ff.read('file1%s.data'%random_name)
         assert ff.modified is False
@@ -300,68 +293,57 @@ def test_store_no_flush(random_path, random_name):
     assert fff.closed is True
 
     with pytest.raises(OSError):
-        with CofferStore(dataf, "xb", fernet_key=key, secret_key=secret_key, auto_flush=False) as ff:
+        with Coffer(dataf, "xb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
             ff.write(data3, 'file3%s.data'%random_name)
             assert ff.closed is False
 
 def test_store_exception(random_path, random_name):
     key = Fernet.generate_key()
-    secret_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, mode='wb', container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         ff.write(data, 'file1%s.data'%random_name)
         with pytest.raises(FileNotFoundError):
             ff.add('badfile', 'file2%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
-        with pytest.raises(filelockTimeout):
-            with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
-                assert data == ff.read('file1%s.data'%random_name)
-
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         with pytest.raises(FileNotFoundError):
             assert data2 == ff.read('file2%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with CofferStore(dataf, "rb", fernet_key=None, secret_key=secret_key) as ff:
+        with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':None}) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with CofferStore(None, "rb", fernet_key=key, secret_key=secret_key) as ff:
+        with Coffer(None, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(OSError):
-        with CofferStore('notafile.bad', "rb", fernet_key=key, secret_key=secret_key) as ff:
+        with Coffer('notafile.bad', "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
             assert ff.mtime is None
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with CofferStore(dataf, "rt", fernet_key=key, secret_key=secret_key) as ff:
+        with Coffer(dataf, "rt", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with CofferStore(dataf, "zz", fernet_key=key, secret_key=secret_key) as ff:
+        with Coffer(dataf, "zz", container_params={'fernet_key':key}) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with CofferStore(dataf, None, fernet_key=key, secret_key=secret_key) as ff:
+        with Coffer(dataf, None, container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with store_open(dataf, 'rt', fernet_key=key, secret_key=secret_key) as ff:
-            assert data == ff.read('file1%s.data'%random_name)
-
-    with pytest.raises(TypeError):
-        with store_open(None, 'r', fernet_key=key, secret_key=secret_key) as ff:
+        with Coffer(dataf, 'rb', container_class=TarZstdFernetFile, container_params=None) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
 def test_store_strings(random_path, random_name):
     key = Fernet.generate_key()
-    secret_key = utils.random(SecretBox.KEY_SIZE)
     length = 684
     data = [
         ''.join(choices(string.ascii_letters + string.digits, k=length)),
@@ -371,60 +353,67 @@ def test_store_strings(random_path, random_name):
     ]
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, mode='wb', container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         ff.writelines(data, 'file1%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert data == ff.readlines('file1%s.data'%random_name)
 
 def test_store_secure_basic(random_path, random_name):
     key = Fernet.generate_key()
-    secret_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     data2a = randbytes(7415)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', fernet_key=key, secret_key=secret_key) as ff:
-        assert repr(ff).startswith('<CofferStore')
+    with Coffer(dataf, mode='wb', container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
+        assert repr(ff).startswith('<Coffer')
         ff.write(data, 'file1%s.data'%random_name)
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
         assert not ff.readable
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert not ff.writable
         assert ff.readable
 
     data3 = randbytes(6589)
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         mtime2 = ff.mtime
 
     assert mtime2 > mtime
 
-    with CofferStore(dataf, "r", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "r", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert data3 == ff.read('file3%s.data'%random_name)
 
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         ff.delete('file3%s.data'%random_name)
         ff.append(data2a, 'file2%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         with pytest.raises(OSError):
             data = ff.read('file3%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 + data2a == ff.read('file2%s.data'%random_name)
 
     data4 = randbytes(54128)
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         ff.write(data4, '4/file%s.data'%random_name)
 
@@ -434,13 +423,15 @@ def test_store_secure_basic(random_path, random_name):
     with open(dataf2, "rb") as ff:
         ddataf2 = ff.read()
 
-    with CofferStore(dataf, "ab", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         assert ff.modified is False
         ff.add(dataf2, '5/file%s.data'%random_name)
         assert ff.modified is False
 
     fff = None
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         fff = ff
         assert data == ff.read('file1%s.data'%random_name)
         assert ff.modified is False
@@ -450,48 +441,56 @@ def test_store_secure_basic(random_path, random_name):
     assert fff.closed is True
 
     with pytest.raises(OSError):
-        with CofferStore(dataf, "xb", fernet_key=key, secret_key=secret_key) as ff:
+        with Coffer(dataf, "xb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+                secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
             ff.write(data3, 'file3%s.data'%random_name)
             assert ff.closed is False
 
     extdir = os.path.join(random_path, 'extract_tar%s'%random_name)
     os.makedirs(extdir, exist_ok=True)
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         ff.extractall(extdir)
+
+    extdir = os.path.join(random_path, 'extract_tar2%s'%random_name)
+    os.makedirs(extdir, exist_ok=True)
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
+        ff.extract('file3%s.data'%random_name, extdir)
 
 def test_store_secure_tmp(random_path, random_name):
     key = Fernet.generate_key()
-    secret_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     data2a = randbytes(7415)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', fernet_key=key, secret_key=secret_key) as ff:
-        assert repr(ff).startswith('<CofferStore')
+    with Coffer(dataf, mode='wb', container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
+        assert repr(ff).startswith('<Coffer')
         ff.write(data, 'file1%s.data'%random_name)
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
         assert not ff.readable
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert not ff.writable
         assert ff.readable
 
-    with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
+            secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
         for member in ff.getmembers():
-            assert repr(member).startswith('<CofferInfo')
-            assert member.mtime is not None
-            with zstd_open(member.path, 'rb', secret_key=secret_key) as fff:
+            with zstd_open(member.path, 'rb', fernet_key=key) as fff:
                 datar = fff.read()
                 if member.name == 'file1%s.data'%random_name:
                     assert data == datar
                 elif member.name == 'file2%s.data'%random_name:
                     assert data2 == datar
             with pytest.raises(ValueError):
-                with zstd_open(member.path, 'rb', secret_key=None) as fff:
+                with zstd_open(member.path, 'rb', fernet_key=None) as fff:
                     assert fff.read() is not None
 

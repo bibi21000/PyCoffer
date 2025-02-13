@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Test for file locking
+
 ### Changed
+
+- Split store to support other containers class
 
 ### Removed
 
