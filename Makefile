@@ -27,16 +27,16 @@ testpypi:
 	./venv/bin/python3 -m twine upload --repository testpypi --verbose dist/*
 
 doc:
-	./venv/bin/pdoc --output-directory docs fernetfile/zstd.py fernetfile/store.py fernetfile/__init__.py
+	./venv/bin/pdoc --output-directory docs pycoffer/zstd.py pycoffer/store.py pycoffer/__init__.py
 
 pypi:
 	./venv/bin/python3 -m twine upload --repository pypi --verbose dist/*
 
 ruff:
-	./venv/bin/ruff check fernetfile/
+	./venv/bin/ruff check pycoffer/
 
 bandit:
-	./venv/bin/bandit -r fernetfile
+	./venv/bin/bandit -r pycoffer
 
 tests:
 	./venv/bin/pytest  --random-order -n auto --ignore=tests/test_benchmark.py tests/

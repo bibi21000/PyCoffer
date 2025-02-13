@@ -14,7 +14,6 @@ import tempfile
 import threading
 from contextlib import contextmanager
 import shutil
-import tarfile
 import io
 from filelock import FileLock
 
