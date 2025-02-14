@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Split store to support other containers class
+- Fix recursive import or directories
 
 ### Removed
 

@@ -8,15 +8,8 @@ __author__ = 'bibi21000 aka Sébastien GALLET'
 __email__ = 'bibi21000@gmail.com'
 
 import os
-import time
-import tempfile
-import threading
-from contextlib import contextmanager
-import shutil
-import tarfile
-import io
 
-from pycoffer import CofferInfo, Coffer, open as store_open
+from pycoffer import Coffer
 from naclfile.zstd import open as zstd_open
 from fernetfile.tar import TarFile as TarZstdFernetFile
 

@@ -10,6 +10,7 @@ import time
 import tarfile
 import pyzstd
 import struct
+import logging
 
 from cryptography.fernet import Fernet
 from nacl import utils
@@ -377,7 +378,9 @@ def test_store_strings(random_path, random_name):
     with CofferStore(dataf, "rb", fernet_key=key, secret_key=secret_key) as ff:
         assert data == ff.readlines('file1%s.data'%random_name)
 
-def test_store_secure_basic(random_path, random_name):
+def test_store_secure_basic(caplog, random_path, random_name):
+    caplog.set_level(logging.DEBUG, logger="pycoffer")
+
     key = Fernet.generate_key()
     secret_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)

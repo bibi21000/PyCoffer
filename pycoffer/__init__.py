@@ -12,6 +12,7 @@ import os
 import time
 import tempfile
 import threading
+import logging
 from contextlib import contextmanager
 import shutil
 import io
@@ -20,6 +21,8 @@ from filelock import FileLock
 from cofferfile import CHUNK_SIZE, READ, WRITE, APPEND, EXCLUSIVE, _open_cls
 
 _open = open
+
+log = logging.getLogger( __name__ )
 
 class CofferInfo():
     """ """
@@ -222,6 +225,8 @@ class Coffer():
             for fname in files:
                 aname = os.path.join( root[len(self.dirpath):], fname )
                 members.append(CofferInfo(aname, store_path=self.dirpath))
+        log.debug("Get members : %s", members)
+
         return members
 
     def close(self):
@@ -273,27 +278,49 @@ class Coffer():
                 self._flush()
 
     def add(self, filename, arcname=None, replace=True):
-        """Add file as arcname. If arcname exists, it is replaced by default.
+        """Add file/dir in the store. arcname the is dest . If arcname exists, it is replaced by default.
         Otherwise an exception is raised"""
         with self._lock:
             self._check_can_write()
-            if isinstance(arcname, CofferInfo):
-                finfo = arcname
+            infos = []
+            srcs = []
+            if os.path.isdir(filename):
+                len_root = len(filename.split('/'))
+                for root, dirs, files in os.walk(filename):
+                    for fname in files:
+                        # ~ if root != filename:
+                            # ~ continue
+                        sdir = root.split('/')[len_root:]
+                        ssdir = ''
+                        if len(sdir) > 0:
+                            ssdir = '/'.join(sdir)
+                        aname = os.path.join( arcname, ssdir, fname )
+                        sname = os.path.join( filename, ssdir, fname )
+                        infos.append((sname, CofferInfo(aname, store_path=self.dirpath)))
             else:
-                finfo = CofferInfo(arcname, store_path=self.dirpath)
+                if isinstance(arcname, CofferInfo):
+                    infos.append((filename, arcname))
+                else:
+                    infos.append((filename, CofferInfo(arcname, store_path=self.dirpath)))
 
-            file_exists = os.path.isfile(finfo.path)
-            if file_exists is True and replace is False:
-                raise FileExistsError('File already exists %s' % self.filename)
+            log.debug("Add file(s) to coffer : %s", infos)
 
-            if file_exists is True:
-                self._delete(arcinfo=finfo)
+            for fname, finfo in infos:
 
-            if finfo.subdir is not None:
-                os.makedirs(os.path.join(self.dirpath, finfo.subdir), exist_ok=True)
+                file_exists = os.path.isfile(finfo.path)
 
-            with _open(filename, 'rb') as ff, self.secure_open(finfo.path, mode='wb', **self.secure_params) as sf:
-                sf.write(ff.read())
+                if file_exists is True and replace is False:
+                    raise FileExistsError('File already exists %s' % self.filename)
+
+                if file_exists is True:
+                    self._delete(arcinfo=finfo)
+
+                if finfo.subdir is not None:
+                    os.makedirs(os.path.join(self.dirpath, finfo.subdir), exist_ok=True)
+
+                with _open(fname, 'rb') as ff, self.secure_open(finfo.path, mode='wb', **self.secure_params) as sf:
+                    sf.write(ff.read())
+
             self._dirmtime = time.time_ns()
 
             if self.auto_flush is True:
@@ -320,7 +347,7 @@ class Coffer():
             finfo = arcname
         else:
             finfo = CofferInfo(arcname, store_path=self.dirpath)
-        self.extractall(path='.', members=[finfo])
+        self.extractall(path=path, members=[finfo])
 
     def _delete(self, arcinfo=None):
         """Delete file in store without lock"""
