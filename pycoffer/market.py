@@ -1,14 +1,13 @@
 # -*- encoding: utf-8 -*-
-"""CofferStore : fast and small
+"""MarketStore :
 
-- Coffer encryption with Nacl
-- File compression with Pyzstd
+- File encyption with Nacl
+- Coffer compression with Pyzstd
 - Autoflush disable : close coffer or call flush to write update to coffer file.
-- Files are store in clear in temp directory
 
 Usage:
 
-- Archiving : can use external zstd dict to maximize data compression
+- Archiving big files
 
 """
 __author__ = 'bibi21000 aka Sébastien GALLET'
@@ -16,18 +15,18 @@ __email__ = 'bibi21000@gmail.com'
 
 import os
 
-from pyzstd import open as zstd_open, CParameter
-
-from pycoffer import Coffer
-from naclfile.tar import TarFile as TarZstdNaclFile
 from naclfile.zstd import open as nacl_open
+from pyzstd import CParameter
 
-class CofferStore(Coffer):
+from cofferfile.zstd import ZstdTarFile
+from pycoffer import Coffer
+
+class CofferMarket(Coffer):
     """ """
 
     def __init__(self, filename=None, mode=None, fileobj=None,
             auto_flush=False, backup=None,
-            coffer_key=None,
+            secure_key=None,
             **kwargs):
         """Constructor for the FernetFile class.
 
@@ -68,23 +67,32 @@ class CofferStore(Coffer):
         """
         if 'r' in mode:
             secure_params = {
+                'secret_key' : secure_key,
+            }
+            container_params = {
             }
         else:
             secure_params = {
+                'secret_key' : secure_key,
+                'level_or_option' : {
+                    CParameter.compressionLevel : 12,
+                }
+            }
+            container_params = {
                 'level_or_option' : {
                     CParameter.compressionLevel : 12,
                 }
             }
         super().__init__(filename=filename, mode=mode, fileobj=fileobj,
             auto_flush=auto_flush, backup=backup,
-            secure_open=zstd_open, secure_params=secure_params,
-            container_class=TarZstdNaclFile, container_params={'secret_key': coffer_key},
+            secure_open=nacl_open, secure_params=secure_params,
+            container_class=ZstdTarFile, container_params=container_params,
             **kwargs)
 
     def __repr__(self):
         """A repr of the store"""
         s = repr(self.filename)
-        return '<CofferStore ' + s[1:-1] + ' ' + hex(id(self)) + '>'
+        return '<CofferMarket ' + s[1:-1] + ' ' + hex(id(self)) + '>'
 
     @classmethod
     def gen_params(cls):
@@ -92,19 +100,19 @@ class CofferStore(Coffer):
         from nacl import utils
         from nacl.secret import SecretBox
         return {
-            "coffer_key": utils.random(SecretBox.KEY_SIZE),
+            "secure_key": utils.random(SecretBox.KEY_SIZE),
         }
 
     def crypt_open(self, filename, mode='r', **kwargs):
         """Return a crypting open function to encrypt esternal files for examples.
         Use keys of the coffer."""
-        return nacl_open(filename, mode=mode, **self.container_params, **kwargs)
+        return nacl_open(filename, mode=mode, **self.secure_params, **kwargs)
 
 def open(filename, mode="rb",
         auto_flush=False, backup=None,
-        coffer_key=None,
+        secure_key=None,
         **kwargs):
-    """Open a CofferStore file in binary mode.
+    """Open a CofferMarket file in binary mode.
 
     The filename argument can be an actual filename (a str or bytes object), or
     an existing file object to read from or write to.
@@ -122,12 +130,12 @@ def open(filename, mode="rb",
         raise ValueError("Invalid mode: %r" % (mode,))
 
     if isinstance(filename, (str, bytes, os.PathLike)):
-        binary_file = CofferStore(filename, mode=mode,
-            coffer_key=coffer_key,
+        binary_file = CofferMarket(filename, mode=mode,
+            secure_key=secure_key,
             **kwargs)
     elif hasattr(filename, "read") or hasattr(filename, "write"):
-        binary_file = CofferStore(None, mode=mode, fileobj=filename,
-            coffer_key=coffer_key,
+        binary_file = CofferMarket(None, mode=mode, fileobj=filename,
+            secure_key=secure_key,
             **kwargs)
     else:
         raise TypeError("filename must be a str or bytes object, or a file")

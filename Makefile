@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
--include makefile.local
+-include Makefile.local
 
 ifndef PYTHON
 PYTHON:=python3

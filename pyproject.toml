@@ -43,11 +43,20 @@ classifiers = [
 [project.scripts]
 pycoffer = "pycoffer.main:cli"
 
+[project.entry-points."cofferfile.coffer"]
+bank = "pycoffer.bank:CofferBank"
+store = "pycoffer.store:CofferStore"
+market = "pycoffer.market:CofferMarket"
+null = "pycoffer.null:CofferNull"
+
+[project.entry-points."cofferfile.plugin.file"]
+password = "pycoffer.plugins.password:Password"
+
 [project.optional-dependencies]
 test = ["pytest", "coverage[toml]", "pytest-cov", "pytest-mock", "pytest-xdist", "pytest-random-order", "ruff", "bandit"]
 build = ["build", 'twine']
 store = ["filelock"]
-cli = ["filelock", "click"]
+cli = ["filelock", "click", 'pyperclip']
 doc = ["sphinx"]
 benchmark = ["pytest-ordering"]
 

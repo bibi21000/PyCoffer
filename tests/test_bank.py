@@ -12,6 +12,7 @@ import pyzstd
 import struct
 import logging
 
+from cryptography.fernet import Fernet
 from nacl import utils
 from nacl.secret import SecretBox
 from filelock import Timeout as filelockTimeout
@@ -19,15 +20,16 @@ from filelock import Timeout as filelockTimeout
 import cofferfile
 from cofferfile import META_CHUNK, META_SIZE
 from pycoffer import CofferInfo
-from pycoffer.store import CofferStore, open as store_open
-from pyzstd import open as zstd_open
-from naclfile.tar import TarFile as TarZstdNaclFile
+from pycoffer.bank import CofferBank, open as store_bank
+from naclfile.zstd import open as zstd_open
+from fernetfile.tar import TarFile as TarZstdFernetFile
 
 import pytest
 
 @pytest.mark.parametrize("buff_size, file_size", [ (1024 * 64, 1024 * 512 + 13) ])
-def notest_zstd_extract(random_path, random_name, buff_size, file_size):
-    coffer_key = utils.random(SecretBox.KEY_SIZE)
+def test_zstd_extract(random_path, random_name, buff_size, file_size):
+    key = Fernet.generate_key()
+    fkey = Fernet(key)
     dataf = os.path.join(random_path, 'test%s.frtz'%random_name)
 
     dataf2 = os.path.join(random_path, 'file2%s.out'%random_name)
@@ -36,7 +38,7 @@ def notest_zstd_extract(random_path, random_name, buff_size, file_size):
     with open(dataf2, "rb") as ff:
         data = ff.read()
 
-    with TarZstdNaclFile(dataf, mode='wb', coffer_key=coffer_key,
+    with TarZstdFernetFile(dataf, mode='wb', fernet_key=key,
             chunk_size=buff_size) as ff:
         ff.add(dataf2, 'file1%s.dat'%random_name)
         assert repr(ff).startswith('<TarZstdFernet')
@@ -74,14 +76,14 @@ def notest_zstd_extract(random_path, random_name, buff_size, file_size):
         out.write(datar)
 
     with tarfile.open(dataf3, "r") as ff:
-        ff.extract('file1%s.dat'%random_name, path=random_path)
+        ff.extract('file1%s.dat'%random_name, path=random_path, filter='data')
 
     with open(os.path.join(random_path, 'file1%s.dat'%random_name), "rb") as ff:
         data1 = ff.read()
     assert data == data1
 
-    with TarZstdNaclFile(dataf, "rb", fernet_key=key) as ff:
-        ff.extract('file1%s.dat'%random_name, path=random_path)
+    with TarZstdFernetFile(dataf, "rb", fernet_key=key) as ff:
+        ff.extract('file1%s.dat'%random_name, path=random_path, filter='data')
 
     with open(os.path.join(random_path, 'file1%s.dat'%random_name), "rb") as ff:
         data1 = ff.read()
@@ -92,79 +94,83 @@ def test_store_info(random_path, random_name):
     assert repr(sinfo).startswith('<CofferInfo')
     assert sinfo.mtime is None
 
-def test_store_open(random_path, random_name):
-    coffer_key = utils.random(SecretBox.KEY_SIZE)
+def test_store_bank(random_path, random_name):
+    key = Fernet.generate_key()
+    secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     data2a = randbytes(7415)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with store_open(dataf, mode='wb', coffer_key=coffer_key) as ff:
-        assert repr(ff).startswith('<CofferStore')
+    with store_bank(dataf, mode='wb', coffer_key=key, secure_key=secure_key) as ff:
+        assert repr(ff).startswith('<CofferBank')
         ff.write(data, 'file1%s.data'%random_name)
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
         assert ff.readable
 
-    with store_open(dataf, "rb", coffer_key=coffer_key) as ff:
+    with store_bank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert not ff.writable
         assert ff.readable
 
     with open(dataf, "rb") as fdata:
-        with store_open(fdata, "rb", coffer_key=coffer_key) as ff:
+        with store_bank(fdata, "rb", coffer_key=key, secure_key=secure_key) as ff:
             assert data == ff.read('file1%s.data'%random_name)
             assert data2 == ff.read('file2%s.data'%random_name)
             assert not ff.writable
             assert ff.readable
 
-def test_store_basic(random_path, random_name):
-    coffer_key = utils.random(SecretBox.KEY_SIZE)
+def test_bank_basic(random_path, random_name):
+    key = Fernet.generate_key()
+    secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     data2a = randbytes(7415)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', coffer_key=coffer_key) as ff:
-        assert repr(ff).startswith('<CofferStore')
+    with CofferBank(dataf, mode='wb', coffer_key=key, secure_key=secure_key) as ff:
+        assert repr(ff).startswith('<CofferBank')
         ff.write(data, 'file1%s.data'%random_name)
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
         assert ff.readable
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert not ff.writable
         assert ff.readable
 
     data3 = randbytes(6589)
-    with CofferStore(dataf, "ab", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key) as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         mtime2 = ff.mtime
 
-    with CofferStore(dataf, "r", coffer_key=coffer_key) as ff:
+    assert mtime2 > mtime
+
+    with CofferBank(dataf, "r", coffer_key=key, secure_key=secure_key) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert data3 == ff.read('file3%s.data'%random_name)
 
-    with CofferStore(dataf, "ab", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key) as ff:
         ff.delete('file3%s.data'%random_name)
         ff.append(data2a, 'file2%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
         with pytest.raises(OSError):
             data = ff.read('file3%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 + data2a == ff.read('file2%s.data'%random_name)
 
     data4 = randbytes(54128)
-    with CofferStore(dataf, "ab", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key) as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         ff.write(data4, '4/file%s.data'%random_name)
 
@@ -174,13 +180,13 @@ def test_store_basic(random_path, random_name):
     with open(dataf2, "rb") as ff:
         ddataf2 = ff.read()
 
-    with CofferStore(dataf, "ab", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key) as ff:
         assert ff.modified is False
         ff.add(dataf2, '5/file%s.data'%random_name)
-        assert ff.modified is True
+        assert ff.modified is False
 
     fff = None
-    with CofferStore(dataf, "rb", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
         fff = ff
         assert data == ff.read('file1%s.data'%random_name)
         assert ff.modified is False
@@ -190,18 +196,19 @@ def test_store_basic(random_path, random_name):
     assert fff.closed is True
 
     with pytest.raises(OSError):
-        with CofferStore(dataf, "xb", coffer_key=coffer_key) as ff:
+        with CofferBank(dataf, "xb", coffer_key=key, secure_key=secure_key) as ff:
             ff.write(data3, 'file3%s.data'%random_name)
             assert ff.closed is False
 
-def test_store_no_flush(random_path, random_name):
-    coffer_key = utils.random(SecretBox.KEY_SIZE)
+def test_bank_no_flush(random_path, random_name):
+    key = Fernet.generate_key()
+    secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     data2a = randbytes(7415)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, mode='wb', coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         assert ff.modified is False
         ff.write(data, 'file1%s.data'%random_name)
         assert ff.modified is True
@@ -209,7 +216,7 @@ def test_store_no_flush(random_path, random_name):
         assert ff.writable
         assert ff.readable
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         assert ff.modified is False
         assert data == ff.read('file1%s.data'%random_name)
         assert ff.modified is False
@@ -219,7 +226,7 @@ def test_store_no_flush(random_path, random_name):
         mtime = ff.mtime
 
     data3 = randbytes(6589)
-    with CofferStore(dataf, "ab", coffer_key=coffer_key, auto_flush=False,
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key, auto_flush=False,
             backup='.bak') as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         mtime2 = ff.mtime
@@ -236,14 +243,14 @@ def test_store_no_flush(random_path, random_name):
 
     assert os.path.isfile(dataf + '.bak')
 
-    with CofferStore(dataf, "r", coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, "r", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         assert ff.modified is False
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 == ff.read('file2%s.data'%random_name)
         assert data3 == ff.read('file3%s.data'%random_name)
         assert ff.modified is False
 
-    with CofferStore(dataf, "ab", coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         assert ff.modified is False
         ff.delete('file3%s.data'%random_name)
         assert ff.modified is True
@@ -256,35 +263,35 @@ def test_store_no_flush(random_path, random_name):
     with open(dataf2, "rb") as ff:
         ddataf2 = ff.read()
 
-    with CofferStore(dataf, "ab", coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         assert ff.modified is False
         ff.add(dataf2, '5/file%s.data'%random_name)
         assert ff.modified is True
 
     with pytest.raises(FileExistsError):
-        with CofferStore(dataf, "ab", coffer_key=coffer_key, auto_flush=False) as ff:
+        with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
             ff.add(dataf2, '5/file%s.data'%random_name, replace=False)
 
-    with CofferStore(dataf, "ab", coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         assert ff.modified is False
         ff.add(dataf2, '5/file%s.data'%random_name)
         assert ff.modified is True
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         with pytest.raises(OSError):
             data = ff.read('file3%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         assert data2 + data2a == ff.read('file2%s.data'%random_name)
 
     data4 = randbytes(54128)
-    with CofferStore(dataf, "ab", coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         ff.write(data3, 'file3%s.data'%random_name)
         ff.write(data4, '4/file%s.data'%random_name)
 
     fff = None
-    with CofferStore(dataf, "rb", coffer_key=coffer_key, auto_flush=False) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
         fff = ff
         assert data == ff.read('file1%s.data'%random_name)
         assert ff.modified is False
@@ -294,66 +301,68 @@ def test_store_no_flush(random_path, random_name):
     assert fff.closed is True
 
     with pytest.raises(OSError):
-        with CofferStore(dataf, "xb", coffer_key=coffer_key, auto_flush=False) as ff:
+        with CofferBank(dataf, "xb", coffer_key=key, secure_key=secure_key, auto_flush=False) as ff:
             ff.write(data3, 'file3%s.data'%random_name)
             assert ff.closed is False
 
-def test_store_exception(random_path, random_name):
-    coffer_key = utils.random(SecretBox.KEY_SIZE)
+def test_bank_exception(random_path, random_name):
+    key = Fernet.generate_key()
+    secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, mode='wb', coffer_key=key, secure_key=secure_key) as ff:
         ff.write(data, 'file1%s.data'%random_name)
         with pytest.raises(FileNotFoundError):
             ff.add('badfile', 'file2%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
         with pytest.raises(filelockTimeout):
-            with CofferStore(dataf, "rb", coffer_key=coffer_key) as ff:
+            with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
                 assert data == ff.read('file1%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
         assert data == ff.read('file1%s.data'%random_name)
         with pytest.raises(FileNotFoundError):
             assert data2 == ff.read('file2%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with CofferStore(dataf, "rb", coffer_key=None) as ff:
+        with CofferBank(dataf, "rb", coffer_key=None, secure_key=secure_key) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with CofferStore(None, "rb", coffer_key=coffer_key) as ff:
+        with CofferBank(None, "rb", coffer_key=key, secure_key=secure_key) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(OSError):
-        with CofferStore('notafile.bad', "rb", coffer_key=coffer_key) as ff:
+        with CofferBank('notafile.bad', "rb", coffer_key=key, secure_key=secure_key) as ff:
             assert ff.mtime is None
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with CofferStore(dataf, "rt", coffer_key=coffer_key) as ff:
+        with CofferBank(dataf, "rt", coffer_key=key, secure_key=secure_key) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with CofferStore(dataf, "zz", coffer_key=coffer_key) as ff:
-            assert data == ff.read('file1%s.data'%random_name)
-
-    with pytest.raises(TypeError):
-        with CofferStore(dataf, None, coffer_key=coffer_key) as ff:
+        with CofferBank(dataf, "zz", coffer_key=key, secure_key=secure_key) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with store_open(dataf, 'rt', coffer_key=coffer_key) as ff:
+        with CofferBank(dataf, None, coffer_key=key, secure_key=secure_key) as ff:
+            assert data == ff.read('file1%s.data'%random_name)
+
+    with pytest.raises(ValueError):
+        with store_bank(dataf, 'rt', coffer_key=key, secure_key=secure_key) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(TypeError):
-        with store_open(None, 'r', coffer_key=coffer_key) as ff:
+        with store_bank(None, 'r', coffer_key=key, secure_key=secure_key) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
-def test_store_strings(random_path, random_name):
-    coffer_key = utils.random(SecretBox.KEY_SIZE)
+def test_bank_strings(random_path, random_name):
+    key = Fernet.generate_key()
+    secure_key = utils.random(SecretBox.KEY_SIZE)
     length = 684
     data = [
         ''.join(choices(string.ascii_letters + string.digits, k=length)),
@@ -363,16 +372,137 @@ def test_store_strings(random_path, random_name):
     ]
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with CofferStore(dataf, mode='wb', coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, mode='wb', coffer_key=key, secure_key=secure_key) as ff:
         ff.writelines(data, 'file1%s.data'%random_name)
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
         assert data == ff.readlines('file1%s.data'%random_name)
 
-    assert CofferStore.gen_params() is not None
+def test_bank_secure_basic(caplog, random_path, random_name):
+    caplog.set_level(logging.DEBUG, logger="pycoffer")
 
-def test_store_crypt_open(random_path, random_name):
-    coffer_key = utils.random(SecretBox.KEY_SIZE)
+    key = Fernet.generate_key()
+    secure_key = utils.random(SecretBox.KEY_SIZE)
+    data = randbytes(2487)
+    data2 = randbytes(1536)
+    data2a = randbytes(7415)
+    dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
+
+    with CofferBank(dataf, mode='wb', coffer_key=key, secure_key=secure_key) as ff:
+        assert repr(ff).startswith('<CofferBank')
+        ff.write(data, 'file1%s.data'%random_name)
+        ff.write(data2, 'file2%s.data'%random_name)
+        mtime = ff.mtime
+        assert ff.writable
+        assert ff.readable
+
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
+        assert data == ff.read('file1%s.data'%random_name)
+        assert data2 == ff.read('file2%s.data'%random_name)
+        assert not ff.writable
+        assert ff.readable
+
+    data3 = randbytes(6589)
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key) as ff:
+        ff.write(data3, 'file3%s.data'%random_name)
+        mtime2 = ff.mtime
+
+    assert mtime2 > mtime
+
+    with CofferBank(dataf, "r", coffer_key=key, secure_key=secure_key) as ff:
+        assert data == ff.read('file1%s.data'%random_name)
+        assert data2 == ff.read('file2%s.data'%random_name)
+        assert data3 == ff.read('file3%s.data'%random_name)
+
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key) as ff:
+        ff.delete('file3%s.data'%random_name)
+        ff.append(data2a, 'file2%s.data'%random_name)
+
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
+        with pytest.raises(OSError):
+            data = ff.read('file3%s.data'%random_name)
+
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
+        assert data == ff.read('file1%s.data'%random_name)
+        assert data2 + data2a == ff.read('file2%s.data'%random_name)
+
+    data4 = randbytes(54128)
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key) as ff:
+        ff.write(data3, 'file3%s.data'%random_name)
+        ff.write(data4, '4/file%s.data'%random_name)
+
+    dataf2 = os.path.join(random_path, 'file2%s.out'%random_name)
+    with open(dataf2, "wb") as out:
+        out.write(os.urandom(127 * 50))
+    with open(dataf2, "rb") as ff:
+        ddataf2 = ff.read()
+
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key) as ff:
+        assert ff.modified is False
+        ff.add(dataf2, '5/file%s.data'%random_name)
+        assert ff.modified is False
+
+    fff = None
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
+        fff = ff
+        assert data == ff.read('file1%s.data'%random_name)
+        assert ff.modified is False
+        assert data2 + data2a == ff.read('file2%s.data'%random_name)
+        assert data3 == ff.read('file3%s.data'%random_name)
+        assert data4 == ff.read('4/file%s.data'%random_name)
+    assert fff.closed is True
+
+    with pytest.raises(OSError):
+        with CofferBank(dataf, "xb", coffer_key=key, secure_key=secure_key) as ff:
+            ff.write(data3, 'file3%s.data'%random_name)
+            assert ff.closed is False
+
+    extdir = os.path.join(random_path, 'extract_tar%s'%random_name)
+    os.makedirs(extdir, exist_ok=True)
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
+        ff.extractall(extdir)
+
+def test_bank_secure_tmp(random_path, random_name):
+    key = Fernet.generate_key()
+    secure_key = utils.random(SecretBox.KEY_SIZE)
+    data = randbytes(2487)
+    data2 = randbytes(1536)
+    data2a = randbytes(7415)
+    dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
+
+    with CofferBank(dataf, mode='wb', coffer_key=key, secure_key=secure_key) as ff:
+        assert repr(ff).startswith('<CofferBank')
+        ff.write(data, 'file1%s.data'%random_name)
+        ff.write(data2, 'file2%s.data'%random_name)
+        mtime = ff.mtime
+        assert ff.writable
+        assert ff.readable
+
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
+        assert data == ff.read('file1%s.data'%random_name)
+        assert data2 == ff.read('file2%s.data'%random_name)
+        assert not ff.writable
+        assert ff.readable
+
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
+        for member in ff.getmembers():
+            assert repr(member).startswith('<CofferInfo')
+            assert member.mtime is not None
+            with zstd_open(member.path, 'rb', secret_key=secure_key) as fff:
+                datar = fff.read()
+                if member.name == 'file1%s.data'%random_name:
+                    assert data == datar
+                elif member.name == 'file2%s.data'%random_name:
+                    assert data2 == datar
+            with pytest.raises(ValueError):
+                with zstd_open(member.path, 'rb', secret_key=None) as fff:
+                    assert fff.read() is not None
+
+    assert CofferBank.gen_params() is not None
+
+def test_bank_crypt_open(random_path, random_name):
+    key = Fernet.generate_key()
+    secure_key = utils.random(SecretBox.KEY_SIZE)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
     dataf2 = os.path.join(random_path, 'copy%s.out'%random_name)
@@ -381,14 +511,14 @@ def test_store_crypt_open(random_path, random_name):
     with open(dataf2, "rb") as ff:
         data = ff.read()
 
-    with CofferStore(dataf, "ab", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "ab", coffer_key=key, secure_key=secure_key) as ff:
         with open(dataf2, "rb") as fff, ff.crypt_open(dataf2+'.crypt', 'wb') as ggg:
             ggg.write(fff.read())
 
     with open(dataf2+'.crypt', "rb") as ff:
         assert data != ff.read()
 
-    with CofferStore(dataf, "rb", coffer_key=coffer_key) as ff:
+    with CofferBank(dataf, "rb", coffer_key=key, secure_key=secure_key) as ff:
         with open(dataf2+'.uncrypt', "wb") as fff, ff.crypt_open(dataf2+'.crypt', 'rb') as ggg:
             fff.write(ggg.read())
 

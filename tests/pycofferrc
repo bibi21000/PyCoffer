@@ -1,0 +1,12 @@
+[DEFAULT]
+backup = .backup
+
+[confidential]
+type = bank
+coffer_key = RTY2MEFQc2pVVkVNUlJmWjRUbklMVGpscWRuVjNsdWpfYVBHbU83YVBmOD0=
+secure_key = P1JwKYoon26kUsDZbp/LP8JRRfoS8Btwx7oVQraQ8Ak=
+
+[game]
+key = 45
+paranoid =
+location = Documents/game.coffer

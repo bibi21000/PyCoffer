@@ -19,6 +19,9 @@ import io
 from filelock import FileLock
 
 from cofferfile import CHUNK_SIZE, READ, WRITE, APPEND, EXCLUSIVE, _open_cls
+from cofferfile.decorator import reify
+
+from .plugins import Plugin
 
 _open = open
 
@@ -51,6 +54,13 @@ class CofferInfo():
             return os.path.getmtime(self.path)
         return None
 
+    @property
+    def filesize(self):
+        """The size of the file in tmp"""
+        if os.path.isfile(self.path):
+            return os.path.getsize(self.path)
+        return None
+
     def __repr__(self):
         """ """
         s = repr(self.name)
@@ -66,7 +76,7 @@ class Coffer():
             auto_flush=True, backup=None,
             secure_open=None, secure_params=None,
             container_class=None, container_params=None,
-            lock_timeout=1, **kwargs):
+            lock_timeout=1, temp_dir=None, **kwargs):
         """Constructor for the FernetFile class.
 
         At least one of fileobj and filename must be given a
@@ -148,11 +158,17 @@ class Coffer():
         self.dirpath = None
         self._dirctime = None
         self._dirmtime = None
+        self.temp_dir = temp_dir
 
     def __repr__(self):
         """A repr of the store"""
         s = repr(self.filename)
         return '<Coffer ' + s[1:-1] + ' ' + hex(id(self)) + '>'
+
+    @classmethod
+    def gen_params(cls):
+        """Generate params for a new store : keys, ... as a dict"""
+        return {}
 
     def _check_not_closed(self):
         """Check if the store is closed"""
@@ -166,12 +182,12 @@ class Coffer():
         if not self.writable:
             raise io.UnsupportedOperation("File not open for writing")
 
-    # ~ def _check_can_read(self):
-        # ~ """Check we can read in store"""
-        # ~ if self.closed:
-            # ~ raise io.UnsupportedOperation("I/O operation on closed file")
-        # ~ if not self.readable:
-            # ~ raise io.UnsupportedOperation("File not open for reading")
+    def _check_can_read(self):
+        """Check we can read in store"""
+        if self.closed:
+            raise io.UnsupportedOperation("I/O operation on closed file")
+        if not self.readable:
+            raise io.UnsupportedOperation("File not open for reading")
 
     def __enter__(self):
         """Enter context manager"""
@@ -180,6 +196,11 @@ class Coffer():
     def __exit__(self, type, value, traceback):
         """Exit context manager"""
         self.close()
+
+    def crypt_open(self, filename, mode='r', **kwargs):
+        """Return a crypting open function to encrypt esternal files for examples.
+        Use keys of the coffer."""
+        raise RuntimeError('Not implemented')
 
     def open(self):
         """Open the store with a lock"""
@@ -191,13 +212,13 @@ class Coffer():
         else:
             if self.mode == READ:
                 raise FileNotFoundError('File not found %s' % self.filename)
-        self.dirpath = tempfile.mkdtemp(prefix=".fernet_")
+        self.dirpath = tempfile.mkdtemp(prefix=".fernet_", dir=self.temp_dir)
         if file_exists:
             with self.container_class(self.filename, mode='rb', fileobj=self.fileobj,
                 **self.container_params,
                 **self.kwargs
             ) as tff:
-                tff.extractall(self.dirpath)
+                tff.extractall(self.dirpath, filter='data')
         self._dirctime = self._dirmtime = time.time_ns()
         return self
 
@@ -207,7 +228,8 @@ class Coffer():
         if self.backup is not None:
             if os.path.isfile(self.filename + self.backup) is True:
                 os.remove(self.filename + self.backup)
-            shutil.move(self.filename, self.filename + self.backup)
+            if os.path.isfile(self.filename) is True:
+                shutil.move(self.filename, self.filename + self.backup)
 
         with self.container_class(self.filename, mode='wb', fileobj=self.fileobj,
             **self.container_params,
@@ -239,6 +261,8 @@ class Coffer():
         self._dirctime = None
         self._dirmtime = None
         self._lockfile.release()
+        if os.path.isfile(self._lockfile.lock_file) is True:
+            os.remove(self._lockfile.lock_file)
 
     def flush(self, force=True):
         """Flush data to store if needed. Unless force is True """
@@ -283,7 +307,6 @@ class Coffer():
         with self._lock:
             self._check_can_write()
             infos = []
-            srcs = []
             if os.path.isdir(filename):
                 len_root = len(filename.split('/'))
                 for root, dirs, files in os.walk(filename):
@@ -329,7 +352,7 @@ class Coffer():
     def extractall(self, path='.', members=None):
         """Extract all files (or only members) to path"""
         with self._lock:
-            self._check_not_closed()
+            self._check_can_read()
             os.makedirs(path, exist_ok=True)
             if members is None:
                 members = self.getmembers()
@@ -381,13 +404,13 @@ class Coffer():
 
     def read(self, arcname=None):
         """Read data from arcname"""
-        self._check_not_closed()
+        self._check_can_read()
         with self.file(arcname=arcname, mode='rb') as nf:
             return nf.read()
 
     def readlines(self, arcname=None, encoding='UTF-8'):
         """Read a list of lines from arcname"""
-        self._check_not_closed()
+        self._check_can_read()
         lines = []
         with self.file(arcname=arcname, mode='rt', encoding=encoding) as nf:
             for line in nf:
@@ -423,7 +446,7 @@ class Coffer():
     def readable(self):
         """Return whether the file was opened for reading."""
         self._check_not_closed()
-        return self.mode == READ
+        return self.mode == READ or self.writable
 
     @property
     def writable(self):
@@ -432,6 +455,80 @@ class Coffer():
         return self.mode == WRITE or self.mode == APPEND \
             or self.mode == EXCLUSIVE
 
+    @reify
+    def _imp_pickle(cls):
+        """Lazy loader for dill pickle"""
+        import importlib
+        try:
+            return importlib.import_module('dill')
+        except ModuleNotFoundError:
+            log.debug("Can't find dill ... use pickle")
+        return importlib.import_module('pickle')
+
+    def pickle_dump(self, data, arcname=None):
+        """Dump pickle to coffer"""
+        if isinstance(arcname, CofferInfo):
+            finfo = arcname
+        else:
+            finfo = CofferInfo(arcname, store_path=self.dirpath)
+        with self._lock:
+            self._pickle_dump(data, arcname=finfo)
+
+    def _pickle_dump(self, data, arcname=None):
+        """Dump pickle to coffer without lock"""
+        if isinstance(arcname, CofferInfo):
+            finfo = arcname
+        else:
+            finfo = CofferInfo(arcname, store_path=self.dirpath)
+
+        if finfo.subdir is not None:
+            os.makedirs(os.path.join(self.dirpath, finfo.subdir), exist_ok=True)
+
+        with self.secure_open(finfo.path, mode='wb', **self.secure_params) as f:
+            self._imp_pickle.dump(data, f)
+
+        self._dirmtime = time.time_ns()
+
+    def pickle_load(self, arcname=None):
+        """Load pickle from coffer"""
+        if isinstance(arcname, CofferInfo):
+            finfo = arcname
+        else:
+            finfo = CofferInfo(arcname, store_path=self.dirpath)
+        with self._lock:
+            return self._pickle_load(arcname=finfo)
+
+    def _pickle_load(self, arcname=None):
+        """Load pickle from coffer"""
+        if isinstance(arcname, CofferInfo):
+            finfo = arcname
+        else:
+            finfo = CofferInfo(arcname, store_path=self.dirpath)
+        if os.path.isfile(finfo.path) is False:
+            return None
+        with self.secure_open(finfo.path, mode='rb', **self.secure_params) as f:
+            return self._imp_pickle.load(f)
+
+    @contextmanager
+    def plugin(self, name=None, group='cofferfile.plugin.file'):
+        """Return a plugin"""
+        with self._lock:
+            plgcls = Plugin.collect(name=name, group=group)
+            if len(plgcls) != 1:
+                raise IndexError("Problem loading %s : found %s matches"%(name, len(plgcls)))
+            plg = plgcls[0]()
+
+            finfo = CofferInfo(plg.arcname, store_path=self.dirpath)
+            if os.path.isfile(finfo.path) is True:
+                plg.store_load(self._pickle_load(finfo))
+
+            yield plg
+
+            if plg.modified is True:
+                self._pickle_dump(plg.store_dump(), finfo)
+
+                if self.auto_flush is True:
+                    self._flush()
 
 def open(filename, mode="rb", secret_key=None,
         chunk_size=CHUNK_SIZE,

@@ -1,14 +1,12 @@
 # -*- encoding: utf-8 -*-
-"""CofferStore : fast and small
+"""CofferBank : maximum security
 
-- Coffer encryption with Nacl
-- File compression with Pyzstd
-- Autoflush disable : close coffer or call flush to write update to coffer file.
-- Files are store in clear in temp directory
+- Double encryption with Fernet and Nacl
+- Compression with pyzstd
 
-Usage:
+Usage :
 
-- Archiving : can use external zstd dict to maximize data compression
+- Confidential datas
 
 """
 __author__ = 'bibi21000 aka Sébastien GALLET'
@@ -16,18 +14,16 @@ __email__ = 'bibi21000@gmail.com'
 
 import os
 
-from pyzstd import open as zstd_open, CParameter
-
 from pycoffer import Coffer
-from naclfile.tar import TarFile as TarZstdNaclFile
-from naclfile.zstd import open as nacl_open
+from naclfile.zstd import open as zstd_open
+from fernetfile.tar import TarFile as TarZstdFernetFile
 
-class CofferStore(Coffer):
+class CofferBank(Coffer):
     """ """
 
     def __init__(self, filename=None, mode=None, fileobj=None,
-            auto_flush=False, backup=None,
-            coffer_key=None,
+            auto_flush=True, backup=None,
+            coffer_key=None, secure_key=None,
             **kwargs):
         """Constructor for the FernetFile class.
 
@@ -51,7 +47,7 @@ class CofferStore(Coffer):
         A mode of 'r' is equivalent to one of 'rb', and similarly for 'w' and
         'wb', 'a' and 'ab', and 'x' and 'xb'.
 
-        The fernet_key argument is the Fernet key used to crypt/decrypt data.
+        The coffer_key argument is the Fernet key used to crypt/decrypt data.
         Encryption is done by chunks to reduce memory footprint. The default
         chunk_size is 64KB.
 
@@ -66,45 +62,39 @@ class CofferStore(Coffer):
 
         If you want to backup archive before flushing it, pass extention to this parameter.
         """
-        if 'r' in mode:
-            secure_params = {
-            }
-        else:
-            secure_params = {
-                'level_or_option' : {
-                    CParameter.compressionLevel : 12,
-                }
-            }
         super().__init__(filename=filename, mode=mode, fileobj=fileobj,
             auto_flush=auto_flush, backup=backup,
-            secure_open=zstd_open, secure_params=secure_params,
-            container_class=TarZstdNaclFile, container_params={'secret_key': coffer_key},
+            secure_open=zstd_open, secure_params={'secret_key': secure_key},
+            container_class=TarZstdFernetFile, container_params={'fernet_key': coffer_key},
             **kwargs)
 
     def __repr__(self):
         """A repr of the store"""
         s = repr(self.filename)
-        return '<CofferStore ' + s[1:-1] + ' ' + hex(id(self)) + '>'
+        return '<CofferBank ' + s[1:-1] + ' ' + hex(id(self)) + '>'
 
     @classmethod
     def gen_params(cls):
         """Generate params for a new store : keys, ... as a dict"""
         from nacl import utils
         from nacl.secret import SecretBox
+        from cryptography.fernet import Fernet
         return {
-            "coffer_key": utils.random(SecretBox.KEY_SIZE),
+            "coffer_key": Fernet.generate_key(),
+            "secure_key": utils.random(SecretBox.KEY_SIZE),
         }
 
     def crypt_open(self, filename, mode='r', **kwargs):
         """Return a crypting open function to encrypt esternal files for examples.
         Use keys of the coffer."""
-        return nacl_open(filename, mode=mode, **self.container_params, **kwargs)
+        return zstd_open(filename, mode=mode, **self.secure_params, **kwargs)
+
 
 def open(filename, mode="rb",
-        auto_flush=False, backup=None,
-        coffer_key=None,
+        auto_flush=True, backup=None,
+        secure_key=None, coffer_key=None,
         **kwargs):
-    """Open a CofferStore file in binary mode.
+    """Open a CofferBank file in binary mode.
 
     The filename argument can be an actual filename (a str or bytes object), or
     an existing file object to read from or write to.
@@ -113,7 +103,7 @@ def open(filename, mode="rb",
     binary mode.
 
     For binary mode, this function is equivalent to the FernetFile constructor:
-    FernetFile(filename, mode, fernet_key). In this case, the encoding, errors
+    FernetFile(filename, mode, coffer_key). In this case, the encoding, errors
     and newline arguments must not be provided.
 
 
@@ -122,12 +112,12 @@ def open(filename, mode="rb",
         raise ValueError("Invalid mode: %r" % (mode,))
 
     if isinstance(filename, (str, bytes, os.PathLike)):
-        binary_file = CofferStore(filename, mode=mode,
-            coffer_key=coffer_key,
+        binary_file = CofferBank(filename, mode=mode,
+            secure_key=secure_key, coffer_key=coffer_key,
             **kwargs)
     elif hasattr(filename, "read") or hasattr(filename, "write"):
-        binary_file = CofferStore(None, mode=mode, fileobj=filename,
-            coffer_key=coffer_key,
+        binary_file = CofferBank(None, mode=mode, fileobj=filename,
+            secure_key=secure_key, coffer_key=coffer_key,
             **kwargs)
     else:
         raise TypeError("filename must be a str or bytes object, or a file")

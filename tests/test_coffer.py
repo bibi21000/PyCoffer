@@ -72,14 +72,14 @@ def test_zstd_extract(random_path, random_name, buff_size, file_size):
         out.write(datar)
 
     with tarfile.open(dataf3, "r") as ff:
-        ff.extract('file1%s.dat'%random_name, path=random_path)
+        ff.extract('file1%s.dat'%random_name, path=random_path, filter='data')
 
     with open(os.path.join(random_path, 'file1%s.dat'%random_name), "rb") as ff:
         data1 = ff.read()
     assert data == data1
 
     with TarZstdFernetFile(dataf, "rb", fernet_key=key) as ff:
-        ff.extract('file1%s.dat'%random_name, path=random_path)
+        ff.extract('file1%s.dat'%random_name, path=random_path, filter='data')
 
     with open(os.path.join(random_path, 'file1%s.dat'%random_name), "rb") as ff:
         data1 = ff.read()
@@ -103,7 +103,7 @@ def test_store_open(random_path, random_name):
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
-        assert not ff.readable
+        assert ff.readable
 
     with store_open(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
@@ -132,7 +132,7 @@ def test_store_basic(caplog, random_path, random_name):
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
-        assert not ff.readable
+        assert ff.readable
 
     with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert data == ff.read('file1%s.data'%random_name)
@@ -272,7 +272,7 @@ def test_store_no_flush(random_path, random_name):
         assert ff.modified is True
         ff.write(data2, 'file2%s.data'%random_name)
         assert ff.writable
-        assert not ff.readable
+        assert ff.readable
 
     with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}, auto_flush=False) as ff:
         assert ff.modified is False
@@ -440,7 +440,7 @@ def test_store_secure_basic(caplog, random_path, random_name):
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
-        assert not ff.readable
+        assert ff.readable
 
     with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
             secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
@@ -539,7 +539,7 @@ def test_store_secure_tmp(random_path, random_name):
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
-        assert not ff.readable
+        assert ff.readable
 
     with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key},
             secure_open=zstd_open, secure_params={'fernet_key': key}) as ff:
@@ -560,4 +560,19 @@ def test_store_secure_tmp(random_path, random_name):
             with pytest.raises(ValueError):
                 with zstd_open(member.path, 'rb', fernet_key=None) as fff:
                     assert fff.read() is not None
+
+def test_coffer_pickle(caplog, random_path, random_name):
+    caplog.set_level(logging.DEBUG, logger="pycoffer")
+    key = Fernet.generate_key()
+    data2 = randbytes(1536)
+    data2a = randbytes(7415)
+    data = {'rand1':data2, 'rand2':data2a}
+
+    dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
+
+    with Coffer(dataf, mode='wb', container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        ff.pickle_dump(data, 'data.pickle')
+
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        assert data == ff.pickle_load('data.pickle')
 
