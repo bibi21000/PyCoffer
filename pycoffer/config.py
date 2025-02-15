@@ -45,12 +45,12 @@ class Config():
             ret['backup'] = None
         if 'coffer_key' in self.parser[section]:
             ret['coffer_key'] = base64.b64decode(self.parser[section]['coffer_key'])
-        else:
-            ret['coffer_key'] = None
+        # ~ else:
+            # ~ ret['coffer_key'] = None
         if 'secure_key' in self.parser[section]:
             ret['secure_key'] = base64.b64decode(self.parser[section]['secure_key'])
-        else:
-            ret['secure_key'] = None
+        # ~ else:
+            # ~ ret['secure_key'] = None
         if 'location' in self.parser[section]:
             ret['location'] = self.parser[section]['location']
         else:
@@ -68,18 +68,18 @@ class Config():
         return ret
 
     @classmethod
-    def generate(self, store=None, type=None, location=None, backup=None):
+    def generate(self, coffer_name=None, type=None, location=None, backup=None):
         """Return a coffer configuration as a list of lines"""
         ret = []
-        if store is None:
-            raise ValueError("Youd need to provide a store")
+        if coffer_name is None:
+            raise ValueError("Youd need to provide a coffer_name")
         if type is None:
             raise ValueError("Youd need to provide a type")
         crpt = entry_points(group='cofferfile.coffer', name=type)
         if len(crpt) != 1:
             raise IndexError("Problem loading %s : found %s matches"%(type, len(crpt)))
         cls = tuple(crpt)[0].load()
-        ret.append('[%s]' % store)
+        ret.append('[%s]' % coffer_name)
         ret.append('type = %s' % type)
         if backup is not None:
             ret.append('backup = %s' % backup)

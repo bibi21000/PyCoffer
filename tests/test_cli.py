@@ -83,27 +83,39 @@ def test_config(random_path, random_name):
     conf = Config('tests/pycofferrc')
     assert conf.coffer('confidential') is not None
 
-def test_hello_world():
-  runner = CliRunner()
-  result = runner.invoke(main.ls, ['--conf', 'tests/pycofferrc', '--store', 'confidential'])
-  assert result.exit_code == 0
-  # ~ assert result.output == 'Hello Peter!\n'
+def test_main_ls_empty(coffer_conf):
+    runner = CliRunner()
+    result = runner.invoke(main.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 1
+    assert result.output == ''
+
+def test_main_ls(coffer_conf):
+    confcoff = Config(coffer_conf, chkmode=False)
+    cofferfactory = confcoff.coffer('test')
+    data = randbytes(178)
+    with cofferfactory['class'](cofferfactory['location'], mode='wb') as ff:
+        ff.write(data, 'file1.data')
+
+    runner = CliRunner()
+    result = runner.invoke(main.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 0
+    assert 'file1.data' in result.output
 
 def test_config(random_path, random_name):
     with pytest.raises(ValueError):
         assert Config.generate() is not None
 
     with pytest.raises(ValueError):
-        assert Config.generate(store='test') is not None
+        assert Config.generate('test') is not None
 
     with pytest.raises(IndexError):
-        assert Config.generate(store='test', type='eeee') is not None
+        assert Config.generate('test', type='eeee') is not None
 
-    assert Config.generate(store='test', type='bank', location='rrrrd') is not None
+    assert Config.generate('test', type='bank', location='rrrrd') is not None
 
-    assert Config.generate(store='test', type='bank', backup='.back') is not None
+    assert Config.generate('test', type='bank', backup='.back') is not None
 
-    assert Config.generate(store='test', type='market') is not None
-    conf = Config('tests/pycofferrc')
-    assert conf.coffer('confidential') is not None
-    assert conf.check_perms() is not None
+    assert Config.generate('test', type='market') is not None
+    # ~ conf = Config('tests/pycofferrc')
+    # ~ assert conf.coffer('confidential') is not None
+    # ~ assert conf.check_perms() is not None

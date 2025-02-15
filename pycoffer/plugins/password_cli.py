@@ -14,9 +14,9 @@ def password():
     pass
 
 @main_lib.opt_configuration
-@main_lib.opt_store
-def ls(conf, store):
-    with main_lib.open_coffer(conf, store, 'r') as ff:
+@main_lib.opt_coffer
+def ls(conf, coffer):
+    with main_lib.open_coffer(conf, coffer, 'r') as ff:
         for member in ff.getmembers():
             print(member.name, member.filesize)
 

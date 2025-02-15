@@ -23,7 +23,7 @@ def crypt(input, output):
     pass
 
 @cli.command(help='Generate configuration for a new store')
-@main_lib.opt_store
+@main_lib.opt_coffer
 @click.option("--type", help='Type of coffer to use', default='bank')
 @click.option("--location", help='Location of the store')
 @click.option("--backup", help='Backup extension for files. None to disable')
@@ -41,9 +41,9 @@ def check(input, output):
 
 @cli.command(help='List files in coffer')
 @main_lib.opt_configuration
-@main_lib.opt_store
-def ls(conf, store):
-    with open_coffer(conf, store, 'r') as ff:
+@main_lib.opt_coffer
+def ls(conf, coffer):
+    with open_coffer(conf, coffer, 'r') as ff:
         for member in ff.getmembers():
             print(member.name, member.filesize)
 

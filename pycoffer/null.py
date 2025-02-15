@@ -97,8 +97,7 @@ def open(filename, mode="rb",
         raise ValueError("Invalid mode: %r" % (mode,))
 
     if isinstance(filename, (str, bytes, os.PathLike)):
-        binary_file = CofferNull(filename, mode=mode,
-            **kwargs)
+        binary_file = CofferNull(filename, mode=mode, **kwargs)
     elif hasattr(filename, "read") or hasattr(filename, "write"):
         binary_file = CofferNull(None, mode=mode, fileobj=filename,
             **kwargs)
