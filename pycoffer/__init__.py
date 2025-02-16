@@ -1,8 +1,5 @@
 # -*- encoding: utf-8 -*-
-"""
-
-.. include:: ../README.md
-   :start-line: 1
+"""A secure storage
 
 """
 __author__ = 'bibi21000 aka Sébastien GALLET'
@@ -17,6 +14,7 @@ from contextlib import contextmanager
 import shutil
 import io
 from filelock import FileLock
+from abc import abstractmethod
 
 from cofferfile import CHUNK_SIZE, READ, WRITE, APPEND, EXCLUSIVE, _open_cls
 from cofferfile.decorator import reify
@@ -76,7 +74,7 @@ class Coffer():
             auto_flush=True, backup=None,
             secure_open=None, secure_params=None,
             container_class=None, container_params=None,
-            lock_timeout=1, temp_dir=None, **kwargs):
+            lock_timeout=1, lock_type='rw', temp_dir=None, **kwargs):
         """Constructor for the FernetFile class.
 
         At least one of fileobj and filename must be given a
@@ -113,6 +111,12 @@ class Coffer():
         This store is thread safe, this allows you to flush from a timer for example.
 
         If you want to backup archive before flushing it, pass extention to this parameter.
+
+        The store is locked by a filelock with a default lock_timeout.
+        By default, file is locked for read and and write access, that mean only one access.
+        The lock is creating when opening coffer and release when closing.
+        In write mode, this is the same, except that this happen only in write mode.
+        No lock in read mode.
         """
         if container_class is None:
             raise ValueError("Invalid container class: {!r}".format(container_class))
@@ -137,6 +141,7 @@ class Coffer():
         self.container_params = container_params
         self.kwargs = kwargs
         self.lock_timeout = lock_timeout
+        self.lock_type = lock_type
         if fileobj is not None:
             self.filename = fileobj.name
             self.fileobj = fileobj
@@ -164,6 +169,23 @@ class Coffer():
         """A repr of the store"""
         s = repr(self.filename)
         return '<Coffer ' + s[1:-1] + ' ' + hex(id(self)) + '>'
+
+    def _flock_acquire(self):
+        """Acquire the file lock depending of lock type"""
+        if self.lock_type == 'w':
+            if self.mode != READ:
+                self._lockfile.acquire()
+        else:
+            self._lockfile.acquire()
+
+    def _flock_release(self):
+        """Release the file lock"""
+        if self.lock_type == 'w':
+            if self.mode != READ:
+                self._lockfile.release()
+        else:
+            self._lockfile.release()
+
 
     @classmethod
     def gen_params(cls):
@@ -197,14 +219,14 @@ class Coffer():
         """Exit context manager"""
         self.close()
 
+    @abstractmethod
     def crypt_open(self, filename, mode='r', **kwargs):
         """Return a crypting open function to encrypt esternal files for examples.
         Use keys of the coffer."""
-        raise RuntimeError('Not implemented')
+        raise NotImplementedError
 
     def open(self):
         """Open the store with a lock"""
-        self._lockfile.acquire()
         file_exists = os.path.isfile(self.filename)
         if file_exists:
             if self.mode == EXCLUSIVE:
@@ -213,6 +235,7 @@ class Coffer():
             if self.mode == READ:
                 raise FileNotFoundError('File not found %s' % self.filename)
         self.dirpath = tempfile.mkdtemp(prefix=".fernet_", dir=self.temp_dir)
+        self._flock_acquire()
         if file_exists:
             with self.container_class(self.filename, mode='rb', fileobj=self.fileobj,
                 **self.container_params,
@@ -260,7 +283,7 @@ class Coffer():
         self.dirpath = None
         self._dirctime = None
         self._dirmtime = None
-        self._lockfile.release()
+        self._flock_acquire()
         if os.path.isfile(self._lockfile.lock_file) is True:
             os.remove(self._lockfile.lock_file)
 

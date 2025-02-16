@@ -73,3 +73,20 @@ def extract(conf, coffer, path, file, all):
         with main_lib.open_coffer(conf, coffer, 'r') as ff:
             ff.extractall(path=path)
 
+@cli.group(help='Check tools.')
+def check():
+    pass
+
+@check.command(help='Print system informations.')
+def system():
+    from .plugins import Plugin
+    import platform
+    cryptors = [c.__name__ for c in Plugin.collect(group='cofferfile.cryptor')]
+    print('Cryptors : %s'%cryptors)
+    coffers = [c.__name__ for c in Plugin.collect(group='cofferfile.coffer')]
+    print('Coffers : %s'%coffers)
+    plugins = [c.__name__ for c in Plugin.collect(group='cofferfile.plugin')]
+    print('Plugins : %s'%plugins)
+    print(f'Architecture : {platform.system()} ({platform.release()}) / {platform.machine()}')
+    print(f'Python : {platform.python_version()} ({platform.python_implementation()})')
+

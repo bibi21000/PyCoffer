@@ -13,6 +13,7 @@ import struct
 import logging
 
 from cryptography.fernet import Fernet
+from filelock import Timeout
 
 import cofferfile
 from cofferfile import META_CHUNK, META_SIZE
@@ -576,3 +577,68 @@ def test_coffer_pickle(caplog, random_path, random_name):
     with Coffer(dataf, "rb", container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
         assert data == ff.pickle_load('data.pickle')
 
+def test_coffer_lock(caplog, random_path, random_name):
+    caplog.set_level(logging.DEBUG, logger="pycoffer")
+    key = Fernet.generate_key()
+    data2 = randbytes(1536)
+    data2a = randbytes(7415)
+    data = {'rand1':data2, 'rand2':data2a}
+
+    dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
+
+    with Coffer(dataf, mode='wb', lock_type='rw', lock_timeout=0.2,
+            container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        ff.pickle_dump(data, 'data.pickle')
+
+    with Coffer(dataf, "wb", lock_type='rw', lock_timeout=0.2,
+            container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        with pytest.raises(Timeout):
+            with Coffer(dataf, "wb", lock_type='rw', lock_timeout=0.2,
+                    container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as fff:
+                assert data == ff.pickle_load('data.pickle')
+
+    with Coffer(dataf, "wb", lock_type='rw', lock_timeout=0.2,
+            container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        with pytest.raises(Timeout):
+            with Coffer(dataf, "rb", lock_type='rw', lock_timeout=0.2,
+                    container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as fff:
+                assert data == ff.pickle_load('data.pickle')
+
+    with Coffer(dataf, "rb", lock_type='rw', lock_timeout=0.2,
+            container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        with pytest.raises(Timeout):
+            with Coffer(dataf, "rb", lock_type='rw', lock_timeout=0.2,
+                    container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as fff:
+                assert data == ff.pickle_load('data.pickle')
+
+    with Coffer(dataf, "rb", lock_type='rw', lock_timeout=0.2,
+            container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        with pytest.raises(Timeout):
+            with Coffer(dataf, "wb", lock_type='rw', lock_timeout=0.2,
+                    container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as fff:
+                assert data == ff.pickle_load('data.pickle')
+
+    with Coffer(dataf, "wb", lock_type='w', lock_timeout=0.2,
+            container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        with pytest.raises(Timeout):
+            with Coffer(dataf, "wb", lock_type='w', lock_timeout=0.2,
+                    container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as fff:
+                assert data == ff.pickle_load('data.pickle')
+
+    with Coffer(dataf, "wb", lock_type='w', lock_timeout=0.2,
+            container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
+                container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as fff:
+            assert data == ff.pickle_load('data.pickle')
+
+    with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
+            container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        with Coffer(dataf, "wb", lock_type='w', lock_timeout=0.2,
+                container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as fff:
+            assert data == ff.pickle_load('data.pickle')
+
+    with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
+            container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as ff:
+        with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
+                container_class=TarZstdFernetFile, container_params={'fernet_key':key}) as fff:
+            assert data == ff.pickle_load('data.pickle')

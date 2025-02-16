@@ -33,6 +33,22 @@ class Config():
         else:
             return True
 
+    @classmethod
+    def get_defaults(self, filename=None):
+        """Return defaults from configuration file"""
+        if filename is not None:
+            parser = configparser.ConfigParser()
+            parser.read(filename)
+        else:
+            parser = self.parser
+        ret = {}
+        for (each_key, each_val) in parser.items('DEFAULT'):
+            if each_key.startswith('default_'):
+                ret[each_key.replace('default_','')] = each_val
+        if 'ext' not in ret:
+            ret['ext'] = '.pcof'
+        return ret
+
     def coffer(self, section=None):
         """Return a coffer matching section"""
         ret = {}
@@ -74,13 +90,27 @@ class Config():
         return ret
 
     @classmethod
-    def generate(self, coffer_name=None, type=None, location=None, backup=None):
+    def generate(self, coffer_name=None, type=None, location=None, backup=None, filename=None):
         """Return a coffer configuration as a list of lines"""
+        # we called from the class of from instance
+        if hasattr(self, 'parser'):
+            # From instance, we can use parser
+            defaults = self.get_defaults(filename)
+        else:
+            # From class ... if we have filename, we could load defaults
+            if filename is not None:
+                defaults = self.get_defaults(filename)
+            else:
+                defaults = {}
         ret = []
+
         if coffer_name is None:
             raise ValueError("Youd need to provide a coffer_name")
         if type is None:
-            raise ValueError("Youd need to provide a type")
+            if 'type' in defaults:
+                type = defaults['type']
+            else:
+                raise ValueError("Youd need to provide a type")
         crpt = entry_points(group='cofferfile.coffer', name=type)
         if len(crpt) != 1:
             raise IndexError("Problem loading %s : found %s matches"%(type, len(crpt)))
@@ -95,4 +125,6 @@ class Config():
             # ~ ret.append('%s = %s' % (k, keys[k].decode()))
         if location is not None:
             ret.append('location = %s' % location)
+        elif 'location' in defaults:
+            ret.append('location = %s' % defaults['location'])
         return ret

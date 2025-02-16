@@ -8,6 +8,8 @@ __email__ = 'bibi21000@gmail.com'
 import os
 import click
 
+from .config import Config
+
 def open_coffer(conf, store, mode):
     from .config import Config
     confcoff = Config(conf, chkmode=True)
@@ -20,13 +22,23 @@ def open_coffer(conf, store, mode):
     return coffer['class'](coffer['location'], mode=mode,
         backup=coffer['backup'], **coffer_args)
 
+defconffile = os.path.join(os.path.expanduser("~"), ".pycofferrc")
 opt_configuration = click.option('-c', "--conf",
     # ~ type=click.File("rb"),
-    help="The pycoffer configuration file",
-    default=os.path.join(os.path.expanduser("~"), ".pycofferrc")
+    help="The pycoffer configuration file.",
+    show_default=True,
+    default=defconffile
 )
 
+def defcoffer():
+    # ~ c = Config(defconffile, chkmode=False)
+    defs = Config.get_defaults(defconffile)
+    if 'coffer' in defs:
+        return defs['coffer']
+    return None
 opt_coffer = click.option('-f', "--coffer",
-    help='The coffer name'
+    help='The coffer name.',
+    show_default=True,
+    default=defcoffer()
 )
 

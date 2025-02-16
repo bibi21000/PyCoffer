@@ -15,6 +15,7 @@ dependencies = [
   "pyzstd",
   "fernetfile",
   "naclfile",
+  "filelock",
 ]
 classifiers = [
   # How mature is this project? Common values are
@@ -56,10 +57,10 @@ crypt = "pycoffer.plugins.crypt:Crypt"
 [project.optional-dependencies]
 test = ["pytest", "coverage[toml]", "pytest-cov", "pytest-mock", "pytest-xdist", "pytest-random-order", "ruff", "bandit"]
 build = ["build", 'twine']
-store = ["filelock"]
-cli = ["filelock", "click", 'pyperclip']
-doc = ["sphinx"]
+cli = ["click", 'pyperclip']
+doc = ["sphinx", 'sphinx-pyproject']
 benchmark = ["pytest-ordering"]
+binaries = ["nuitka"]
 
 [project.urls]
 HomePage = "https://github.com/bibi21000/PyCoffer"
@@ -92,3 +93,26 @@ source = ['pycoffer']
 
 [tool.bandit]
 exclude_dirs = ["tests", "venv"]
+
+[tool.sphinx-pyproject]
+extensions = [
+    'sphinx.ext.autodoc',
+]
+autodoc_exclude_members = [
+    "__dict__",
+    "__class__",
+    "__dir__",
+    "__weakref__",
+    "__module__",
+    "__annotations__",
+    "__orig_bases__",
+    "__parameters__",
+    "__subclasshook__",
+    "__init_subclass__",
+    "__attrs_attrs__",
+    "__init__",
+    "__new__",
+    "__getnewargs__",
+    "__abstractmethods__",
+    "__hash__",
+]

@@ -47,7 +47,6 @@ A python coffer
             plg.encrypt(source, target)
 ```
 
-
 - temp directory : the coffer file is extracted in a temp directory
   before accessing to files.
 
@@ -84,7 +83,8 @@ A python coffer
   data with the internal open function.
 
 - And look at doc to create your own store with your own crypting tools.
+  Look at https://github.com/bibi21000/PyCoffer/blob/main/BENCHMARK.md to
+  choose.
 
-Look at https://github.com/bibi21000/PyCoffer/blob/main/BENCHMARK.md
-
+Look at documentation : https://bibi21000.github.io/PyCoffer.
 

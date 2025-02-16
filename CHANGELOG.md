@@ -18,9 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Finished CLI
 - Split store to support other containers class
 - Fix recursive import or directories
 - Fix reading files in a writable coffer
+- Update locking strategy
 
 ### Removed
 

@@ -27,9 +27,6 @@ jobs:
           name: Install dependencies from pyproject.toml
           command: |
             pip install .
-            pip install .[dev]
-            pip install .[zstd]
-            pip install .[store]
             pip install .[cli]
             pip install .[test]
 
@@ -56,9 +53,6 @@ jobs:
           name: Install dependencies from pyproject.toml
           command: |
             pip install .
-            pip install .[dev]
-            pip install .[zstd]
-            pip install .[store]
             pip install .[cli]
             pip install .[test]
             pip install codecov-cli

@@ -1,5 +1,8 @@
 [DEFAULT]
-backup = .backup
+default_backup = .backup
+default_coffer = confidential
+default_location = ~/
+default_hidden = yes
 
 [confidential]
 type = bank

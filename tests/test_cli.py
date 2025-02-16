@@ -102,6 +102,17 @@ def test_main_ls(coffer_conf):
     assert result.exit_code == 0
     assert 'file1.data' in result.output
 
+def test_main_check_system(coffer_conf):
+
+    runner = CliRunner()
+    result = runner.invoke(main_cli.check, [])
+    # ~ assert 'Cryptors' in result.output
+    assert result.exit_code == 0
+
+    result = runner.invoke(main_cli.check, ['system'])
+    assert result.exit_code == 0
+    assert 'Cryptors' in result.output
+
 def test_main_generate_bank(random_path, coffer_conf):
     runner = CliRunner()
     result = runner.invoke(main_cli.generate, ['--coffer', 'test', '--type', 'bank', '--location', random_path])
