@@ -20,6 +20,8 @@ Plugins
 
 .. program-output:: /home/runner/.local/bin/pycoffer crypt --help
 
+.. program-output:: /home/runner/.local/bin/pycoffer decrypt --help
+
 .. program-output:: /home/runner/.local/bin/pycoffer password --help
 
 Tools
