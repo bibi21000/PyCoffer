@@ -1,4 +1,4 @@
-pycoffer
+API
 ========
 
 .. toctree::

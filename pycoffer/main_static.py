@@ -7,22 +7,26 @@ __email__ = 'bibi21000@gmail.com'
 
 import click
 
+# CofferFile
 import cofferfile.aes
-import pycoffer.null
 
+# FernetFile
 import fernetfile
 import fernetfile.tar
 import fernetfile.zstd
 
+# NaclFile
 import naclfile
 import naclfile.tar
 import naclfile.zstd
 
+# PyCoffer
 from pycoffer import main_cli
 
 from pycoffer import bank
 from pycoffer import store
 from pycoffer import market
+import pycoffer.null
 
 from pycoffer.plugins import Plugin
 from pycoffer.plugins import password
