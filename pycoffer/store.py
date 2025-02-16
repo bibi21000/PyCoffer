@@ -29,7 +29,7 @@ class CofferStore(Coffer):
             auto_flush=False, backup=None,
             coffer_key=None,
             **kwargs):
-        """Constructor for the FernetFile class.
+        """Constructor for the CofferStore class.
 
         At least one of fileobj and filename must be given a
         non-trivial value.
@@ -112,8 +112,8 @@ def open(filename, mode="rb",
     The mode argument can be "r", "rb", "w", "wb", "x", "xb", "a" or "ab" for
     binary mode.
 
-    For binary mode, this function is equivalent to the FernetFile constructor:
-    FernetFile(filename, mode, fernet_key). In this case, the encoding, errors
+    For binary mode, this function is equivalent to the CofferStore constructor:
+    CofferStore(filename, mode, fernet_key). In this case, the encoding, errors
     and newline arguments must not be provided.
 
 

@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
-"""Store passswords in coffer
-
+"""Encrypt/Decrypt external files using keys of coffer
 """
 
 __author__ = 'bibi21000 aka Sébastien GALLET'

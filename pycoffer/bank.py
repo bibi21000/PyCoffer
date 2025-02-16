@@ -16,7 +16,7 @@ import os
 
 from pycoffer import Coffer
 from naclfile.zstd import open as zstd_open
-from fernetfile.tar import TarFile as TarZstdFernetFile
+from fernetfile.tar import TarFile as TarZstdCofferBank
 
 class CofferBank(Coffer):
     """ """
@@ -25,7 +25,7 @@ class CofferBank(Coffer):
             auto_flush=True, backup=None,
             coffer_key=None, secure_key=None,
             **kwargs):
-        """Constructor for the FernetFile class.
+        """Constructor for the CofferBank class.
 
         At least one of fileobj and filename must be given a
         non-trivial value.
@@ -65,7 +65,7 @@ class CofferBank(Coffer):
         super().__init__(filename=filename, mode=mode, fileobj=fileobj,
             auto_flush=auto_flush, backup=backup,
             secure_open=zstd_open, secure_params={'secret_key': secure_key},
-            container_class=TarZstdFernetFile, container_params={'fernet_key': coffer_key},
+            container_class=TarZstdCofferBank, container_params={'fernet_key': coffer_key},
             **kwargs)
 
     def __repr__(self):
@@ -102,8 +102,8 @@ def open(filename, mode="rb",
     The mode argument can be "r", "rb", "w", "wb", "x", "xb", "a" or "ab" for
     binary mode.
 
-    For binary mode, this function is equivalent to the FernetFile constructor:
-    FernetFile(filename, mode, coffer_key). In this case, the encoding, errors
+    For binary mode, this function is equivalent to the CofferBank constructor:
+    CofferBank(filename, mode, coffer_key). In this case, the encoding, errors
     and newline arguments must not be provided.
 
 

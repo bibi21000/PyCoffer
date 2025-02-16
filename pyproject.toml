@@ -59,7 +59,7 @@ crypt = "pycoffer.plugins.crypt:Crypt"
 test = ["pytest", "coverage[toml]", "pytest-cov", "pytest-mock", "pytest-xdist", "pytest-random-order", "ruff", "bandit"]
 build = ["build", 'twine']
 cli = ["click", 'pyperclip']
-doc = ["sphinx", 'sphinx-pyproject']
+doc = ["sphinx", "sphinxcontrib-programoutput", 'sphinx-pyproject']
 benchmark = ["pytest-ordering"]
 binaries = ["nuitka"]
 
@@ -98,6 +98,7 @@ exclude_dirs = ["tests", "venv"]
 [tool.sphinx-pyproject]
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinxcontrib.programoutput',
 ]
 autodoc_exclude_members = [
     "__dict__",
