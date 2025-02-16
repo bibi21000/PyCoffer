@@ -308,6 +308,12 @@ class Coffer():
             self._check_can_write()
             infos = []
             if os.path.isdir(filename):
+                if arcname is None:
+                    arcname = os.path.basename(filename)
+                    if len(dirnames) > 1:
+                        arcname = dirnames[-1]
+                    else:
+                        arcname = ''
                 len_root = len(filename.split('/'))
                 for root, dirs, files in os.walk(filename):
                     for fname in files:
@@ -321,6 +327,8 @@ class Coffer():
                         sname = os.path.join( filename, ssdir, fname )
                         infos.append((sname, CofferInfo(aname, store_path=self.dirpath)))
             else:
+                if arcname is None:
+                    arcname = os.path.basename(filename)
                 if isinstance(arcname, CofferInfo):
                     infos.append((filename, arcname))
                 else:

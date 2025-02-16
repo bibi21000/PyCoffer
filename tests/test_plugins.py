@@ -23,11 +23,13 @@ from pycoffer import main
 from pycoffer import CofferInfo, Coffer, open as store_open
 from pycoffer.bank import CofferBank
 from pycoffer.plugins import Plugin
+import pycoffer.plugins.password_cli
 from pycoffer.config import Config
 from naclfile.zstd import NaclFile as ZstdNaclFile, open as naclz_open
 from naclfile.tar import TarFile as TarZstdNaclFile
 
 import pytest
+from click.testing import CliRunner
 
 def test_plugin(random_path, random_name):
     print(Plugin.collect())
@@ -113,3 +115,45 @@ def test_plugin_password_coffer(random_path, random_name):
         assert data2 == ff.read('file2%s.data'%random_name)
         assert not ff.writable
         assert ff.readable
+
+def test_cli_ls_empty(coffer_conf):
+    runner = CliRunner()
+    result = runner.invoke(pycoffer.plugins.password_cli.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 1
+    # ~ assert result.output == ''
+
+def test_cli_add_ls(coffer_conf):
+    confcoff = Config(coffer_conf, chkmode=False)
+    cofferfactory = confcoff.coffer('test')
+
+    runner = CliRunner()
+
+    result = runner.invoke(pycoffer.plugins.password_cli.add, ['--conf', coffer_conf, '--coffer', 'test',
+        '--username', 'testuser', '--name', 'testname', '--url', 'https://test.url', '--password', 'azerty'])
+    assert result.exit_code == 0
+    # ~ assert 'file1.data' in result.output
+
+    result = runner.invoke(pycoffer.plugins.password_cli.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 0
+    assert 'https://test.url' in result.output
+
+    result = runner.invoke(pycoffer.plugins.password_cli.delete, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'testname'])
+    assert result.exit_code == 0
+    # ~ assert "" == result.output
+
+    result = runner.invoke(pycoffer.plugins.password_cli.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 0
+    assert 'https://test.url' not in result.output
+
+    result = runner.invoke(pycoffer.plugins.password_cli.import_chrome, ['--conf', coffer_conf, '--coffer', 'test', '--file', 'tests/chrome-password.csv'])
+    assert result.exit_code == 0
+
+    result = runner.invoke(pycoffer.plugins.password_cli.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 0
+    assert 'www.totoaucongo.com' in result.output
+
+    result = runner.invoke(pycoffer.plugins.password_cli.show, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'tata.com', '--owner', 'chrome'])
+    assert result.exit_code == 0
+
+    result = runner.invoke(pycoffer.plugins.password_cli.clip, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'tata.com', '--owner', 'chrome'])
+    assert result.exit_code == 0

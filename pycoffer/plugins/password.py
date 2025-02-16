@@ -31,9 +31,9 @@ class PasswordInfo(PasswordInfoPublic):
         super().__init__(name=name, username=username, url=url, note=note, owner=owner, **kwargs)
         self.password = password
 
-    def public(self):
+    def to_public(self):
         """Remove sensible data"""
-        return PasswordInfoPublic(name=name, username=username, url=url, note=note, owner=owner)
+        return PasswordInfoPublic(name=self.name, username=self.username, url=self.url, note=self.note, owner=self.owner)
 
 
 class Password(FilePlugin, CliInterface):

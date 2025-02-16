@@ -9,20 +9,83 @@ import click
 
 from .. import main_lib
 
-@click.group(help='Manage passwords in coffer')
+# ~ @click.group(help='Manage passwords in coffer.')
+# ~ @click.command(help='Manage passwords in coffer.')
+# ~ def password():
+    # ~ pass
+
+@click.group()
+def cli():
+    pass
+
+@click.group(help='Manage passwords in coffer.')
+# ~ @click.command(help='Manage passwords in coffer.')
 def password():
     pass
 
+@password.command(help='List passwords in coffer.')
 @main_lib.opt_configuration
 @main_lib.opt_coffer
 def ls(conf, coffer):
     with main_lib.open_coffer(conf, coffer, 'r') as ff:
-        for member in ff.getmembers():
-            print(member.name, member.filesize)
+        with ff.plugin('password') as plg:
+            for member in plg.getmembers():
+                print(member.name, member.username, member.url, member.owner)
 
-@password.command()
-@click.argument("a", type=click.FLOAT)
-@click.argument("b", type=click.FLOAT)
-def password_copy(a, b):
-    click.echo(a - b)
+@password.command(help='Delete password in coffer.')
+@main_lib.opt_configuration
+@main_lib.opt_coffer
+@click.option("--name", help='Name of the password to delete.')
+@click.option("--owner", help='Owner of the password to delete.')
+def delete(conf, coffer, name, owner):
+    with main_lib.open_coffer(conf, coffer, 'a') as ff:
+        with ff.plugin('password') as plg:
+            pwd = plg.get((owner,name)).to_public()
+            plg.delete(pwd)
 
+@password.command(help='Import passwords from chrome.')
+@main_lib.opt_configuration
+@main_lib.opt_coffer
+@click.option("--file", help='Csv file exported by chrome.')
+def import_chrome(conf, coffer, file):
+    with main_lib.open_coffer(conf, coffer, 'a') as ff:
+        with ff.plugin('password') as plg:
+            plg.import_chrome(file)
+
+@password.command(help='Add password in coffer.')
+@main_lib.opt_configuration
+@main_lib.opt_coffer
+@click.option("--name", help='Name of the password.')
+@click.option("--username", help='Username to login.')
+@click.option("--url", help='Url linked to password.')
+@click.option("--password", help='The password.')
+@click.option("--note", help='A note.')
+@click.option("--owner", help="Owner of the password.")
+def add(conf, coffer, name, username, url, password, note, owner):
+    with main_lib.open_coffer(conf, coffer, 'a') as ff:
+        with ff.plugin('password') as plg:
+            dpass = plg.Info(name=name, username=username, url=url,
+                password=password, note=note, owner=owner)
+            plg.add(dpass)
+
+@password.command(help='Show password in coffer.')
+@main_lib.opt_configuration
+@main_lib.opt_coffer
+@click.option("--name", help='Name of the password to delete.')
+@click.option("--owner", help='Owner of the password to delete.')
+def show(conf, coffer, name, owner):
+    with main_lib.open_coffer(conf, coffer, 'a') as ff:
+        with ff.plugin('password') as plg:
+            pwd = plg.get((owner,name)).to_public()
+            print(pwd)
+
+@password.command(help='Copy password in coffer to clipboard.')
+@main_lib.opt_configuration
+@main_lib.opt_coffer
+@click.option("--name", help='Name of the password to delete.')
+@click.option("--owner", help='Owner of the password to delete.')
+def clip(conf, coffer, name, owner):
+    with main_lib.open_coffer(conf, coffer, 'a') as ff:
+        with ff.plugin('password') as plg:
+            pwd = plg.get((owner,name)).to_public()
+            print(pwd)

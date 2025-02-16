@@ -80,7 +80,7 @@ allow-direct-references = true
 
 [tool.pytest.ini_options]
 # addopts = "--cov=pycoffer --cov-report xml --junitxml=junit.xml"
-addopts = "--cov=pycoffer --durations=0 --capture=sys --cov-report html --junitxml=junit.xml"
+addopts = "--cov=pycoffer --durations=0 --cov-report html --junitxml=junit.xml"
 
 [tool.coverage.run]
 source = ['pycoffer']

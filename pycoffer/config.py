@@ -38,6 +38,7 @@ class Config():
         ret = {}
         if section is None:
             section = 'DEFAULT'
+
         name = ret['type'] = self.parser[section]['type']
         if 'backup' in self.parser[section]:
             ret['backup'] = self.parser[section]['backup']
@@ -45,14 +46,19 @@ class Config():
             ret['backup'] = None
         if 'coffer_key' in self.parser[section]:
             ret['coffer_key'] = base64.b64decode(self.parser[section]['coffer_key'])
+            # ~ ret['coffer_key'] = self.parser[section]['coffer_key']
         # ~ else:
             # ~ ret['coffer_key'] = None
         if 'secure_key' in self.parser[section]:
+            # ~ ret['secure_key'] = self.parser[section]['secure_key']
             ret['secure_key'] = base64.b64decode(self.parser[section]['secure_key'])
         # ~ else:
             # ~ ret['secure_key'] = None
         if 'location' in self.parser[section]:
-            ret['location'] = self.parser[section]['location']
+            if os.path.isdir(self.parser[section]['location']):
+                ret['location'] = os.path.join(self.parser[section]['location'], '.'+section)
+            else:
+                ret['location'] = self.parser[section]['location']
         else:
             if section == 'DEFAULT':
                 ret['location'] = os.path.expanduser('~/.pycoffer')
@@ -85,7 +91,8 @@ class Config():
             ret.append('backup = %s' % backup)
         keys = cls.gen_params()
         for k in keys:
-            ret.append('%s = %s' % (k, base64.b64encode(keys[k])))
+            ret.append('%s = %s' % (k, base64.b64encode(keys[k]).decode()))
+            # ~ ret.append('%s = %s' % (k, keys[k].decode()))
         if location is not None:
             ret.append('location = %s' % location)
         return ret

@@ -101,6 +101,87 @@ def test_main_ls(coffer_conf):
     assert result.exit_code == 0
     assert 'file1.data' in result.output
 
+def test_main_generate_bank(random_path, coffer_conf):
+    runner = CliRunner()
+    result = runner.invoke(main.generate, ['--coffer', 'test', '--type', 'bank', '--location', random_path])
+    assert result.exit_code == 0
+    assert 'type = bank' in result.output
+    assert '[test]' in result.output
+    assert 'coffer_key' in result.output
+    assert 'secure_key' in result.output
+
+    with open(coffer_conf, 'wt') as f:
+        for li in result.output.split('\n'):
+            f.write(li + '\n')
+            print(li)
+
+    confcoff = Config(coffer_conf, chkmode=False)
+    cofferfactory = confcoff.coffer('test')
+    data = randbytes(178)
+
+    with cofferfactory['class'](cofferfactory['location'], mode='wb',
+        coffer_key=cofferfactory['coffer_key'], secure_key=cofferfactory['secure_key'],
+        backup=cofferfactory['backup'] ) as ff:
+        ff.write(data, 'file1.data')
+
+    result = runner.invoke(main.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 0
+    assert 'file1.data' in result.output
+
+def test_main_add_delete_ls_extract(random_path, coffer_conf):
+    data = randbytes(589)
+    dataf = os.path.join(random_path, 'file1.data')
+    with open(dataf, 'ab') as f:
+        f.write(data)
+
+    runner = CliRunner()
+    result = runner.invoke(main.add, ['--conf', coffer_conf, '--coffer', 'test',
+            '--source', dataf, '--target', 'file1.data'])
+    assert result.exit_code == 0
+
+    result = runner.invoke(main.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 0
+    assert 'file1.data' in result.output
+
+    result = runner.invoke(main.add, ['--conf', coffer_conf, '--coffer', 'test',
+            '--source', dataf, '--target', 'test2/file1.data'])
+    assert result.exit_code == 0
+
+    result = runner.invoke(main.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 0
+    assert 'file1.data' in result.output
+    assert 'test2/file1.data' in result.output
+
+    edir = os.path.join(random_path,'extract1')
+
+    result = runner.invoke(main.extract, ['--conf', coffer_conf, '--coffer', 'test',
+            '--path', edir])
+    assert result.exit_code == 1
+
+    result = runner.invoke(main.extract, ['--conf', coffer_conf, '--coffer', 'test',
+            '--file', 'test2/file1.data', '--path', edir])
+    assert result.exit_code == 0
+    with open(os.path.join(edir,'test2/file1.data'), 'rb') as f:
+        assert data == f.read()
+
+    edir = os.path.join(random_path,'extract2')
+    result = runner.invoke(main.extract, ['--conf', coffer_conf, '--coffer', 'test',
+            '--all', '--path', edir])
+    assert result.exit_code == 0
+    with open(os.path.join(edir,'test2/file1.data'), 'rb') as f:
+        assert data == f.read()
+    with open(os.path.join(edir,'file1.data'), 'rb') as f:
+        assert data == f.read()
+
+    result = runner.invoke(main.delete, ['--conf', coffer_conf, '--coffer', 'test',
+            '--force', '--file', 'test2/file1.data'])
+    assert result.exit_code == 0
+
+    result = runner.invoke(main.ls, ['--conf', coffer_conf, '--coffer', 'test'])
+    assert result.exit_code == 0
+    assert 'file1.data' in result.output
+    assert 'test2/file1.data' not in result.output
+
 def test_config(random_path, random_name):
     with pytest.raises(ValueError):
         assert Config.generate() is not None
@@ -119,3 +200,4 @@ def test_config(random_path, random_name):
     # ~ conf = Config('tests/pycofferrc')
     # ~ assert conf.coffer('confidential') is not None
     # ~ assert conf.check_perms() is not None
+
