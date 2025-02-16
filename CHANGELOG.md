@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Test for file locking
 - Benchmark
+- Add new coffer types : bank, store, market and null
 - Add plugin extensions
 - Add plugin for password with import from chrome
 - Add plugin for encrypting/decrypting external files using coffer key
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Split store to support other containers class
 - Fix recursive import or directories
+- Fix reading files in a writable coffer
 
 ### Removed
 
