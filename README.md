@@ -13,17 +13,22 @@ A python coffer
 - The Coffer class is thread-safe
 - Read/write in files in Coffer using read, write, readlines and writelines function:
 
+```
     with Coffer( ... ) as store:
         store.write('file.data', data)
+```
 
 - Read/write in files with context manager:
 
+```
     with Coffer( ... ) as store:
         with store.file('file2.data') as ffile:
             ffile.write(data)
+```
 
 - Access to files with common tar commands:
 
+```
     with Coffer( ... ) as store:
         store.add('/tmp/file.data', 'myfiles/file.data')
 
@@ -32,6 +37,7 @@ A python coffer
 
     with Coffer( ... ) as store:
         store.delete('myfiles/file.data')
+```
 
 - temp directory : the coffer file is extracted in a temp directory
   before accessing to files.
@@ -71,3 +77,5 @@ A python coffer
 - And look at doc to create your own store with your own crypting tools.
 
 Look at https://github.com/bibi21000/PyCoffer/blob/main/BENCHMARK.md
+
+
