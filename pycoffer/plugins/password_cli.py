@@ -18,8 +18,7 @@ from .. import main_lib
 def cli():
     pass
 
-@click.group(help='Manage passwords in coffer.')
-# ~ @click.command(help='Manage passwords in coffer.')
+@cli.group(help='Manage passwords in coffer.')
 def password():
     pass
 

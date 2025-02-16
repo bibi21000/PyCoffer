@@ -10,10 +10,9 @@ import datetime
 
 from cofferfile.decorator import reify
 
-from . import OtherPlugin
+from . import OtherPlugin, CliInterface
 
-
-class Crypt(OtherPlugin):
+class Crypt(OtherPlugin, CliInterface):
     desc = "Encrypt/ decrypt external files with key's coffer"
 
     @classmethod

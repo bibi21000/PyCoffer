@@ -55,7 +55,7 @@ class Password(FilePlugin, CliInterface):
     @classmethod
     def cli(cls):
         """Lazy loader for click"""
-        return cls._imp_lib_cli.password
+        return cls._imp_lib_cli.cli
 
     @classmethod
     @reify

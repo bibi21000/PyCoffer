@@ -9,10 +9,8 @@ __email__ = 'bibi21000@gmail.com'
 import sys
 import datetime
 
-if sys.version_info < (3, 10):
-    from importlib_metadata import entry_points  # noqa
-else:
-    from importlib.metadata import entry_points  # noqa
+from cofferfile.decorator import reify
+
 
 class PluginInfo():
     """Data used with plugin. Better to use class than free data"""
@@ -46,9 +44,19 @@ class Plugin():
     desc = "Description"
 
     @classmethod
+    @reify
+    def _imp_metadata(cls):
+        """Lazy loader for metadata"""
+        import importlib
+        if sys.version_info < (3, 10):
+            return importlib.import_module('importlib_metadata')
+        else:
+            return importlib.import_module('importlib.metadata')
+
+    @classmethod
     def collect(cls, name=None, group="cofferfile.plugin"):
         """Collect plugins"""
-        eps = entry_points()
+        eps = cls._imp_metadata.entry_points()
         grps = []
         for grp in eps.groups:
             if grp.startswith(group) is False:
@@ -57,7 +65,7 @@ class Plugin():
 
         plugins = []
         for grp in grps:
-            eps = entry_points(group=grp)
+            eps = cls._imp_metadata.entry_points(group=grp)
             for ep in eps:
                 if name is not None:
                     if ep.name != name:
@@ -67,7 +75,7 @@ class Plugin():
         return plugins
 
     @classmethod
-    def collect_cli(cls, group="cofferfile.plugin."):
+    def collect_cli(cls, group="cofferfile.plugin"):
         """Collect plugins with cli interface"""
         return [ plg for plg in cls.collect(group=group) if issubclass(plg, CliInterface)]
 

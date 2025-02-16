@@ -20,6 +20,7 @@ from nacl.secret import SecretBox
 
 from pycoffer import config
 from pycoffer import main
+from pycoffer import main_cli
 from pycoffer import CofferInfo, Coffer, open as store_open
 from pycoffer.bank import CofferBank
 from pycoffer.plugins import Plugin
@@ -169,7 +170,7 @@ def test_crypt_encrypt(random_path, coffer_conf):
     runner = CliRunner()
 
     # Need an existing coffer file
-    result = runner.invoke(main.add, ['--conf', coffer_conf, '--coffer', 'test',
+    result = runner.invoke(main_cli.add, ['--conf', coffer_conf, '--coffer', 'test',
             '--source', dataf, '--target', 'file1.data'])
     assert result.exit_code == 0
 

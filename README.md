@@ -39,6 +39,15 @@ A python coffer
         store.delete('myfiles/file.data')
 ```
 
+- Easely extensible with plugins:
+
+```
+    with main_lib.open_coffer(conf, coffer, 'r') as ff:
+        with ff.plugin('crypt') as plg:
+            plg.encrypt(source, target)
+```
+
+
 - temp directory : the coffer file is extracted in a temp directory
   before accessing to files.
 
