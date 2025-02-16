@@ -213,3 +213,5 @@ def test_config(random_path, random_name):
     # ~ assert conf.coffer('confidential') is not None
     # ~ assert conf.check_perms() is not None
 
+def test_main_static(coffer_conf):
+    import pycoffer.main_static
