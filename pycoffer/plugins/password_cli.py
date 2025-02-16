@@ -7,7 +7,7 @@ __email__ = 'bibi21000@gmail.com'
 
 import click
 
-from .. import main_lib
+from pycoffer import main_lib
 
 # ~ @click.group(help='Manage passwords in coffer.')
 # ~ @click.command(help='Manage passwords in coffer.')

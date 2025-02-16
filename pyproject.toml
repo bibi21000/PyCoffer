@@ -43,6 +43,7 @@ classifiers = [
 
 [project.scripts]
 pycoffer = "pycoffer.main:cli"
+pycoffer_static = "pycoffer.main_static:cli"
 
 [project.entry-points."cofferfile.coffer"]
 bank = "pycoffer.bank:CofferBank"

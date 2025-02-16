@@ -7,6 +7,11 @@ endif
 
 .PHONY: venv tests
 
+clean:
+	rm -rf build extract_tar extract_tar_
+	rm -rf .pytest_cache .ruff_cache
+	rm -f pycoffer_static.bin
+
 venv:
 	${PYTHON} -m venv venv
 	./venv/bin/pip install -e .
@@ -22,15 +27,15 @@ venv_nuitka:
 	python3 -m venv venv_nuitka
 	./venv_nuitka/bin/pip install --upgrade pip
 	./venv_nuitka/bin/pip install -e .
-	./venv_nuitka/bin/pip install -e .[test]
 	./venv_nuitka/bin/pip install -e .[cli]
 	./venv_nuitka/bin/pip install -e .[binaries]
 	./venv_nuitka/bin/pip install -e ../FernetFile
 	./venv_nuitka/bin/pip install -e ../NaclFile
 	./venv_nuitka/bin/pip install -e ../CofferFile
 
-pycoffer.bin: venv_nuitka
-	./venv_nuitka/bin/nuitka --remove-output --include-package-data=pycoffer --include-package=pycoffer --include-package=cofferfile --include-package=fernetfile --include-package=naclfile --onefile ./venv_nuitka/bin/pycoffer --output-dir=
+pycoffer_static.bin: venv_nuitka
+#~ 	./venv_nuitka/bin/nuitka --show-progress --remove-output --include-package=pycoffer --include-package=cofferfile --include-package=fernetfile --include-package=naclfile --onefile ./venv_nuitka/bin/pycoffer --output-dir=
+	./venv_nuitka/bin/nuitka --include-distribution-metadata=pycoffer --include-distribution-metadata=cofferfile --include-distribution-metadata=fernetfile --include-distribution-metadata=naclfile --remove-output --onefile ./venv_nuitka/bin/pycoffer_static --output-dir=
 
 build:
 	rm -rf dist
