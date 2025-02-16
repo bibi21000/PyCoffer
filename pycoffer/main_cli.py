@@ -16,10 +16,18 @@ def cli():
 
 
 @cli.command(help='Generate configuration for a new coffer.')
-@main_lib.opt_coffer
-@click.option("--type", help='Type of coffer to use.', default='bank')
-@click.option("--location", help='Location of the store.')
-@click.option("--backup", help='Backup extension for files. None to disable.')
+@click.option('-f', "--coffer",
+    help='The coffer name.',
+    show_default=True, required=True)
+@click.option("--type", help='Type of coffer to use.',
+    default=main_lib.defaults['type'] if 'type' in main_lib.defaults else 'bank',
+    show_default=True)
+@click.option("--location", help='Location of the store.',
+    default=main_lib.defaults['location'] if 'location' in main_lib.defaults else None,
+    show_default=True)
+@click.option("--backup", help='Backup extension for files. None to disable.',
+    default=main_lib.defaults['backup'] if 'backup' in main_lib.defaults else None,
+    show_default=True)
 def generate(coffer, type, location, backup):
     import os
     from .config import Config
@@ -39,7 +47,7 @@ def ls(conf, coffer):
 @cli.command(help='Add file/directory in coffer.')
 @main_lib.opt_configuration
 @main_lib.opt_coffer
-@click.option('-s', "--source", help='Then file to add to coffer.')
+@click.option('-s', "--source", help='The file/directory to add to coffer.')
 @click.option('-t', "--target", help='The target in coffer. if None, the basename is used.')
 @click.option("--replace", is_flag=True, show_default=True, default=False, help="Replace file in coffer if already exists.")
 def add(conf, coffer, source, target, replace):

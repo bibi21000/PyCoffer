@@ -30,15 +30,11 @@ opt_configuration = click.option('-c', "--conf",
     default=defconffile
 )
 
-def defcoffer():
-    # ~ c = Config(defconffile, chkmode=False)
-    defs = Config.get_defaults(defconffile)
-    if 'coffer' in defs:
-        return defs['coffer']
-    return None
+defaults = Config.get_defaults(defconffile)
+
 opt_coffer = click.option('-f', "--coffer",
     help='The coffer name.',
     show_default=True,
-    default=defcoffer()
+    default=defaults['coffer'] if 'coffer' in defaults else None
 )
 
