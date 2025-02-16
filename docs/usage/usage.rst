@@ -15,6 +15,8 @@ Manage files
 
 .. program-output:: /home/runner/.local/bin/pycoffer extract --help
 
+.. program-output:: /home/runner/.local/bin/pycoffer delete --help
+
 Plugins
 ---------------------
 
