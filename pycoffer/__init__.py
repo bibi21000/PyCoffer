@@ -518,7 +518,7 @@ class Coffer():
             return self._imp_pickle.load(f)
 
     @contextmanager
-    def plugin(self, name=None, group='cofferfile.plugin.file'):
+    def plugin(self, name=None, group='cofferfile.plugin'):
         """Return a plugin"""
         with self._lock:
             plgcls = Plugin.collect(name=name, group=group)
@@ -526,17 +526,25 @@ class Coffer():
                 raise IndexError("Problem loading %s : found %s matches"%(name, len(plgcls)))
             plg = plgcls[0]()
 
-            finfo = CofferInfo(plg.arcname, store_path=self.dirpath)
-            if os.path.isfile(finfo.path) is True:
-                plg.store_load(self._pickle_load(finfo))
+            if plg.category == 'file':
 
-            yield plg
+                finfo = CofferInfo(plg.arcname, store_path=self.dirpath)
+                if os.path.isfile(finfo.path) is True:
+                    plg.store_load(self._pickle_load(finfo))
 
-            if plg.modified is True:
-                self._pickle_dump(plg.store_dump(), finfo)
+                yield plg
 
-                if self.auto_flush is True:
-                    self._flush()
+                if plg.modified is True:
+                    self._pickle_dump(plg.store_dump(), finfo)
+
+                    if self.auto_flush is True:
+                        self._flush()
+
+            elif plg.category == 'other':
+
+                plg.crypt_open = self.crypt_open
+
+                yield plg
 
 def open(filename, mode="rb", secret_key=None,
         chunk_size=CHUNK_SIZE,

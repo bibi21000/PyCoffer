@@ -24,6 +24,7 @@ from pycoffer import CofferInfo, Coffer, open as store_open
 from pycoffer.bank import CofferBank
 from pycoffer.plugins import Plugin
 import pycoffer.plugins.password_cli
+import pycoffer.plugins.crypt_cli
 from pycoffer.config import Config
 from naclfile.zstd import NaclFile as ZstdNaclFile, open as naclz_open
 from naclfile.tar import TarFile as TarZstdNaclFile
@@ -116,13 +117,13 @@ def test_plugin_password_coffer(random_path, random_name):
         assert not ff.writable
         assert ff.readable
 
-def test_cli_ls_empty(coffer_conf):
+def test_password_ls_empty(coffer_conf):
     runner = CliRunner()
     result = runner.invoke(pycoffer.plugins.password_cli.ls, ['--conf', coffer_conf, '--coffer', 'test'])
     assert result.exit_code == 1
     # ~ assert result.output == ''
 
-def test_cli_add_ls(coffer_conf):
+def test_password_add_ls(coffer_conf):
     confcoff = Config(coffer_conf, chkmode=False)
     cofferfactory = confcoff.coffer('test')
 
@@ -157,3 +158,32 @@ def test_cli_add_ls(coffer_conf):
 
     result = runner.invoke(pycoffer.plugins.password_cli.clip, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'tata.com', '--owner', 'chrome'])
     assert result.exit_code == 0
+
+def test_crypt_encrypt(random_path, coffer_conf):
+    data = randbytes(4523)
+    dataf = os.path.join(random_path, 'file1.data')
+    datac = os.path.join(random_path, 'file1.datae')
+    datad = os.path.join(random_path, 'file1.datad')
+    with open(dataf, 'ab') as f:
+        f.write(data)
+    runner = CliRunner()
+
+    # Need an existing coffer file
+    result = runner.invoke(main.add, ['--conf', coffer_conf, '--coffer', 'test',
+            '--source', dataf, '--target', 'file1.data'])
+    assert result.exit_code == 0
+
+    result = runner.invoke(pycoffer.plugins.crypt_cli.crypt, ['--conf', coffer_conf, '--coffer', 'test',
+        '--source', dataf, '--target', datac])
+    assert result.exit_code == 0
+    # ~ assert result.output == 'ddd'
+    assert os.path.isfile(datac)
+
+    result = runner.invoke(pycoffer.plugins.crypt_cli.decrypt, ['--conf', coffer_conf, '--coffer', 'test',
+        '--source', datac, '--target', datad])
+    assert result.exit_code == 0
+    # ~ assert result.output == 'ddd'
+    assert os.path.isfile(datad)
+
+    with open(datad, 'rb') as f:
+        assert data == f.read()

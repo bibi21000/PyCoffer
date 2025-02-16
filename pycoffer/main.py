@@ -76,4 +76,5 @@ def extract(conf, coffer, path, file, all):
             ff.extractall(path=path)
 
 for plugin in Plugin.collect_cli():
+    print(plugin.desc)
     cli.add_command(plugin.cli())

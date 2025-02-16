@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Test for file locking
 - Benchmark
+- Add plugin extensions
+- Add plugin for password with import from chrome
+- Add plugin for encrypting/decrypting external files using coffer key
 
 ### Changed
 

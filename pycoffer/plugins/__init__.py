@@ -42,11 +42,11 @@ class PluginInfo():
         return '<PluginInfo ' + s + ' ' + hex(id(self)) + '>'
 
 class Plugin():
-    ep_cat = None
+    category = None
     desc = "Description"
 
     @classmethod
-    def collect(cls, name=None, group="cofferfile.plugin."):
+    def collect(cls, name=None, group="cofferfile.plugin"):
         """Collect plugins"""
         eps = entry_points()
         grps = []
@@ -77,8 +77,11 @@ class Plugin():
         """Factory for Info data"""
         return PluginInfo
 
+class OtherPlugin(Plugin):
+    category = 'other'
+
 class FilePlugin(Plugin):
-    ep_cat = 'file'
+    category = 'file'
 
     def __init__(self):
         self._modified = False

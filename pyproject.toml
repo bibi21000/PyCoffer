@@ -49,8 +49,9 @@ store = "pycoffer.store:CofferStore"
 market = "pycoffer.market:CofferMarket"
 null = "pycoffer.null:CofferNull"
 
-[project.entry-points."cofferfile.plugin.file"]
+[project.entry-points."cofferfile.plugin"]
 password = "pycoffer.plugins.password:Password"
+crypt = "pycoffer.plugins.crypt:Crypt"
 
 [project.optional-dependencies]
 test = ["pytest", "coverage[toml]", "pytest-cov", "pytest-mock", "pytest-xdist", "pytest-random-order", "ruff", "bandit"]

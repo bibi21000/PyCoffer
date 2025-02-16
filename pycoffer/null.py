@@ -75,6 +75,10 @@ class CofferNull(Coffer):
         return {
         }
 
+    def crypt_open(self, filename, mode='r', **kwargs):
+        """Return a crypting open function to encrypt esternal files for examples.
+        Use keys of the coffer."""
+        return open(filename, mode=mode, **kwargs)
 
 def open(filename, mode="rb",
         auto_flush=False, backup=None,
