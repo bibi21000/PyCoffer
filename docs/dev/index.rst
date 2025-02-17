@@ -6,5 +6,6 @@ Developer manual
 
    coffer
    plugin
+   static
    benchmark
    changelog

@@ -6,4 +6,5 @@ User manual
 
    readme
    install
+   rescue
    usage
