@@ -16,4 +16,5 @@ documentation for details.
    :caption: Contents:
 
    usage/index
+   dev/index
    api/modules

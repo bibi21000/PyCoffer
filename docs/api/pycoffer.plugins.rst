@@ -36,6 +36,22 @@ pycoffer.plugins.password\_cli module
    :undoc-members:
    :show-inheritance:
 
+pycoffer.plugins.rsync module
+-----------------------------
+
+.. automodule:: pycoffer.plugins.rsync
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pycoffer.plugins.rsync\_cli module
+----------------------------------
+
+.. automodule:: pycoffer.plugins.rsync_cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

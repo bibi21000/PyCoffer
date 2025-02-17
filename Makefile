@@ -45,7 +45,8 @@ testpypi:
 	./venv/bin/python3 -m twine upload --repository testpypi --verbose dist/*
 
 apidoc:
-	./venv/bin/sphinx-apidoc --output-dir docs/source/api --force pycoffer
+	./venv/bin/sphinx-apidoc --output-dir docs/api --force pycoffer
+	git checkout docs/api/modules.rst
 
 doc:
 	./venv/bin/pdoc --output-directory docs pycoffer/zstd.py pycoffer/store.py pycoffer/__init__.py

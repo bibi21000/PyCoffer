@@ -52,6 +52,14 @@ pycoffer.main\_lib module
    :undoc-members:
    :show-inheritance:
 
+pycoffer.main\_static module
+----------------------------
+
+.. automodule:: pycoffer.main_static
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pycoffer.market module
 ----------------------
 

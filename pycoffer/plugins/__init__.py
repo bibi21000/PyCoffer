@@ -40,6 +40,7 @@ class PluginInfo():
         return '<PluginInfo ' + s + ' ' + hex(id(self)) + '>'
 
 class Plugin():
+    """The base class for plugins"""
     category = None
     desc = "Description"
 
@@ -85,11 +86,43 @@ class Plugin():
         """Factory for Info data"""
         return PluginInfo
 
+class CofferPlugin(Plugin):
+    """The Coffer plugin class
+    These plugins have total access to the coffer.
+    They should manage locks, ...
+    """
+    category = 'coffer'
+
+    def __init__(self):
+        self._modified = False
+        self.coffer_file = None
+        """The coffer file"""
+
+    @property
+    def modified(self):
+        return self._modified
+
+    def run(self, coffer):
+        return None
+
 class OtherPlugin(Plugin):
+    """The Other plugin class
+    These plugins have access to the crypting method
+    """
     category = 'other'
 
+    def __init__(self):
+        self.crypt_open = None
+        """The open crypted method"""
+
+
 class FilePlugin(Plugin):
+    """The File plugin class
+    These plugins have access to a pickle arcname to store their datas.
+    """
     category = 'file'
+    arcname = None
+    """The name of the picke for data. Should be in .plugins/ directory."""
 
     def __init__(self):
         self._modified = False
@@ -105,8 +138,10 @@ class FilePlugin(Plugin):
         self._modified = False
 
 class CliInterface():
-
+    """The CLI plugin interfacce
+    Used to collect plugins with cli
+    """
     @classmethod
     def cli(cls):
-        """Lazy loader for cli"""
-        raise RuntimeError("Not defined")
+        """Load the click interface"""
+        raise NotImplementedError

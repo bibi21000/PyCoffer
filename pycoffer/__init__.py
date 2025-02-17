@@ -14,7 +14,6 @@ from contextlib import contextmanager
 import shutil
 import io
 from filelock import FileLock
-from abc import abstractmethod
 
 from cofferfile import CHUNK_SIZE, READ, WRITE, APPEND, EXCLUSIVE, _open_cls
 from cofferfile.decorator import reify
@@ -219,7 +218,6 @@ class Coffer():
         """Exit context manager"""
         self.close()
 
-    @abstractmethod
     def crypt_open(self, filename, mode='r', **kwargs):
         """Return a crypting open function to encrypt esternal files for examples.
         Use keys of the coffer."""
@@ -543,13 +541,26 @@ class Coffer():
     @contextmanager
     def plugin(self, name=None, group='cofferfile.plugin'):
         """Return a plugin"""
+        plgcls = Plugin.collect(name=name, group=group)
+        if len(plgcls) != 1:
+            raise IndexError("Problem loading %s : found %s matches"%(name, len(plgcls)))
+        plg = plgcls[0]()
+
+        if plg.category == 'coffer':
+            # These plugins have total control on coffer and locks
+
+            plg.coffer_file = self
+
+            yield plg
+
+            if plg.modified is True:
+                if self.auto_flush is True:
+                    self._flush()
+
         with self._lock:
-            plgcls = Plugin.collect(name=name, group=group)
-            if len(plgcls) != 1:
-                raise IndexError("Problem loading %s : found %s matches"%(name, len(plgcls)))
-            plg = plgcls[0]()
 
             if plg.category == 'file':
+                # These plugins have access to a pickle storage
 
                 finfo = CofferInfo(plg.arcname, store_path=self.dirpath)
                 if os.path.isfile(finfo.path) is True:
@@ -568,6 +579,7 @@ class Coffer():
                 plg.crypt_open = self.crypt_open
 
                 yield plg
+
 
 def open(filename, mode="rb", secret_key=None,
         chunk_size=CHUNK_SIZE,
