@@ -6,7 +6,7 @@ WT -1, ... are the last store.add time in store
 
 WTime is the total write time (WT -1 + WT -2 + WT -3 + ...).
 
-ETime the time spent to extract all files from coffer
+Extime the time spent to extract all files from coffer
 
 | Class             | Data              | NbDocs | Orig size | Crypt size | C Ratio | WTime  | Extime | WT -1 | WT -2 | WT -3 | WT -4 |
 |:------------------|:------------------|-------:|----------:|-----------:|--------:|-------:|-------:|------:|------:|------:|------:|

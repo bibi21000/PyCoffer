@@ -26,6 +26,7 @@ from pycoffer.bank import CofferBank
 from pycoffer.plugins import Plugin
 import pycoffer.plugins.password_cli
 import pycoffer.plugins.crypt_cli
+import pycoffer.plugins.rsync_cli
 from pycoffer.config import Config
 from naclfile.zstd import NaclFile as ZstdNaclFile, open as naclz_open
 from naclfile.tar import TarFile as TarZstdNaclFile
@@ -160,7 +161,7 @@ def test_password_add_ls(coffer_conf):
     result = runner.invoke(pycoffer.plugins.password_cli.clip, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'tata.com', '--owner', 'chrome'])
     assert result.exit_code == 0
 
-def test_crypt_encrypt(random_path, coffer_conf):
+def test_plugin_crypt(random_path, coffer_conf):
     data = randbytes(4523)
     dataf = os.path.join(random_path, 'file1.data')
     datac = os.path.join(random_path, 'file1.datae')
@@ -188,3 +189,24 @@ def test_crypt_encrypt(random_path, coffer_conf):
 
     with open(datad, 'rb') as f:
         assert data == f.read()
+
+def test_plugin_rsync(caplog, random_path, random_name):
+    caplog.set_level(logging.DEBUG, logger="pycoffer")
+    key = utils.random(SecretBox.KEY_SIZE)
+    dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
+
+    with Coffer(dataf, mode='ab', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+        with ff.plugin('rsync') as plg:
+            plg.rsync('src', 'target')
+
+def test_plugin_rsync_cli(coffer_conf):
+    confcoff = Config(coffer_conf, chkmode=False)
+    cofferfactory = confcoff.coffer('test')
+
+    runner = CliRunner()
+
+    result = runner.invoke(pycoffer.plugins.rsync_cli.rsync, ['--conf', coffer_conf, '--coffer', 'test',
+        '--source', 'source', '--target', 'target'])
+    assert result.exit_code == 0
+    # ~ assert 'file1.data' in result.output
+

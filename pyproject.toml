@@ -54,6 +54,7 @@ null = "pycoffer.null:CofferNull"
 [project.entry-points."cofferfile.plugin"]
 password = "pycoffer.plugins.password:Password"
 crypt = "pycoffer.plugins.crypt:Crypt"
+rsync = "pycoffer.plugins.rsync:Rsync"
 
 [project.optional-dependencies]
 test = ["pytest", "coverage[toml]", "pytest-cov", "pytest-mock", "pytest-xdist", "pytest-random-order", "ruff", "bandit"]

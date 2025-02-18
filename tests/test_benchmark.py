@@ -252,7 +252,7 @@ def test_benchmark_fstore_header(random_path):
         ff.write("\n")
         ff.write("WTime is the total write time (WT -1 + WT -2 + WT -3 + ...).\n")
         ff.write("\n")
-        ff.write("ETime the time spent to extract all files from coffer\n")
+        ff.write("Extime the time spent to extract all files from coffer\n")
         ff.write("\n")
         ff.write("| Class             | Data              | NbDocs | Orig size | Crypt size | C Ratio | WTime  | Extime | WT -1 | WT -2 | WT -3 | WT -4 |\n")
         ff.write("|:------------------|:------------------|-------:|----------:|-----------:|--------:|-------:|-------:|------:|------:|------:|------:|\n")

@@ -24,5 +24,6 @@ def cli():
 @click.option('-s', "--source", help='The source directory.')
 @click.option('-t', "--target", help='The target directory in coffer.')
 def rsync(conf, coffer, source, target):
-    pass
-
+    with main_lib.open_coffer(conf, coffer, 'a') as ff:
+        with ff.plugin('rsync') as plg:
+            plg.rsync(source, target)
