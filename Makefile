@@ -64,5 +64,5 @@ tests:
 	./venv/bin/pytest  --random-order -n auto --ignore=tests/test_benchmark.py tests/
 
 benchmark:
-#~ 	./venv/bin/pip install .[benchmark]
+	./venv/bin/pip install .[benchmark]
 	./venv/bin/pytest tests/test_benchmark.py

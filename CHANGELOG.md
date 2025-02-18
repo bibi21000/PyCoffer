@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix recursive import or directories
 - Fix reading files in a writable coffer
 - Update locking strategy
+- Fix tmp cleaning
 
 ### Removed
 

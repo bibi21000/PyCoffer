@@ -96,5 +96,10 @@ def system():
     plugins = [c.__name__ for c in Plugin.collect(group='cofferfile.plugin')]
     print('Plugins : %s'%plugins)
     print(f'Architecture : {platform.system()} ({platform.release()}) / {platform.machine()}')
+    print(f'System : {platform.version()}')
+    try:
+        print(f'Specific : {platform.libc_ver()}')
+    except Exception:
+        pass
     print(f'Python : {platform.python_version()} ({platform.python_implementation()})')
 
