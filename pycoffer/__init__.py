@@ -185,7 +185,6 @@ class Coffer():
         else:
             self._lockfile.release()
 
-
     @classmethod
     def gen_params(cls):
         """Generate params for a new store : keys, ... as a dict"""
@@ -232,12 +231,12 @@ class Coffer():
         else:
             if self.mode == READ:
                 raise FileNotFoundError('File not found %s' % self.filename)
-        self.dirpath = tempfile.mkdtemp(prefix=".fernet_", dir=self.temp_dir)
+        self.dirpath = tempfile.mkdtemp(prefix=".coff_", dir=self.temp_dir)
         self._flock_acquire()
         if file_exists:
             with self.container_class(self.filename, mode='rb', fileobj=self.fileobj,
                 **self.container_params,
-                **self.kwargs
+                # ~ **self.kwargs
             ) as tff:
                 tff.extractall(self.dirpath, filter='data')
         self._dirctime = self._dirmtime = time.time_ns()
@@ -254,7 +253,7 @@ class Coffer():
 
         with self.container_class(self.filename, mode='wb', fileobj=self.fileobj,
             **self.container_params,
-            **self.kwargs
+            # ~ **self.kwargs
         ) as tff:
             for member in self.getmembers():
                 tff.add(member.path, arcname=member.name)
@@ -277,7 +276,7 @@ class Coffer():
         if self.writable:
             with self._lock:
                 self._write_store()
-                shutil.rmtree(self.dirpath)
+        shutil.rmtree(self.dirpath)
         self.dirpath = None
         self._dirctime = None
         self._dirmtime = None
