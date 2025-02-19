@@ -36,5 +36,3 @@ from pycoffer.plugins import crypt_cli
 
 plgs = [main_cli.cli] + [ plg.cli() for plg in Plugin.collect_cli()]
 cli = click.CommandCollection(sources=plgs)
-
-

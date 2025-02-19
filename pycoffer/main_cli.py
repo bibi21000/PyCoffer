@@ -69,7 +69,7 @@ def delete(conf, coffer, file, force):
 @main_lib.opt_configuration
 @main_lib.opt_coffer
 @click.option('-p', "--path", help='The path to extract files.')
-@click.option('-f', "--file", help='The file to extract from coffer.')
+@click.option('-i', "--file", help='The file to extract from coffer.')
 @click.option("--all", is_flag=True, show_default=True, default=False, help="Extract all file.")
 def extract(conf, coffer, path, file, all):
     if file is None and all is False:
@@ -90,16 +90,28 @@ def system():
     from .plugins import Plugin
     import platform
     cryptors = [c.__name__ for c in Plugin.collect(group='cofferfile.cryptor')]
-    print('Cryptors : %s'%cryptors)
+    print('Cryptors : %s' % cryptors)
     coffers = [c.__name__ for c in Plugin.collect(group='cofferfile.coffer')]
-    print('Coffers : %s'%coffers)
+    print('Coffers : %s' % coffers)
     plugins = [c.__name__ for c in Plugin.collect(group='cofferfile.plugin')]
-    print('Plugins : %s'%plugins)
+    print('Plugins : %s' % plugins)
+    print(f'Python : {platform.python_version()} ({platform.python_implementation()})')
     print(f'Architecture : {platform.system()} ({platform.release()}) / {platform.machine()}')
     print(f'System : {platform.version()}')
+    try:
+        with open('/etc/issue', 'r') as f:
+            os = f.read().split('\n')[0]
+        print(f'Os : {os}')
+    except Exception:
+        pass
     try:
         print(f'Specific : {platform.libc_ver()}')
     except Exception:
         pass
-    print(f'Python : {platform.python_version()} ({platform.python_implementation()})')
-
+    try:
+        import subprocess
+        ret = subprocess.run(["ldd", 'pycoffer_static.bin'], capture_output=True, text=True)
+        ret = [r.strip() for r in ret.stdout.split('\n') if r.strip() != '']
+        print(f'Ldd : {ret}')
+    except Exception:
+        pass

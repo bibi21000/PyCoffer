@@ -16,7 +16,7 @@ from . import FilePlugin, PluginInfo, CliInterface
 class PasswordInfoPublic(PluginInfo):
 
     def __init__(self, name=None, username=None, password=None, url=None, note=None, owner=None, **kwargs):
-        """Helper for passowrd info"""
+        """Helper for passowrd public info"""
         super().__init__(name=name, **kwargs)
         self.username = username
         self.url = url
@@ -85,7 +85,7 @@ class Password(FilePlugin, CliInterface):
         """List public data about passwords in coffer"""
         ret = []
         for k in self.store.keys():
-            ret.append(PasswordInfoPublic(self.store[k].to_dict()))
+            ret.append(PasswordInfoPublic(**self.store[k].to_dict()))
         return ret
 
     def add(self, datainfo=None, replace=True):

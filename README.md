@@ -4,7 +4,7 @@
 
 # PyCoffer
 
-A python coffer
+A python coffer.
 
 
 Look at documentation : https://bibi21000.github.io/PyCoffer.

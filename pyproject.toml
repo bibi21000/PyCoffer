@@ -13,8 +13,6 @@ maintainers = [
 packages = ["pycoffer"]
 dependencies = [
   "pyzstd",
-  "fernetfile",
-  "naclfile",
   "filelock",
 ]
 classifiers = [
@@ -59,10 +57,12 @@ rsync = "pycoffer.plugins.rsync:Rsync"
 [project.optional-dependencies]
 test = ["pytest", "coverage[toml]", "pytest-cov", "pytest-mock", "pytest-xdist", "pytest-random-order", "ruff", "bandit"]
 build = ["build", 'twine']
-cli = ["click", 'pyperclip']
+cli = ["click", 'pyperclip', "fernetfile", "naclfile"]
 doc = ["sphinx", "sphinxcontrib-programoutput", 'sphinx-pyproject', 'myst-parser']
 benchmark = ["pytest-ordering"]
 binaries = ["nuitka"]
+fernet = ["fernetfile"]
+nacl = ["naclfile"]
 
 [project.urls]
 HomePage = "https://github.com/bibi21000/PyCoffer"

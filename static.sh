@@ -6,6 +6,7 @@ python3 -m venv venv_static
 ./venv_static/bin/pip install -e .[cli]
 ./venv_static/bin/pip install -e .[binaries]
 ./venv_static/bin/nuitka --remove-output --onefile \
+    --include-package=pycoffer \
     --include-distribution-metadata=pycoffer \
     --include-distribution-metadata=cofferfile \
     --include-distribution-metadata=fernetfile \

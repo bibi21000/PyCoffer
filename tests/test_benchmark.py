@@ -244,7 +244,7 @@ def test_benchmark_tar(caplog, random_path, dt, cls, key, secure_open, secure_pa
 @pytest.mark.run(order=0)
 def test_benchmark_fstore_header(random_path):
     with open('BENCHMARK.md','wt') as ff:
-        ff.write("## Benchmarks Coffer\n")
+        ff.write("# Benchmarks Coffer\n")
         ff.write("\n")
         ff.write("Tests done with autoflush, with or without open_secure.\n")
         ff.write("\n")
@@ -367,7 +367,7 @@ def test_benchmark_fstore(caplog, random_path, dt, cls, container_params, secure
 @pytest.mark.run(order=10)
 def test_benchmark_fstore_header_tmp(random_path):
     with open('BENCHMARK.md','at') as ff:
-        ff.write("## Benchmarks Coffer with cache in tmpfs\n")
+        ff.write("# Benchmarks Coffer with cache in tmpfs\n")
         ff.write("\n")
         ff.write("mount -t tmpfs tmpfs /tmp/coffertmp/ -o size=4g\n")
         ff.write("\n")

@@ -1,4 +1,4 @@
-## Benchmarks Coffer
+# Benchmarks Coffer
 
 Tests done with autoflush, with or without open_secure.
 
@@ -36,7 +36,7 @@ Extime the time spent to extract all files from coffer
 |CofferMarket       |mixed              |     25 |    479529 |     351234 |   73.25 |  21.83 |   3.08 |  0.81 |  0.81 |  0.80 |  0.81 |
 
 
-## Benchmarks Coffer with cache in tmpfs
+# Benchmarks Coffer with cache in tmpfs
 
 mount -t tmpfs tmpfs /tmp/coffertmp/ -o size=4g
 

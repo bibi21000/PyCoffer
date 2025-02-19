@@ -28,6 +28,7 @@ def password():
 def ls(conf, coffer):
     with main_lib.open_coffer(conf, coffer, 'r') as ff:
         with ff.plugin('password') as plg:
+            print('Name', "Username", "Url", "Owner")
             for member in plg.getmembers():
                 print(member.name, member.username, member.url, member.owner)
 
@@ -45,7 +46,7 @@ def delete(conf, coffer, name, owner):
 @password.command(help='Import passwords from chrome.')
 @main_lib.opt_configuration
 @main_lib.opt_coffer
-@click.option("--file", help='Csv file exported by chrome.')
+@click.option( "-i","--file", help='Csv file exported by chrome.')
 def import_chrome(conf, coffer, file):
     with main_lib.open_coffer(conf, coffer, 'a') as ff:
         with ff.plugin('password') as plg:
@@ -75,8 +76,9 @@ def add(conf, coffer, name, username, url, password, note, owner):
 def show(conf, coffer, name, owner):
     with main_lib.open_coffer(conf, coffer, 'a') as ff:
         with ff.plugin('password') as plg:
-            pwd = plg.get((owner,name)).to_public()
-            print(pwd)
+            print('Owner', "Name", "Username", "Url", "Password")
+            pwd = plg.get((owner,name))
+            print(pwd.owner, pwd.name, pwd.username, pwd.url, pwd.password)
 
 @password.command(help='Copy password in coffer to clipboard.')
 @main_lib.opt_configuration
@@ -87,4 +89,4 @@ def clip(conf, coffer, name, owner):
     with main_lib.open_coffer(conf, coffer, 'a') as ff:
         with ff.plugin('password') as plg:
             pwd = plg.get((owner,name)).to_public()
-            print(pwd)
+            print('Not implemented')
