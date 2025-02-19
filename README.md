@@ -6,6 +6,8 @@
 
 A python coffer.
 
+Store your confidential data in a secure coffer.
 
-Look at documentation : https://bibi21000.github.io/PyCoffer.
+User doc : https://bibi21000.github.io/PyCoffer/usage/install.html
 
+Developers doc : https://bibi21000.github.io/PyCoffer/dev/coffer.html
