@@ -24,12 +24,14 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Ubuntu dependencies
+          command: apt-get install xsel
+      - run:
           name: Install dependencies from pyproject.toml
           command: |
             pip install .
             pip install .[cli]
             pip install .[test]
-
             pip install codecov-cli
       - run:
           name: Run tests
@@ -49,6 +51,9 @@ jobs:
       - image: cimg/python:<< parameters.python >>
     steps:
       - checkout
+      - run:
+          name: Install Ubuntu dependencies
+          command: apt-get install xsel
       - run:
           name: Install dependencies from pyproject.toml
           command: |
