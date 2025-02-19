@@ -36,7 +36,7 @@ jobs:
           command: pytest --cov-report xml --junitxml=pytest.<< parameters.python >>.junit.xml -o junit_family=legacy
       - run:
           name: Run ruff
-          command: ruff check --respect-gitignore --output-format junit --output-file ruff.<< parameters.python >>.junit.xml fernetfile/ || true
+          command: ruff check --respect-gitignore --output-format junit --output-file ruff.<< parameters.python >>.junit.xml pycoffer/ || true
       - run:
           name: Upload tests result
           command: codecovcli do-upload --report-type test_results --file pytest.<< parameters.python >>.junit.xml --file ruff.<< parameters.python >>.junit.xml
@@ -61,7 +61,7 @@ jobs:
           command: pytest -n auto --ignore=tests/test_benchmark.py --cov-report xml --junitxml=pytest.<< parameters.python >>.junit.xml -o junit_family=legacy
       - run:
           name: Run ruff
-          command: ruff check --respect-gitignore --output-format junit --output-file ruff.<< parameters.python >>.junit.xml . || true
+          command: ruff check --respect-gitignore --output-format junit --output-file ruff.<< parameters.python >>.junit.xml pycoffer/ || true
       - codecov/upload
       - run:
           name: Upload tests result
