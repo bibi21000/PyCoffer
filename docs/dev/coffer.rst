@@ -11,22 +11,23 @@ Coffer informations
 
 - Read/write in files in Coffer using read, write, readlines and writelines function:
 
-```
+.. code::
+
     with Coffer( ... ) as store:
         store.write('file.data', data)
-```
 
 - Read/write in files with context manager:
 
-```
+.. code::
+
     with Coffer( ... ) as store:
         with store.file('file2.data') as ffile:
             ffile.write(data)
-```
 
 - Access to files with common tar commands:
 
-```
+.. code::
+
     with Coffer( ... ) as store:
         store.add('/tmp/file.data', 'myfiles/file.data')
 
@@ -35,15 +36,14 @@ Coffer informations
 
     with Coffer( ... ) as store:
         store.delete('myfiles/file.data')
-```
 
 - Easely extensible with plugins:
 
-```
+.. code::
+
     with main_lib.open_coffer(conf, coffer, 'r') as ff:
         with ff.plugin('crypt') as plg:
             plg.encrypt(source, target)
-```
 
 - temp directory : the coffer is extracted in a temp directory
   before accessing to files.
