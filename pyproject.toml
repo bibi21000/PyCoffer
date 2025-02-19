@@ -78,7 +78,6 @@ build-backend = "hatchling.build"
 include = [
   "/pycoffer",
 ]
-
 [tool.hatch.metadata]
 allow-direct-references = true
 
@@ -89,7 +88,6 @@ addopts = "--cov=pycoffer --durations=0 --cov-report html --junitxml=junit.xml"
 [tool.coverage.run]
 source = ['pycoffer']
 omit = ['tests']
-
 [tool.coverage.paths]
 source = ['pycoffer']
 
@@ -120,3 +118,6 @@ autodoc_exclude_members = [
     "__abstractmethods__",
     "__hash__",
 ]
+
+[tool.ruff]
+exclude = ['pycoffer/main_static.py']

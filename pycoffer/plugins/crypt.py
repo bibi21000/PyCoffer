@@ -5,8 +5,6 @@
 __author__ = 'bibi21000 aka Sébastien GALLET'
 __email__ = 'bibi21000@gmail.com'
 
-import datetime
-
 from cofferfile.decorator import reify
 
 from . import OtherPlugin, CliInterface

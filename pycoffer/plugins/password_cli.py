@@ -88,5 +88,6 @@ def show(conf, coffer, name, owner):
 def clip(conf, coffer, name, owner):
     with main_lib.open_coffer(conf, coffer, 'a') as ff:
         with ff.plugin('password') as plg:
-            pwd = plg.get((owner,name)).to_public()
-            print('Not implemented')
+            import pyperclip
+            pwd = plg.get((owner,name))
+            pyperclip.copy(pwd.password)

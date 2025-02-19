@@ -1,11 +1,9 @@
 # -*- encoding: utf-8 -*-
-"""Encrypt/Decrypt external files using keys of coffer
+"""Synchronise files
 """
 
 __author__ = 'bibi21000 aka Sébastien GALLET'
 __email__ = 'bibi21000@gmail.com'
-
-import datetime
 
 from cofferfile.decorator import reify
 
@@ -27,6 +25,6 @@ class Rsync(CofferPlugin, CliInterface):
         return cls._imp_lib_cli.cli
 
     def rsync(self, source, target):
-        """Encrypt source in target"""
+        """Synchronize source in target"""
         pass
 

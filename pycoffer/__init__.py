@@ -330,10 +330,10 @@ class Coffer():
             if os.path.isdir(filename):
                 if arcname is None:
                     arcname = os.path.basename(filename)
-                    if len(dirnames) > 1:
-                        arcname = dirnames[-1]
-                    else:
-                        arcname = ''
+                    # ~ if len(dirnames) > 1:
+                        # ~ arcname = dirnames[-1]
+                    # ~ else:
+                        # ~ arcname = ''
                 len_root = len(filename.split('/'))
                 for root, dirs, files in os.walk(filename):
                     for fname in files:

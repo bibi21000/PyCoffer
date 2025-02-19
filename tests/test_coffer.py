@@ -260,6 +260,45 @@ def test_store_basic(caplog, random_path, random_name):
         with open(edir+'/test2/test/file222%s.data'%(random_name), "rb") as fff:
             assert ddataf2 == fff.read()
 
+def test_store_basic_recurse(caplog, random_path, random_name):
+    caplog.set_level(logging.DEBUG, logger="pycoffer")
+    key = Fernet.generate_key()
+    data = randbytes(2487)
+    data2 = randbytes(1536)
+    data2a = randbytes(7415)
+    dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
+
+    with Coffer(dataf, mode='wb', container_class=TarZstdFernetFile,
+            container_params={'fernet_key':key}) as ff:
+        assert repr(ff).startswith('<Coffer')
+        ff.write(data, 'file1%s.data'%random_name)
+        ff.write(data2, 'file2%s.data'%random_name)
+
+    edir = os.path.join(random_path, 'extract%s'%random_name)
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile,
+            container_params={'fernet_key':key}) as ff:
+        os.makedirs(edir)
+        ff.extractall(edir)
+    assert os.path.isfile(os.path.join(edir, 'file1%s.data'%random_name))
+    assert os.path.isfile(os.path.join(edir, 'file2%s.data'%random_name))
+
+    with Coffer(dataf, "ab", container_class=TarZstdFernetFile,
+            container_params={'fernet_key':key}) as ff:
+        ff.add(edir)
+
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile,
+            container_params={'fernet_key':key}) as ff:
+        print(ff.getmembers())
+
+    e2dir = os.path.join(random_path, 'extract2%s'%random_name)
+    with Coffer(dataf, "rb", container_class=TarZstdFernetFile,
+            container_params={'fernet_key':key}) as ff:
+        os.makedirs(e2dir)
+        ff.extractall(e2dir)
+
+    assert os.path.isfile(os.path.join(e2dir, 'extract%s'%random_name, 'file1%s.data'%random_name))
+    assert os.path.isfile(os.path.join(e2dir, 'extract%s'%random_name, 'file2%s.data'%random_name))
+
 def test_store_no_flush(random_path, random_name):
     key = Fernet.generate_key()
     data = randbytes(2487)

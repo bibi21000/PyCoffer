@@ -12,8 +12,6 @@ __email__ = 'bibi21000@gmail.com'
 
 import os
 
-from pyzstd import CParameter
-
 from cofferfile.zstd import ZstdTarFile
 from pycoffer import Coffer
 
