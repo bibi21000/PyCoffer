@@ -25,7 +25,9 @@ jobs:
       - checkout
       - run:
           name: Install Ubuntu dependencies
-          command: sudo apt-get install xsel
+          command: |
+            sudo apt-get update
+            sudo apt-get install xsel
       - run:
           name: Install dependencies from pyproject.toml
           command: |
@@ -53,7 +55,9 @@ jobs:
       - checkout
       - run:
           name: Install Ubuntu dependencies
-          command: sudo apt-get install xsel
+          command: |
+            sudo apt-get update
+            sudo apt-get install xsel
       - run:
           name: Install dependencies from pyproject.toml
           command: |
