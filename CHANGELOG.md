@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Changed
+
+### Removed
+
+## [0.0.10] - 2025-02-19
+
+### Added
+
 - Test for file locking
 - Benchmark
 - Add new coffer types : bank, store, market and null
