@@ -10,4 +10,4 @@ Store your confidential data in a secure coffer.
 
 User doc : https://bibi21000.github.io/PyCoffer/usage/install.html
 
-Developers doc : https://bibi21000.github.io/PyCoffer/dev/coffer.html
+Developer doc : https://bibi21000.github.io/PyCoffer/dev/coffer.html
