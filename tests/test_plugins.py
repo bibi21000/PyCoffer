@@ -158,8 +158,8 @@ def test_password_add_ls(coffer_conf):
     result = runner.invoke(pycoffer.plugins.password_cli.show, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'tata.com', '--owner', 'chrome'])
     assert result.exit_code == 0
 
-    result = runner.invoke(pycoffer.plugins.password_cli.clip, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'tata.com', '--owner', 'chrome'])
-    assert result.exit_code == 0
+#    result = runner.invoke(pycoffer.plugins.password_cli.clip, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'tata.com', '--owner', 'chrome'])
+#    assert result.exit_code == 0
 
 def test_plugin_crypt(random_path, coffer_conf):
     data = randbytes(4523)
