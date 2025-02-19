@@ -27,7 +27,7 @@ jobs:
           name: Install Ubuntu dependencies
           command: |
             sudo apt-get update
-            sudo apt-get install xsel
+            sudo apt-get install xclip
       - run:
           name: Install dependencies from pyproject.toml
           command: |
@@ -57,7 +57,7 @@ jobs:
           name: Install Ubuntu dependencies
           command: |
             sudo apt-get update
-            sudo apt-get install xsel
+            sudo apt-get install xclip
       - run:
           name: Install dependencies from pyproject.toml
           command: |
