@@ -17,7 +17,7 @@ LTB are only a secure and durable way to safeguard your personal information.
 Let's test this experimental feature.
 
 Today
--------
+---------
 
 Using `nuitka <https://nuitka.net/>`_, it's possible to make a binary of
 PyCoffer.
@@ -91,3 +91,14 @@ In 2075
 
 Now, we are in 2075 and you need to recover your digital life ...
 From 2025
+
+First of all... why 2025???
+ok ok ok... you made backups but you lost them
+
+As we notice before, pycoffer_static.bin is linked to libc ...
+so you need a compatible release of libc to launch it.
+
+Let's try with current Linux distro and hope for a miracle :)
+
+But not need to wait a miracle, just need to find an install CD
+or more simple a docker image of a compatible libc.
