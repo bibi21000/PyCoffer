@@ -26,7 +26,7 @@ import naclfile
 from naclfile import NaclFile
 from naclfile.zstd import NaclFile as _ZstdNaclFile, open as naclz_open
 from naclfile.tar import TarFile as _TarZstdNaclFile
-from aesfile.aes import AesFile
+from aesfile import AesFile
 from aesfile.zstd import AesFile as _ZstdAesFile, open as aesz_open
 from aesfile.tar import TarFile as _TarZstdAesFile
 from fernetfile.tar import TarFile as _TarZstdFernetFile
