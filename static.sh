@@ -1,5 +1,5 @@
 #!/bin/bash
-[ -f pycoffer_static.bin ] && exit
+[ -f pycoffer_static.bin ] && echo 'pycoffer_static.bin already exists' && exit
 python3 -m venv venv_static
 ./venv_static/bin/pip install --upgrade pip
 ./venv_static/bin/pip install -e .

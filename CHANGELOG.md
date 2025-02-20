@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- AES cryptography
+
 ### Changed
 
 ### Removed
@@ -32,8 +34,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix reading files in a writable coffer
 - Update locking strategy
 - Fix tmp cleaning
-
-### Removed
 
 
 ## [0.0.9] - 2025-02-09

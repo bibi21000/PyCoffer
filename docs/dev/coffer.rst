@@ -9,6 +9,9 @@ Coffer informations
 
   For example, you can safely flush coffer from a timer thread.
 
+- Files are encrypted by chunk (64kb by default). You can encrypt large files
+  with only small memory amount.
+
 - Read/write in files in Coffer using read, write, readlines and writelines function:
 
 .. code::
@@ -16,7 +19,7 @@ Coffer informations
     with Coffer( ... ) as store:
         store.write('file.data', data)
 
-- Read/write in files with context manager:
+- Read/write in files in coffer with context manager:
 
 .. code::
 
@@ -58,7 +61,7 @@ Coffer informations
 
   But while you use them or after an application bug ... they are in /tmp
 
-  These can be a security issue if files are stored in clear in coffer.
+  This can be a security issue if files are stored in clear in coffer.
 
   Look at CofferBank which use Fernet to encrypt the coffer file and PyNacl
   to encrypt files inside.
@@ -81,4 +84,4 @@ Coffer informations
   data with the internal open function.
 
 - Look at https://github.com/bibi21000/PyCoffer/blob/main/BENCHMARK.md to
-  choose.
+  choose your coffer.
