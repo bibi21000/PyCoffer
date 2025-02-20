@@ -13,9 +13,9 @@ import aesfile.tar
 import aesfile.zstd
 
 # FernetFile
-import fernetfile
-import fernetfile.tar
-import fernetfile.zstd
+# import fernetfile
+# import fernetfile.tar
+# import fernetfile.zstd
 
 # NaclFile
 import naclfile

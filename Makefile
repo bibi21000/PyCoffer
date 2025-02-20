@@ -21,6 +21,7 @@ venv:
 	./venv/bin/pip install .[doc]
 	./venv/bin/pip install ../FernetFile -e .
 	./venv/bin/pip install ../NaclFile -e .
+	./venv/bin/pip install ../AesFile -e .
 	./venv/bin/pip install ../CofferFile -e .
 
 venv_nuitka:
@@ -30,12 +31,13 @@ venv_nuitka:
 	./venv_nuitka/bin/pip install -e .[cli]
 	./venv_nuitka/bin/pip install -e .[binaries]
 	./venv_nuitka/bin/pip install -e ../FernetFile
+	./venv_nuitka/bin/pip install -e ../AeslFile
 	./venv_nuitka/bin/pip install -e ../NaclFile
 	./venv_nuitka/bin/pip install -e ../CofferFile
 
 pycoffer_static.bin: venv_nuitka
 #~ 	./venv_nuitka/bin/nuitka --show-progress --remove-output --include-package=pycoffer --include-package=cofferfile --include-package=fernetfile --include-package=naclfile --onefile ./venv_nuitka/bin/pycoffer --output-dir=
-	./venv_nuitka/bin/nuitka --include-distribution-metadata=pycoffer --include-distribution-metadata=cofferfile --include-distribution-metadata=fernetfile --include-distribution-metadata=naclfile --remove-output --onefile ./venv_nuitka/bin/pycoffer_static --output-dir=
+	./venv_nuitka/bin/nuitka --include-distribution-metadata=pycoffer --include-distribution-metadata=cofferfile --include-distribution-metadata=aesfile --include-distribution-metadata=naclfile --remove-output --onefile ./venv_nuitka/bin/pycoffer_static --output-dir=
 
 build:
 	rm -rf dist
