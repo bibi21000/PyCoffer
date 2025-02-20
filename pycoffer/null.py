@@ -63,12 +63,6 @@ class CofferNull(Coffer):
         s = repr(self.filename)
         return '<CofferNull ' + s[1:-1] + ' ' + hex(id(self)) + '>'
 
-    @classmethod
-    def gen_params(cls):
-        """Generate params for a new store : keys, ... as a dict"""
-        return {
-        }
-
     def crypt_open(self, filename, mode='r', **kwargs):
         """Return a crypting open function to encrypt esternal files for examples.
         Use keys of the coffer."""
