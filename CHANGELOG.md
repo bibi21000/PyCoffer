@@ -9,14 +9,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+### Changed
+
+### Removed
+
+
+## [0.1.0] - 2025-02-20
+
+### Added
+
 - AES cryptography
 
 ### Changed
 
-- Compatibility broken !!! Switch from Fernet to Aes for better
+- !!! Compatibility broken !!! Switch from Fernet to Aes for better
   performance for bank coffer
-
-### Removed
 
 
 ## [0.0.10] - 2025-02-19
