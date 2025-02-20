@@ -152,17 +152,6 @@ Crypt a file using key from coffer. You need an existing coffer to encrypt exter
 
 .. code::
 
-    Owner Name Username Url Password
-    chrome example.com user1 https://www.example.com/ azerty
-
-Crypt a file using key from coffer. You need an existing coffer to encrypt external files :
-
-.. code::
-
-    pycoffer crypt --source README.md --target README.md.crypt
-
-.. code::
-
     ls README.md*
 
 .. code::
