@@ -74,7 +74,7 @@ class Coffer():
             secure_open=None, secure_params=None,
             container_class=None, container_params=None,
             lock_timeout=1, lock_type='rw', temp_dir=None, **kwargs):
-        """Constructor for the FernetFile class.
+        """Constructor for the Coffer class.
 
         At least one of fileobj and filename must be given a
         non-trivial value.
@@ -96,12 +96,14 @@ class Coffer():
         A mode of 'r' is equivalent to one of 'rb', and similarly for 'w' and
         'wb', 'a' and 'ab', and 'x' and 'xb'.
 
-        The fernet_key argument is the Fernet key used to crypt/decrypt data.
+        The container_class and container_params allows to choose the container
+        and the params.
+
         Encryption is done by chunks to reduce memory footprint. The default
         chunk_size is 64KB.
 
         Files are stored in clear mode when opening archive (in a directory in /tmp).
-        You can give a "secured open" command to avoid that (in dev)
+        You can give a "secure_open" command (and secure_params) to avoid that.
 
         Everytime data are written in archive, it is flushed to file : this means
         that thar archive is compressed and crypted. You can change this with auto_flush.
@@ -135,7 +137,6 @@ class Coffer():
             self.mode = EXCLUSIVE
         else:
             raise ValueError("Invalid mode: {!r}".format(mode))
-        # ~ self.fernet_key = fernet_key
         self.container_class = container_class
         self.container_params = container_params
         self.kwargs = kwargs
@@ -280,7 +281,7 @@ class Coffer():
         self.dirpath = None
         self._dirctime = None
         self._dirmtime = None
-        self._flock_acquire()
+        self._flock_release()
         if os.path.isfile(self._lockfile.lock_file) is True:
             os.remove(self._lockfile.lock_file)
 
@@ -586,7 +587,7 @@ def open(filename, mode="rb", secret_key=None,
         secure_open=None, secure_params=None,
         container_class=None, container_params=None,
         **kwargs):
-    """Open a ZstdFernet file in binary or text mode.
+    """Open a Coffer file in binary or text mode.
 
     The filename argument can be an actual filename (a str or bytes object), or
     an existing file object to read from or write to.

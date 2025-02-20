@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-""" pyfernet main script.
+""" pycoffer static main script.
 
 """
 __author__ = 'bibi21000 aka Sébastien GALLET'

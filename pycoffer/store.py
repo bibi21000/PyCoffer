@@ -51,7 +51,7 @@ class CofferStore(Coffer):
         A mode of 'r' is equivalent to one of 'rb', and similarly for 'w' and
         'wb', 'a' and 'ab', and 'x' and 'xb'.
 
-        The fernet_key argument is the Fernet key used to crypt/decrypt data.
+        The aes_key argument is the AES key used to crypt/decrypt data.
         Encryption is done by chunks to reduce memory footprint. The default
         chunk_size is 64KB.
 
@@ -113,7 +113,7 @@ def open(filename, mode="rb",
     binary mode.
 
     For binary mode, this function is equivalent to the CofferStore constructor:
-    CofferStore(filename, mode, fernet_key). In this case, the encoding, errors
+    CofferStore(filename, mode, aes_key). In this case, the encoding, errors
     and newline arguments must not be provided.
 
 

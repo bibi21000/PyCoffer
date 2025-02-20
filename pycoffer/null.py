@@ -42,12 +42,8 @@ class CofferNull(Coffer):
         A mode of 'r' is equivalent to one of 'rb', and similarly for 'w' and
         'wb', 'a' and 'ab', and 'x' and 'xb'.
 
-        The fernet_key argument is the Fernet key used to crypt/decrypt data.
         Encryption is done by chunks to reduce memory footprint. The default
         chunk_size is 64KB.
-
-        Files are stored in clear mode when opening archive (in a directory in /tmp).
-        You can give a "secured open" command to avoid that (in dev)
 
         Everytime data are written in archive, it is flushed to file : this means
         that thar archive is compressed and crypted. You can change this with auto_flush.
@@ -89,8 +85,8 @@ def open(filename, mode="rb",
     The mode argument can be "r", "rb", "w", "wb", "x", "xb", "a" or "ab" for
     binary mode.
 
-    For binary mode, this function is equivalent to the FernetFile constructor:
-    FernetFile(filename, mode, fernet_key). In this case, the encoding, errors
+    For binary mode, this function is equivalent to the CofferNull constructor:
+    CofferNull(filename, mode). In this case, the encoding, errors
     and newline arguments must not be provided.
 
 
