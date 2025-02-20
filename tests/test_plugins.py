@@ -14,7 +14,7 @@ import shutil
 import base64
 import logging
 
-from cryptography.fernet import Fernet
+from Crypto.Random import get_random_bytes
 from nacl import utils
 from nacl.secret import SecretBox
 
@@ -97,7 +97,7 @@ def test_plugin_password_coffer(random_path, random_name):
     assert coffer is not None
     assert coffer['class'] == CofferBank
     print(base64.b64encode(utils.random(SecretBox.KEY_SIZE)))
-    print(base64.b64encode(Fernet.generate_key()))
+    print(base64.b64encode(get_random_bytes(16)))
     # ~ assert False
 
     data = randbytes(2487)

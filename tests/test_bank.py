@@ -12,24 +12,24 @@ import pyzstd
 import struct
 import logging
 
-from cryptography.fernet import Fernet
+from Crypto.Random import get_random_bytes
 from nacl import utils
 from nacl.secret import SecretBox
 from filelock import Timeout as filelockTimeout
+from Crypto.Cipher import AES
 
 import cofferfile
 from cofferfile import META_CHUNK, META_SIZE
 from pycoffer import CofferInfo
 from pycoffer.bank import CofferBank, open as store_bank
 from naclfile.zstd import open as zstd_open
-from fernetfile.tar import TarFile as TarZstdFernetFile
+from aesfile.tar import TarFile as TarZstdAesFile
 
 import pytest
 
 @pytest.mark.parametrize("buff_size, file_size", [ (1024 * 64, 1024 * 512 + 13) ])
 def test_zstd_extract(random_path, random_name, buff_size, file_size):
-    key = Fernet.generate_key()
-    fkey = Fernet(key)
+    key = get_random_bytes(16)
     dataf = os.path.join(random_path, 'test%s.frtz'%random_name)
 
     dataf2 = os.path.join(random_path, 'file2%s.out'%random_name)
@@ -38,10 +38,10 @@ def test_zstd_extract(random_path, random_name, buff_size, file_size):
     with open(dataf2, "rb") as ff:
         data = ff.read()
 
-    with TarZstdFernetFile(dataf, mode='wb', fernet_key=key,
+    with TarZstdAesFile(dataf, mode='wb', aes_key=key,
             chunk_size=buff_size) as ff:
         ff.add(dataf2, 'file1%s.dat'%random_name)
-        assert repr(ff).startswith('<TarZstdFernet')
+        assert repr(ff).startswith('<TarZstdAes')
 
     with open(dataf, "rb") as ff:
         datar = ff.read()
@@ -61,7 +61,12 @@ def test_zstd_extract(random_path, random_name, buff_size, file_size):
         size_data = struct.unpack('<I', size_struct)[0]
         chunk = datar[beg + META_SIZE:beg + size_data + META_SIZE]
         beg += size_data + META_SIZE
-        datau += fkey.decrypt(chunk)
+
+        tag = chunk[0:16]
+        nonce = chunk[16:31]
+        ciphertext = chunk[31:]
+        cipher = AES.new(key, AES.MODE_OCB, nonce=nonce)
+        datau += cipher.decrypt_and_verify(ciphertext, tag)
 
     # Now we have compressed data
     dataf2 = os.path.join(random_path, 'test%s.zstd'%random_name)
@@ -82,7 +87,7 @@ def test_zstd_extract(random_path, random_name, buff_size, file_size):
         data1 = ff.read()
     assert data == data1
 
-    with TarZstdFernetFile(dataf, "rb", fernet_key=key) as ff:
+    with TarZstdAesFile(dataf, "rb", aes_key=key) as ff:
         ff.extract('file1%s.dat'%random_name, path=random_path, filter='data')
 
     with open(os.path.join(random_path, 'file1%s.dat'%random_name), "rb") as ff:
@@ -95,7 +100,7 @@ def test_store_info(random_path, random_name):
     assert sinfo.mtime is None
 
 def test_store_bank(random_path, random_name):
-    key = Fernet.generate_key()
+    key = get_random_bytes(16)
     secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
@@ -124,7 +129,7 @@ def test_store_bank(random_path, random_name):
             assert ff.readable
 
 def test_bank_basic(random_path, random_name):
-    key = Fernet.generate_key()
+    key = get_random_bytes(16)
     secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
@@ -201,7 +206,7 @@ def test_bank_basic(random_path, random_name):
             assert ff.closed is False
 
 def test_bank_no_flush(random_path, random_name):
-    key = Fernet.generate_key()
+    key = get_random_bytes(16)
     secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
@@ -306,7 +311,7 @@ def test_bank_no_flush(random_path, random_name):
             assert ff.closed is False
 
 def test_bank_exception(random_path, random_name):
-    key = Fernet.generate_key()
+    key = get_random_bytes(16)
     secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
@@ -361,7 +366,7 @@ def test_bank_exception(random_path, random_name):
             assert data == ff.read('file1%s.data'%random_name)
 
 def test_bank_strings(random_path, random_name):
-    key = Fernet.generate_key()
+    key = get_random_bytes(16)
     secure_key = utils.random(SecretBox.KEY_SIZE)
     length = 684
     data = [
@@ -381,7 +386,7 @@ def test_bank_strings(random_path, random_name):
 def test_bank_secure_basic(caplog, random_path, random_name):
     caplog.set_level(logging.DEBUG, logger="pycoffer")
 
-    key = Fernet.generate_key()
+    key = get_random_bytes(16)
     secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
@@ -463,7 +468,7 @@ def test_bank_secure_basic(caplog, random_path, random_name):
         ff.extractall(extdir)
 
 def test_bank_secure_tmp(random_path, random_name):
-    key = Fernet.generate_key()
+    key = get_random_bytes(16)
     secure_key = utils.random(SecretBox.KEY_SIZE)
     data = randbytes(2487)
     data2 = randbytes(1536)
@@ -501,7 +506,7 @@ def test_bank_secure_tmp(random_path, random_name):
     assert CofferBank.gen_params() is not None
 
 def test_bank_crypt_open(random_path, random_name):
-    key = Fernet.generate_key()
+    key = get_random_bytes(16)
     secure_key = utils.random(SecretBox.KEY_SIZE)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 

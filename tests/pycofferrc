@@ -6,7 +6,7 @@ default_hidden = yes
 
 [confidential]
 type = bank
-coffer_key = RTY2MEFQc2pVVkVNUlJmWjRUbklMVGpscWRuVjNsdWpfYVBHbU83YVBmOD0=
+coffer_key = wgNtDOJjDoGyXQeV8msoKA==
 secure_key = P1JwKYoon26kUsDZbp/LP8JRRfoS8Btwx7oVQraQ8Ak=
 
 [game]

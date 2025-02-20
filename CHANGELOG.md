@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Compatibility broken !!! Switch from Fernet to Aes for better
+  performance for bank coffer
+
 ### Removed
 
 

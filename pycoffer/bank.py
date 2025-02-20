@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 """CofferBank : maximum security
 
-- Double encryption with Fernet and Nacl
+- Double encryption with Aes and Nacl
 - Compression with pyzstd
 
 Usage :
@@ -16,7 +16,7 @@ import os
 
 from pycoffer import Coffer
 from naclfile.zstd import open as zstd_open
-from fernetfile.tar import TarFile as TarZstdCofferBank
+from aesfile.tar import TarFile as TarZstdCofferBank
 
 class CofferBank(Coffer):
     """ """
@@ -47,7 +47,7 @@ class CofferBank(Coffer):
         A mode of 'r' is equivalent to one of 'rb', and similarly for 'w' and
         'wb', 'a' and 'ab', and 'x' and 'xb'.
 
-        The coffer_key argument is the Fernet key used to crypt/decrypt data.
+        The coffer_key argument is the AES key used to crypt/decrypt data.
         Encryption is done by chunks to reduce memory footprint. The default
         chunk_size is 64KB.
 
@@ -65,7 +65,7 @@ class CofferBank(Coffer):
         super().__init__(filename=filename, mode=mode, fileobj=fileobj,
             auto_flush=auto_flush, backup=backup,
             secure_open=zstd_open, secure_params={'secret_key': secure_key},
-            container_class=TarZstdCofferBank, container_params={'fernet_key': coffer_key},
+            container_class=TarZstdCofferBank, container_params={'aes_key': coffer_key},
             **kwargs)
 
     def __repr__(self):
@@ -78,9 +78,9 @@ class CofferBank(Coffer):
         """Generate params for a new store : keys, ... as a dict"""
         from nacl import utils
         from nacl.secret import SecretBox
-        from cryptography.fernet import Fernet
+        from Crypto.Random import get_random_bytes
         return {
-            "coffer_key": Fernet.generate_key(),
+            "coffer_key": get_random_bytes(16),
             "secure_key": utils.random(SecretBox.KEY_SIZE),
         }
 
