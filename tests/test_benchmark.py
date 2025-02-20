@@ -14,6 +14,7 @@ import logging
 from cryptography.fernet import Fernet
 from nacl import utils
 from nacl.secret import SecretBox
+from Crypto.Random import get_random_bytes
 
 import pyzstd
 
@@ -25,7 +26,9 @@ import naclfile
 from naclfile import NaclFile
 from naclfile.zstd import NaclFile as _ZstdNaclFile, open as naclz_open
 from naclfile.tar import TarFile as _TarZstdNaclFile
-from cofferfile.aes import AesFile
+from aesfile.aes import AesFile
+from aesfile.zstd import AesFile as _ZstdAesFile, open as aesz_open
+from aesfile.tar import TarFile as _TarZstdAesFile
 from fernetfile.tar import TarFile as _TarZstdFernetFile
 from pycoffer import Coffer
 from pycoffer.store import CofferStore
@@ -34,16 +37,18 @@ from pycoffer.market import CofferMarket
 
 class ZstdFernetFile(_ZstdFernetFile):
     pass
-
-class ZstdNaclFile(_ZstdNaclFile):
-    pass
-
-class TarZstdNaclFile(_TarZstdNaclFile):
-    pass
-
 class TarZstdFernetFile(_TarZstdFernetFile):
     pass
 
+class ZstdNaclFile(_ZstdNaclFile):
+    pass
+class TarZstdNaclFile(_TarZstdNaclFile):
+    pass
+
+class ZstdAesFile(_ZstdAesFile):
+    pass
+class TarZstdAesFile(_TarZstdAesFile):
+    pass
 
 try:
     import pytest_ordering
