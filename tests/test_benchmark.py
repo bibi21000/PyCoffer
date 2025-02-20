@@ -18,10 +18,10 @@ from Crypto.Random import get_random_bytes
 
 import pyzstd
 
-import fernetfile
+# ~ import fernetfile
 
 import pytest
-from fernetfile.zstd import FernetFile as _ZstdFernetFile, CParameter, open as zstd_open
+# ~ from fernetfile.zstd import FernetFile as _ZstdFernetFile, CParameter, open as zstd_open
 import naclfile
 from naclfile import NaclFile
 from naclfile.zstd import NaclFile as _ZstdNaclFile, open as naclz_open
@@ -29,16 +29,16 @@ from naclfile.tar import TarFile as _TarZstdNaclFile
 from aesfile import AesFile
 from aesfile.zstd import AesFile as _ZstdAesFile, open as aesz_open
 from aesfile.tar import TarFile as _TarZstdAesFile
-from fernetfile.tar import TarFile as _TarZstdFernetFile
+# ~ from fernetfile.tar import TarFile as _TarZstdFernetFile
 from pycoffer import Coffer
 from pycoffer.store import CofferStore
 from pycoffer.bank import CofferBank
 from pycoffer.market import CofferMarket
 
-class ZstdFernetFile(_ZstdFernetFile):
-    pass
-class TarZstdFernetFile(_TarZstdFernetFile):
-    pass
+# ~ class ZstdFernetFile(_ZstdFernetFile):
+    # ~ pass
+# ~ class TarZstdFernetFile(_TarZstdFernetFile):
+    # ~ pass
 
 class ZstdNaclFile(_ZstdNaclFile):
     pass

@@ -23,7 +23,7 @@ from pycoffer import main
 from pycoffer import main_cli
 from pycoffer import CofferInfo, Coffer, open as store_open
 from pycoffer.bank import CofferBank
-from pycoffer.plugins import Plugin
+from pycoffer.plugins import Plugin, PluginInfo
 import pycoffer.plugins.password_cli
 import pycoffer.plugins.crypt_cli
 import pycoffer.plugins.rsync_cli
@@ -37,6 +37,7 @@ from click.testing import CliRunner
 def test_plugin(random_path, random_name):
     print(Plugin.collect())
     print(Plugin.collect_cli())
+    assert repr(PluginInfo()).startswith('<PluginInfo')
     # ~ assert False
 
 def test_plugin_password(caplog, random_path, random_name):

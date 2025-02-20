@@ -15,9 +15,10 @@ import base64
 
 from click.testing import CliRunner
 
-from cryptography.fernet import Fernet
+# ~ from cryptography.fernet import Fernet
 from nacl import utils
 from nacl.secret import SecretBox
+from Crypto.Random import get_random_bytes
 
 from pycoffer import config
 from pycoffer import main

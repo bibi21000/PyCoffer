@@ -37,7 +37,7 @@ class PluginInfo():
             s = self.name
         else:
             s = 'Unknown'
-        return '<PluginInfo ' + s + ' ' + hex(id(self)) + '>'
+        return '<PluginInfo ' + repr(s) + ' ' + hex(id(self)) + '>'
 
 class Plugin():
     """The base class for plugins"""
