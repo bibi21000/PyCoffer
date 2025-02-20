@@ -7,8 +7,10 @@ __email__ = 'bibi21000@gmail.com'
 
 import click
 
-# CofferFile
-import cofferfile.aes
+# AesFile
+import aesfile
+import aesfile.tar
+import aesfile.zstd
 
 # FernetFile
 import fernetfile
