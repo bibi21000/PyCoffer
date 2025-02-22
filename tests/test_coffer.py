@@ -618,3 +618,63 @@ def test_coffer_lock(caplog, random_path, random_name):
         with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
                 container_class=TarZstdAesFile, container_params={'aes_key':key}) as fff:
             assert data == ff.pickle_load('data.pickle')
+
+def test_store_mtime(random_path, random_name):
+    key = get_random_bytes(16)
+    data1 = randbytes(2487)
+    data2 = randbytes(1536)
+    data3 = randbytes(7415)
+    dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
+    dataf1 = 'file1%s.data'%random_name
+    dataf2 = 'file2%s.data'%random_name
+    dataf3 = 'file3%s.data'%random_name
+
+    with store_open(dataf, mode='wb', container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
+        ff.write(data1, dataf1)
+        ff.write(data2, dataf2)
+        members = ff.getmembers()
+        for memb in members:
+            if memb.name.startswith('file1'):
+                mtime1 = memb.mtime
+                atime1 = memb.atime
+            elif memb.name.startswith('file2'):
+                mtime2 = memb.mtime
+                atime2 = memb.atime
+        # ~ print(members)
+
+    with store_open(dataf, "rb", container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
+        assert data1 == ff.read(dataf1)
+        assert data2 == ff.read(dataf2)
+        members = ff.getmembers()
+        for memb in members:
+            if memb.name.startswith('file1'):
+                assert mtime1 == memb.mtime
+                # ~ assert atime1 == memb.atime
+            elif memb.name.startswith('file2'):
+                assert mtime2 == memb.mtime
+                # ~ assert atime2 == memb.atime
+
+    with open(os.path.join(random_path, dataf3), 'wb') as f:
+        f.write(data3)
+    os.utime(os.path.join(random_path, dataf3), (time.time() - 60, time.time() - 120))
+    atime3 = os.path.getatime(os.path.join(random_path, dataf3))
+    mtime3 = os.path.getmtime(os.path.join(random_path, dataf3))
+
+    with store_open(dataf, mode='wb', container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
+        ff.add(os.path.join(random_path, dataf3), dataf3)
+
+    with store_open(dataf, "rb", container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
+        assert data1 == ff.read(dataf1)
+        assert data2 == ff.read(dataf2)
+        assert data3 == ff.read(dataf3)
+        members = ff.getmembers()
+        for memb in members:
+            if memb.name.startswith('file1'):
+                assert mtime1 == memb.mtime
+                # ~ assert atime1 == memb.atime
+            elif memb.name.startswith('file2'):
+                assert mtime2 == memb.mtime
+                # ~ assert atime2 == memb.atime
+            elif memb.name.startswith('file3'):
+                assert mtime3 == memb.mtime
+                # ~ assert atime3 == memb.atime

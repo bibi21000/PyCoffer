@@ -52,6 +52,13 @@ class CofferInfo():
         return None
 
     @property
+    def atime(self):
+        """The atime of the file in tmp"""
+        if os.path.isfile(self.path):
+            return os.path.getatime(self.path)
+        return None
+
+    @property
     def filesize(self):
         """The size of the file in tmp"""
         if os.path.isfile(self.path):
@@ -373,6 +380,10 @@ class Coffer():
                 with _open(fname, 'rb') as ff, self.secure_open(finfo.path, mode='wb', **self.secure_params) as sf:
                     sf.write(ff.read())
 
+                mtime = os.path.getmtime(fname)
+                atime = os.path.getatime(fname)
+                os.utime(finfo.path, (atime, mtime))
+
             self._dirmtime = time.time_ns()
 
             if self.auto_flush is True:
@@ -392,6 +403,10 @@ class Coffer():
                 with self.secure_open(member.path, mode='rb', **self.secure_params) as fin, \
                         _open(os.path.join(path, member.name), mode='wb') as fout:
                     fout.write(fin.read())
+
+                mtime = os.path.getmtime(member.path)
+                atime = os.path.getatime(member.path)
+                os.utime(os.path.join(path, member.name), (atime, mtime))
 
     def extract(self, arcname, path='.'):
         """Extract arcname to path"""
