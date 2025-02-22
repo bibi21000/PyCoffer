@@ -38,6 +38,13 @@ def test_plugin(random_path, random_name):
     print(Plugin.collect())
     print(Plugin.collect_cli())
     assert repr(PluginInfo()).startswith('<PluginInfo')
+
+    key = utils.random(SecretBox.KEY_SIZE)
+    dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
+    with pytest.raises(IndexError):
+        with Coffer(dataf, mode='ab', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+            with ff.plugin('toto') as plg:
+                pass
     # ~ assert False
 
 def test_plugin_password(caplog, random_path, random_name):
