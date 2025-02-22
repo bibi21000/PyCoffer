@@ -35,6 +35,8 @@ def test_config(random_path, random_name):
         f.write(b'')
     confcoff = config.Config(fname, chkmode=False)
 
+    assert confcoff.get_defaults() == {'ext': '.pcof'}
+
     with pytest.raises(PermissionError):
         assert confcoff.check_perms() is False
 
@@ -45,6 +47,7 @@ def test_config(random_path, random_name):
 
     fname = 'tests/pycofferrc'
     confcoff = config.Config(fname, chkmode=False)
+    assert confcoff.get_defaults() != {}
     coffer = confcoff.coffer('confidential')
     assert coffer is not None
     assert coffer['class'] == CofferBank
@@ -77,7 +80,8 @@ def test_config_generate(random_path, random_name):
         'test%s'%random_name,
         type='market')
 
-    assert Config.get_defaults() == {}
+    assert Config.Defaults() == {'ext': '.pcof'}
+
     assert Config.generate('test', type='bank', location='rrrrd') is not None
 
     assert Config.generate('test', type='bank', backup='.back') is not None

@@ -33,29 +33,30 @@ class Config():
         else:
             return True
 
-    @classmethod
     def get_defaults(self, filename=None):
         """Return defaults from configuration file"""
-        if filename is not None:
-            parser = configparser.ConfigParser()
-            parser.read(filename)
-        else:
-            # we called from the class of from instance
-            if hasattr(self, 'parser'):
-                # From instance, we can use parser
-                parser = self.parser
-            else:
-                # From class ... but no filename
-                return {}
+        return self._get_defaults(self.parser)
 
-
+    @classmethod
+    def _get_defaults(self, parser=None):
+        """Return defaults from configuration file"""
         ret = {}
-        for (each_key, each_val) in parser.items('DEFAULT'):
-            if each_key.startswith('default_'):
-                ret[each_key.replace('default_','')] = each_val
+        if parser is not None:
+            for (each_key, each_val) in parser.items('DEFAULT'):
+                if each_key.startswith('default_'):
+                    ret[each_key.replace('default_','')] = each_val
         if 'ext' not in ret:
             ret['ext'] = '.pcof'
         return ret
+
+    @classmethod
+    def Defaults(cls, filename=None):
+        """Return defaults from configuration file"""
+
+        parser = configparser.ConfigParser()
+        if filename is not None:
+            parser.read(filename)
+        return cls._get_defaults(parser)
 
     def coffer(self, section=None):
         """Return a coffer matching section"""

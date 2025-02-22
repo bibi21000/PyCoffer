@@ -30,7 +30,7 @@ opt_configuration = click.option('-c', "--conf",
     default=defconffile
 )
 
-defaults = Config.get_defaults(defconffile)
+defaults = Config.Defaults(defconffile)
 
 opt_coffer = click.option('-f', "--coffer",
     help='The coffer name.',
