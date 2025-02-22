@@ -108,7 +108,9 @@ class Config():
     @classmethod
     def generate(self, coffer_name=None, type=None, location=None, backup=None, filename=None):
         """Return a coffer configuration as a list of lines"""
-        # we called from the class or from instance
+        if coffer_name is None:
+            raise ValueError("Youd need to provide a coffer_name")
+        # are we called from the class or from instance
         if hasattr(self, 'parser'):
             # From instance, we can use parser
             defaults = self._get_defaults(self.parser)
@@ -120,8 +122,6 @@ class Config():
             defaults = self._get_defaults(parser)
         ret = []
 
-        if coffer_name is None:
-            raise ValueError("Youd need to provide a coffer_name")
         if type is None:
             if 'type' in defaults:
                 type = defaults['type']

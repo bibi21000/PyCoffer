@@ -11,10 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+### Removed
+
+
+## [0.1.2] - 2025-02-22
+
+### Changed
+
 - Fix mtime saving
 - Fix instance/class metchods in Config
-
-### Removed
 
 
 ## [0.1.1] - 2025-02-20
