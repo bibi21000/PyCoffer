@@ -49,7 +49,7 @@ def test_config(random_path, random_name):
     assert coffer is not None
     assert coffer['class'] == CofferBank
     print(base64.b64encode(utils.random(SecretBox.KEY_SIZE)))
-    print(base64.b64encode(Fernet.generate_key()))
+    # ~ print(base64.b64encode(Fernet.generate_key()))
     # ~ assert False
 
     data = randbytes(2487)
@@ -63,7 +63,7 @@ def test_config(random_path, random_name):
         ff.write(data2, 'file2%s.data'%random_name)
         mtime = ff.mtime
         assert ff.writable
-        assert not ff.readable
+        assert ff.readable
 
     with coffer['class'](coffer['location'], "rb", coffer_key=coffer['coffer_key'], secure_key=coffer['secure_key'], backup=coffer['backup']) as ff:
         assert data == ff.read('file1%s.data'%random_name)
@@ -71,19 +71,23 @@ def test_config(random_path, random_name):
         assert not ff.writable
         assert ff.readable
 
-def test_config(random_path, random_name):
+def test_config_generate(random_path, random_name):
 
     config = Config.generate(
-        store='test%s'%random_name,
+        'test%s'%random_name,
         type='market')
 
-    assert Config.generate(store='test', type='bank', location='rrrrd') is not None
+    assert Config.get_defaults() == {}
+    assert Config.generate('test', type='bank', location='rrrrd') is not None
 
-    assert Config.generate(store='test', type='bank', backup='.back') is not None
+    assert Config.generate('test', type='bank', backup='.back') is not None
 
-    assert Config.generate(store='test', type='market') is not None
+    assert Config.generate('test', type='market') is not None
     conf = Config('tests/pycofferrc')
     assert conf.coffer('confidential') is not None
+
+    with pytest.raises(KeyError):
+        assert conf.coffer(None) is not None
 
 def test_main_ls_empty(coffer_conf):
     runner = CliRunner()
@@ -195,7 +199,7 @@ def test_main_add_delete_ls_extract(random_path, coffer_conf):
     assert 'file1.data' in result.output
     assert 'test2/file1.data' not in result.output
 
-def test_config(random_path, random_name):
+def test_config_baad(random_path, random_name):
     with pytest.raises(ValueError):
         assert Config.generate() is not None
 

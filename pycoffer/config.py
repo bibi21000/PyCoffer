@@ -40,7 +40,15 @@ class Config():
             parser = configparser.ConfigParser()
             parser.read(filename)
         else:
-            parser = self.parser
+            # we called from the class of from instance
+            if hasattr(self, 'parser'):
+                # From instance, we can use parser
+                parser = self.parser
+            else:
+                # From class ... but no filename
+                return {}
+
+
         ret = {}
         for (each_key, each_val) in parser.items('DEFAULT'):
             if each_key.startswith('default_'):
