@@ -27,6 +27,8 @@ def test_store_info(random_path, random_name):
     sinfo = CofferInfo('titi', store_path=random_path)
     assert repr(sinfo).startswith('<Coffer')
     assert sinfo.mtime is None
+    assert sinfo.atime is None
+    assert sinfo.filesize is None
 
 def test_store_open(random_path, random_name):
     key = get_random_bytes(16)
@@ -374,7 +376,11 @@ def test_store_exception(random_path, random_name):
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
-        with Coffer(dataf, "zz", container_params={'aes_key':key}) as ff:
+        with Coffer(dataf, "rt", container_params={'aes_key':key}) as ff:
+            assert data == ff.read('file1%s.data'%random_name)
+
+    with pytest.raises(ValueError):
+        with Coffer(dataf, "zz", container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
             assert data == ff.read('file1%s.data'%random_name)
 
     with pytest.raises(ValueError):
