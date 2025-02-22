@@ -516,14 +516,14 @@ class Coffer():
         else:
             finfo = CofferInfo(arcname, store_path=self.dirpath)
         with self._lock:
-            self._pickle_dump(data, arcname=finfo)
+            self._pickle_dump(data, arcinfo=finfo)
 
-    def _pickle_dump(self, data, arcname=None):
+    def _pickle_dump(self, data, arcinfo=None):
         """Dump pickle to coffer without lock"""
-        if finfo.subdir is not None:
-            os.makedirs(os.path.join(self.dirpath, finfo.subdir), exist_ok=True)
+        if arcinfo.subdir is not None:
+            os.makedirs(os.path.join(self.dirpath, arcinfo.subdir), exist_ok=True)
 
-        with self.secure_open(finfo.path, mode='wb', **self.secure_params) as f:
+        with self.secure_open(arcinfo.path, mode='wb', **self.secure_params) as f:
             self._imp_pickle.dump(data, f)
 
         self._dirmtime = time.time_ns()
@@ -535,13 +535,13 @@ class Coffer():
         else:
             finfo = CofferInfo(arcname, store_path=self.dirpath)
         with self._lock:
-            return self._pickle_load(arcname=finfo)
+            return self._pickle_load(arcinfo=finfo)
 
-    def _pickle_load(self, arcname=None):
+    def _pickle_load(self, arcinfo=None):
         """Load pickle from coffer"""
-        if os.path.isfile(finfo.path) is False:
+        if os.path.isfile(arcinfo.path) is False:
             return None
-        with self.secure_open(finfo.path, mode='rb', **self.secure_params) as f:
+        with self.secure_open(arcinfo.path, mode='rb', **self.secure_params) as f:
             return self._imp_pickle.load(f)
 
     @contextmanager
