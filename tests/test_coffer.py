@@ -336,6 +336,16 @@ def test_store_no_flush(random_path, random_name):
         assert data3 == ff.read('file3%s.data'%random_name)
         assert data4 == ff.read('4/file%s.data'%random_name)
     assert fff.closed is True
+    with pytest.raises(io.UnsupportedOperation):
+        assert fff.readable
+    with pytest.raises(io.UnsupportedOperation):
+        assert fff.modified
+    with pytest.raises(io.UnsupportedOperation):
+        assert fff.writable
+    with pytest.raises(io.UnsupportedOperation):
+        fff._check_can_write()
+    with pytest.raises(io.UnsupportedOperation):
+        fff._check_can_read()
 
     with pytest.raises(OSError):
         with Coffer(dataf, "xb", container_class=TarZstdAesFile, container_params={'aes_key':key}, auto_flush=False) as ff:
