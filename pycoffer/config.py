@@ -8,12 +8,13 @@ __email__ = 'bibi21000@gmail.com'
 import os
 import sys
 import configparser
-import base64
 
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points  # noqa
 else:
     from importlib.metadata import entry_points  # noqa
+
+from cofferfile.decorator import reify
 
 class Config():
 
@@ -21,6 +22,13 @@ class Config():
         self.filename = filename
         self.parser = configparser.ConfigParser()
         self.parser.read(filename)
+
+    @classmethod
+    @reify
+    def _imp_base64(cls):
+        """Lazy loader for base64"""
+        import importlib
+        return importlib.import_module('base64')
 
     def check_perms(self, exc=True):
         """Check user right on config file. Must be 600 !!!"""
@@ -52,7 +60,6 @@ class Config():
     @classmethod
     def Defaults(cls, filename=None):
         """Return defaults from configuration file"""
-
         parser = configparser.ConfigParser()
         if filename is not None:
             parser.read(filename)
@@ -70,13 +77,13 @@ class Config():
         else:
             ret['backup'] = None
         if 'coffer_key' in self.parser[section]:
-            ret['coffer_key'] = base64.b64decode(self.parser[section]['coffer_key'])
+            ret['coffer_key'] = self._imp_base64.b64decode(self.parser[section]['coffer_key'])
             # ~ ret['coffer_key'] = self.parser[section]['coffer_key']
         # ~ else:
             # ~ ret['coffer_key'] = None
         if 'secure_key' in self.parser[section]:
             # ~ ret['secure_key'] = self.parser[section]['secure_key']
-            ret['secure_key'] = base64.b64decode(self.parser[section]['secure_key'])
+            ret['secure_key'] = self._imp_base64.b64decode(self.parser[section]['secure_key'])
         # ~ else:
             # ~ ret['secure_key'] = None
         if 'location' in self.parser[section]:
@@ -101,16 +108,16 @@ class Config():
     @classmethod
     def generate(self, coffer_name=None, type=None, location=None, backup=None, filename=None):
         """Return a coffer configuration as a list of lines"""
-        # we called from the class of from instance
+        # we called from the class or from instance
         if hasattr(self, 'parser'):
             # From instance, we can use parser
-            defaults = self.get_defaults(filename)
+            defaults = self._get_defaults(self.parser)
         else:
             # From class ... if we have filename, we could load defaults
+            parser = configparser.ConfigParser()
             if filename is not None:
-                defaults = self.get_defaults(filename)
-            else:
-                defaults = {}
+                parser.read(filename)
+            defaults = self._get_defaults(parser)
         ret = []
 
         if coffer_name is None:
@@ -130,7 +137,7 @@ class Config():
             ret.append('backup = %s' % backup)
         keys = cls.gen_params()
         for k in keys:
-            ret.append('%s = %s' % (k, base64.b64encode(keys[k]).decode()))
+            ret.append('%s = %s' % (k, self._imp_base64.b64encode(keys[k]).decode()))
             # ~ ret.append('%s = %s' % (k, keys[k].decode()))
         if location is not None:
             ret.append('location = %s' % location)
