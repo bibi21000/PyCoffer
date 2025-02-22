@@ -569,6 +569,9 @@ def test_coffer_pickle(caplog, random_path, random_name):
     with Coffer(dataf, "rb", container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
         assert data == ff.pickle_load('data.pickle')
 
+    with Coffer(dataf, "rb", container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
+        assert None == ff.pickle_load('nodata.pickle')
+
 def test_coffer_lock(caplog, random_path, random_name):
     caplog.set_level(logging.DEBUG, logger="pycoffer")
     key = get_random_bytes(16)
