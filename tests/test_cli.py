@@ -87,11 +87,19 @@ def test_config_generate(random_path, random_name):
     assert Config.generate('test', type='bank', backup='.back') is not None
 
     assert Config.generate('test', type='market') is not None
+
+    assert Config.generate('test', type='market', filename='tests/pycofferrc') is not None
+
     conf = Config('tests/pycofferrc')
+    assert conf.generate('test', type='market') is not None
+
     assert conf.coffer('confidential') is not None
 
     with pytest.raises(KeyError):
         assert conf.coffer(None) is not None
+
+    with pytest.raises(IndexError):
+        assert conf.generate('test', type='baaad') is not None
 
 def test_main_ls_empty(coffer_conf):
     runner = CliRunner()
