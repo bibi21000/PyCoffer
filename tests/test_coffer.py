@@ -677,7 +677,7 @@ def test_store_mtime(random_path, random_name):
     mtime3 = os.path.getmtime(os.path.join(random_path, dataf3))
 
     with store_open(dataf, mode='wb', container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
-        ff.add(os.path.join(random_path, dataf3), dataf3)
+        ff.add(os.path.join(random_path, dataf3))
 
     with store_open(dataf, "rb", container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
         assert data1 == ff.read(dataf1)

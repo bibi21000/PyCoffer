@@ -60,24 +60,6 @@ def test_plugin_password(caplog, random_path, random_name):
         with ff.plugin('password') as plg:
             assert plg.get((None,'test')).username == 'username'
 
-    # ~ pwdcls = Plugin.collect(name='password')[0]
-    # ~ assert pwdcls is not None
-    # ~ pwdplg = pwdcls()
-    # ~ pwdplg.getmembers()
-    # ~ with pytest.raises(ValueError):
-        # ~ pwdplg.add(None)
-    # ~ dpass = pwdplg.Info(name='test', username='username', url='testurl', password='azerty', note='testnote')
-    # ~ pwdplg.add(dpass)
-    # ~ with pytest.raises(IndexError):
-        # ~ pwdplg.add(dpass, replace=False)
-    # ~ members = pwdplg.getmembers()
-    # ~ assert len(members) > 0
-    # ~ infpass = pwdplg.get((None,'test'))
-    # ~ print(infpass)
-    # ~ assert infpass.username == 'username'
-    # ~ pwdplg.import_chrome('tests/chrome-password.csv')
-    # ~ assert pwdplg.get(('chrome','toto.com')).username == 'user'
-
 def test_plugin_password_coffer(random_path, random_name):
     fname = os.path.join(random_path, 'config.ini')
     with open(fname, 'wb') as f:
