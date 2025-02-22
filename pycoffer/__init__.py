@@ -520,11 +520,6 @@ class Coffer():
 
     def _pickle_dump(self, data, arcname=None):
         """Dump pickle to coffer without lock"""
-        if isinstance(arcname, CofferInfo):
-            finfo = arcname
-        else:
-            finfo = CofferInfo(arcname, store_path=self.dirpath)
-
         if finfo.subdir is not None:
             os.makedirs(os.path.join(self.dirpath, finfo.subdir), exist_ok=True)
 
@@ -544,10 +539,6 @@ class Coffer():
 
     def _pickle_load(self, arcname=None):
         """Load pickle from coffer"""
-        if isinstance(arcname, CofferInfo):
-            finfo = arcname
-        else:
-            finfo = CofferInfo(arcname, store_path=self.dirpath)
         if os.path.isfile(finfo.path) is False:
             return None
         with self.secure_open(finfo.path, mode='rb', **self.secure_params) as f:
