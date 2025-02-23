@@ -263,6 +263,34 @@ def test_plugin_rsync_lib(caplog, random_path, random_name):
     with open(os.path.join(tarpath, 'target', 'test2', 'file1.data'), 'rb') as f:
         assert data == f.read()
 
+    with Coffer(dataf, mode='wb', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+        with ff.plugin('rsync') as plg:
+            ret = plg.rsync(os.path.join(random_path, 'rsync_%s'%random_name), None)
+            print(ret)
+        membs = ff.getmembers()
+        assert len(membs) == 4
+        print(membs)
+
+    tarpath = os.path.join(random_path, "extract_rsync3_%s"%random_name)
+    with Coffer(dataf, mode='rb', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+        ff.extractall(path=tarpath)
+    with open(os.path.join(tarpath, 'rsync_%s'%random_name, 'file1.data'), 'rb') as f:
+        assert data == f.read()
+    with open(os.path.join(tarpath, 'rsync_%s'%random_name, 'test1', 'file1.data'), 'rb') as f:
+        assert data == f.read()
+    with open(os.path.join(tarpath, 'rsync_%s'%random_name, 'test1', 'test11', 'file1.data'), 'rb') as f:
+        assert data2 == f.read()
+    with open(os.path.join(tarpath, 'rsync_%s'%random_name, 'test2', 'file1.data'), 'rb') as f:
+        assert data == f.read()
+
+    with Coffer(dataf, mode='wb', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+        with ff.plugin('rsync') as plg:
+            ret = plg.rsync(dataf1, None)
+            print(ret)
+        membs = ff.getmembers()
+        assert len(membs) == 1
+        print(membs)
+
 def test_plugin_rsync_cli(coffer_conf, random_path, random_name):
     confcoff = Config(coffer_conf, chkmode=False)
     cofferfactory = confcoff.coffer('test')

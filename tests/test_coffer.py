@@ -587,14 +587,14 @@ def test_coffer_lock(caplog, random_path, random_name):
             container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
         ff.pickle_dump(data, 'data.pickle')
 
-    with Coffer(dataf, "wb", lock_type='rw', lock_timeout=0.2,
+    with Coffer(dataf, "ab", lock_type='rw', lock_timeout=0.2,
             container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
         with pytest.raises(Timeout):
             with Coffer(dataf, "wb", lock_type='rw', lock_timeout=0.2,
                     container_class=TarZstdAesFile, container_params={'aes_key':key}) as fff:
                 assert data == ff.pickle_load('data.pickle')
 
-    with Coffer(dataf, "wb", lock_type='rw', lock_timeout=0.2,
+    with Coffer(dataf, "ab", lock_type='rw', lock_timeout=0.2,
             container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
         with pytest.raises(Timeout):
             with Coffer(dataf, "rb", lock_type='rw', lock_timeout=0.2,
@@ -611,18 +611,24 @@ def test_coffer_lock(caplog, random_path, random_name):
     with Coffer(dataf, "rb", lock_type='rw', lock_timeout=0.2,
             container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
         with pytest.raises(Timeout):
-            with Coffer(dataf, "wb", lock_type='rw', lock_timeout=0.2,
+            with Coffer(dataf, "ab", lock_type='rw', lock_timeout=0.2,
                     container_class=TarZstdAesFile, container_params={'aes_key':key}) as fff:
                 assert data == ff.pickle_load('data.pickle')
 
-    with Coffer(dataf, "wb", lock_type='w', lock_timeout=0.2,
+    with Coffer(dataf, "ab", lock_type='w', lock_timeout=0.2,
             container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
         with pytest.raises(Timeout):
-            with Coffer(dataf, "wb", lock_type='w', lock_timeout=0.2,
+            with Coffer(dataf, "ab", lock_type='w', lock_timeout=0.2,
                     container_class=TarZstdAesFile, container_params={'aes_key':key}) as fff:
                 assert data == ff.pickle_load('data.pickle')
 
-    with Coffer(dataf, "wb", lock_type='w', lock_timeout=0.2,
+    with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
+            container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
+        with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
+                container_class=TarZstdAesFile, container_params={'aes_key':key}) as fff:
+            assert data == ff.pickle_load('data.pickle')
+
+    with Coffer(dataf, "ab", lock_type='w', lock_timeout=0.2,
             container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
         with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
                 container_class=TarZstdAesFile, container_params={'aes_key':key}) as fff:
@@ -630,15 +636,10 @@ def test_coffer_lock(caplog, random_path, random_name):
 
     with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
             container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
-        with Coffer(dataf, "wb", lock_type='w', lock_timeout=0.2,
+        with Coffer(dataf, "ab", lock_type='w', lock_timeout=0.2,
                 container_class=TarZstdAesFile, container_params={'aes_key':key}) as fff:
             assert data == ff.pickle_load('data.pickle')
 
-    with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
-            container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
-        with Coffer(dataf, "rb", lock_type='w', lock_timeout=0.2,
-                container_class=TarZstdAesFile, container_params={'aes_key':key}) as fff:
-            assert data == ff.pickle_load('data.pickle')
 
 def test_store_mtime(random_path, random_name):
     key = get_random_bytes(16)
@@ -681,7 +682,7 @@ def test_store_mtime(random_path, random_name):
     atime3 = os.path.getatime(os.path.join(random_path, dataf3))
     mtime3 = os.path.getmtime(os.path.join(random_path, dataf3))
 
-    with store_open(dataf, mode='wb', container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
+    with store_open(dataf, mode='ab', container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:
         ff.add(os.path.join(random_path, dataf3))
 
     with store_open(dataf, "rb", container_class=TarZstdAesFile, container_params={'aes_key':key}) as ff:

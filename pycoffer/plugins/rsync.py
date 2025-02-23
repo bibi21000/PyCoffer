@@ -91,7 +91,7 @@ class Rsync(CofferPlugin, CliInterface):
 
                 os.utime(finfo.path, (atime, mtime))
 
-                self._modified == True
+                self._modified = True
 
             dry_ret.append("update %s"%finfo.name)
 

@@ -242,7 +242,7 @@ class Coffer():
                 raise FileNotFoundError('File not found %s' % self.filename)
         self.dirpath = tempfile.mkdtemp(prefix=".coff_", dir=self.temp_dir)
         self._flock_acquire()
-        if file_exists:
+        if file_exists and self.mode != WRITE:
             with self.container_class(self.filename, mode='rb', fileobj=self.fileobj,
                 **self.container_params,
                 # ~ **self.kwargs

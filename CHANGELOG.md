@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Move coffer definitions in coffers module
 - Finish rsync plugin
+- Fix WRITE mode vs APPEND mode : don't extract files in WRITE mode
 
 ### Removed
 
