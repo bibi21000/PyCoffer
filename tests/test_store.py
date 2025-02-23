@@ -19,7 +19,7 @@ from filelock import Timeout as filelockTimeout
 import cofferfile
 from cofferfile import META_CHUNK, META_SIZE
 from pycoffer import CofferInfo
-from pycoffer.store import CofferStore, open as store_open
+from pycoffer.coffers.store import CofferStore, open as store_open
 from pyzstd import open as zstd_open
 from naclfile.tar import TarFile as TarZstdNaclFile
 

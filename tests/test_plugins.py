@@ -22,7 +22,7 @@ from pycoffer import config
 from pycoffer import main
 from pycoffer import main_cli
 from pycoffer import CofferInfo, Coffer, open as store_open
-from pycoffer.bank import CofferBank
+from pycoffer.coffers.bank import CofferBank
 from pycoffer.plugins import Plugin, PluginInfo
 import pycoffer.plugins.password_cli
 import pycoffer.plugins.crypt_cli

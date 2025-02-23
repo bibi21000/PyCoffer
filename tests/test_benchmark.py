@@ -31,9 +31,9 @@ from aesfile.zstd import AesFile as _ZstdAesFile, open as aesz_open
 from aesfile.tar import TarFile as _TarZstdAesFile
 # ~ from fernetfile.tar import TarFile as _TarZstdFernetFile
 from pycoffer import Coffer
-from pycoffer.store import CofferStore
-from pycoffer.bank import CofferBank
-from pycoffer.market import CofferMarket
+from pycoffer.coffers.store import CofferStore
+from pycoffer.coffers.bank import CofferBank
+from pycoffer.coffers.market import CofferMarket
 
 # ~ class ZstdFernetFile(_ZstdFernetFile):
     # ~ pass

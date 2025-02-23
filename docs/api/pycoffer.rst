@@ -7,18 +7,11 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   pycoffer.coffers
    pycoffer.plugins
 
 Submodules
 ----------
-
-pycoffer.bank module
---------------------
-
-.. automodule:: pycoffer.bank
-   :members:
-   :show-inheritance:
-   :undoc-members:
 
 pycoffer.config module
 ----------------------
@@ -56,30 +49,6 @@ pycoffer.main\_static module
 ----------------------------
 
 .. automodule:: pycoffer.main_static
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-pycoffer.market module
-----------------------
-
-.. automodule:: pycoffer.market
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-pycoffer.null module
---------------------
-
-.. automodule:: pycoffer.null
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-pycoffer.store module
----------------------
-
-.. automodule:: pycoffer.store
    :members:
    :show-inheritance:
    :undoc-members:

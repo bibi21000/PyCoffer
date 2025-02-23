@@ -23,7 +23,7 @@ from Crypto.Random import get_random_bytes
 from pycoffer import config
 from pycoffer import main
 from pycoffer import main_cli
-from pycoffer.bank import CofferBank
+from pycoffer.coffers.bank import CofferBank
 from pycoffer.plugins import Plugin
 from pycoffer.config import Config
 

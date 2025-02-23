@@ -17,7 +17,7 @@ from filelock import Timeout as filelockTimeout
 import cofferfile
 from cofferfile import META_CHUNK, META_SIZE
 from pycoffer import CofferInfo
-from pycoffer.null import CofferNull, open as store_open
+from pycoffer.coffers.null import CofferNull, open as store_open
 from pyzstd import open as zstd_open
 from cofferfile.zstd import clean_level_or_option, ZstdTarFile
 

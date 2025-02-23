@@ -21,7 +21,7 @@ from Crypto.Cipher import AES
 import cofferfile
 from cofferfile import META_CHUNK, META_SIZE
 from pycoffer import CofferInfo
-from pycoffer.bank import CofferBank, open as store_bank
+from pycoffer.coffers.bank import CofferBank, open as store_bank
 from naclfile.zstd import open as zstd_open
 from aesfile.tar import TarFile as TarZstdAesFile
 

@@ -25,10 +25,10 @@ import naclfile.zstd
 # PyCoffer
 from pycoffer import main_cli
 
-from pycoffer import bank
-from pycoffer import store
-from pycoffer import market
-import pycoffer.null
+from pycoffer.coffers import bank
+from pycoffer.coffers import store
+from pycoffer.coffers import market
+import pycoffer.coffers.null
 
 from pycoffer.plugins import Plugin
 from pycoffer.plugins import password

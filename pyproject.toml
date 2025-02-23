@@ -44,10 +44,10 @@ pycoffer = "pycoffer.main:cli"
 pycoffer_static = "pycoffer.main_static:cli"
 
 [project.entry-points."cofferfile.coffer"]
-bank = "pycoffer.bank:CofferBank"
-store = "pycoffer.store:CofferStore"
-market = "pycoffer.market:CofferMarket"
-null = "pycoffer.null:CofferNull"
+bank = "pycoffer.coffers.bank:CofferBank"
+store = "pycoffer.coffers.store:CofferStore"
+market = "pycoffer.coffers.market:CofferMarket"
+null = "pycoffer.coffers.null:CofferNull"
 
 [project.entry-points."cofferfile.plugin"]
 password = "pycoffer.plugins.password:Password"
