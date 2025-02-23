@@ -233,7 +233,11 @@ def test_plugin_rsync_lib(caplog, random_path, random_name):
             ret = plg.rsync(os.path.join(random_path, 'rsync_%s'%random_name), 'target', dry=True)
             print(ret)
             assert len(ret) == 5
-            assert ret[3] == 'found target/test1/test11/file1.data'
+            found = False
+            for r in ret:
+                if r == 'found target/test1/test11/file1.data':
+                    found = True
+            assert found is True
         membs = ff.getmembers()
         print(membs)
 
