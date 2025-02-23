@@ -27,7 +27,7 @@ jobs:
           name: Install Ubuntu dependencies
           command: |
             sudo apt-get update
-            sudo apt-get install xclip
+            sudo apt-get install xclip libpcsclite-dev
       - run:
           name: Install dependencies from pyproject.toml
           command: |
@@ -58,7 +58,7 @@ jobs:
           name: Install Ubuntu dependencies
           command: |
             sudo apt-get update
-            sudo apt-get install xclip
+            sudo apt-get install xclip libpcsclite-dev
       - run:
           name: Install dependencies from pyproject.toml
           command: |
