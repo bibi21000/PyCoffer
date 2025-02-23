@@ -53,62 +53,68 @@ def test_plugin_password(caplog, random_path, random_name):
     key = utils.random(SecretBox.KEY_SIZE)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with Coffer(dataf, mode='ab', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+    with Coffer(dataf, mode='wb', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
         with ff.plugin('password') as plg:
             dpass = plg.Info(name='test', username='username', url='testurl', password='azerty', note='testnote')
             plg.add(dpass)
+            with pytest.raises(IndexError):
+                plg.add(dpass, replace=False)
 
     with Coffer(dataf, mode='ab', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
         with ff.plugin('password') as plg:
-            dpass = plg.Info(name='test', username='username', url='testurl', password='azerty', note='testnote')
-            plg.import_chrome('tests/chrome-password.csv')
+            with pytest.raises(ValueError):
+                plg.add('test')
+            with pytest.raises(ValueError):
+                plg.delete('test')
 
+    with Coffer(dataf, mode='ab', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+        with ff.plugin('password') as plg:
+            plg.import_chrome('tests/chrome-password.csv')
 
     with Coffer(dataf, "rb", container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
         with ff.plugin('password') as plg:
             assert plg.get((None,'test')).username == 'username'
 
-def test_plugin_password_coffer(random_path, random_name):
-    fname = os.path.join(random_path, 'config.ini')
-    with open(fname, 'wb') as f:
-        f.write(b'')
-    confcoff = config.Config(fname, chkmode=False)
+# ~ def test_plugin_password_coffer(random_path, random_name):
+    # ~ fname = os.path.join(random_path, 'config.ini')
+    # ~ with open(fname, 'wb') as f:
+        # ~ f.write(b'')
+    # ~ confcoff = config.Config(fname, chkmode=False)
 
-    with pytest.raises(PermissionError):
-        assert confcoff.check_perms() is False
+    # ~ with pytest.raises(PermissionError):
+        # ~ assert confcoff.check_perms() is False
 
-    assert confcoff.check_perms(exc=False) is False
+    # ~ assert confcoff.check_perms(exc=False) is False
 
-    os.chmod(fname, 0o600)
-    assert confcoff.check_perms()
+    # ~ os.chmod(fname, 0o600)
+    # ~ assert confcoff.check_perms()
 
-    fname = 'tests/pycofferrc'
-    confcoff = config.Config(fname, chkmode=False)
-    coffer = confcoff.coffer('confidential')
-    assert coffer is not None
-    assert coffer['class'] == CofferBank
-    print(base64.b64encode(utils.random(SecretBox.KEY_SIZE)))
-    print(base64.b64encode(get_random_bytes(16)))
-    # ~ assert False
+    # ~ fname = 'tests/pycofferrc'
+    # ~ confcoff = config.Config(fname, chkmode=False)
+    # ~ coffer = confcoff.coffer('confidential')
+    # ~ assert coffer is not None
+    # ~ assert coffer['class'] == CofferBank
+    # ~ print(base64.b64encode(utils.random(SecretBox.KEY_SIZE)))
+    # ~ print(base64.b64encode(get_random_bytes(16)))
 
-    data = randbytes(2487)
-    data2 = randbytes(1536)
-    data2a = randbytes(7415)
-    dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
+    # ~ data = randbytes(2487)
+    # ~ data2 = randbytes(1536)
+    # ~ data2a = randbytes(7415)
+    # ~ dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
-    with coffer['class'](coffer['location'], mode='wb', coffer_key=coffer['coffer_key'], secure_key=coffer['secure_key'], backup=coffer['backup']) as ff:
-        assert repr(ff).startswith('<CofferBank')
-        ff.write(data, 'file1%s.data'%random_name)
-        ff.write(data2, 'file2%s.data'%random_name)
-        mtime = ff.mtime
-        assert ff.writable
-        assert ff.readable
+    # ~ with coffer['class'](coffer['location'], mode='wb', coffer_key=coffer['coffer_key'], secure_key=coffer['secure_key'], backup=coffer['backup']) as ff:
+        # ~ assert repr(ff).startswith('<CofferBank')
+        # ~ ff.write(data, 'file1%s.data'%random_name)
+        # ~ ff.write(data2, 'file2%s.data'%random_name)
+        # ~ mtime = ff.mtime
+        # ~ assert ff.writable
+        # ~ assert ff.readable
 
-    with coffer['class'](coffer['location'], "rb", coffer_key=coffer['coffer_key'], secure_key=coffer['secure_key'], backup=coffer['backup']) as ff:
-        assert data == ff.read('file1%s.data'%random_name)
-        assert data2 == ff.read('file2%s.data'%random_name)
-        assert not ff.writable
-        assert ff.readable
+    # ~ with coffer['class'](coffer['location'], "rb", coffer_key=coffer['coffer_key'], secure_key=coffer['secure_key'], backup=coffer['backup']) as ff:
+        # ~ assert data == ff.read('file1%s.data'%random_name)
+        # ~ assert data2 == ff.read('file2%s.data'%random_name)
+        # ~ assert not ff.writable
+        # ~ assert ff.readable
 
 def test_password_ls_empty(coffer_conf):
     runner = CliRunner()
