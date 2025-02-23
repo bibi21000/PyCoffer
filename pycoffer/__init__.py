@@ -72,7 +72,8 @@ class CofferInfo():
 
 
 class Coffer():
-    """ """
+    """
+    """
 
     filename = None
 
@@ -168,8 +169,8 @@ class Coffer():
         if self.secure_params is None:
             self.secure_params = {}
         self.dirpath = None
-        self._dirctime = None
-        self._dirmtime = None
+        self.dirctime = None
+        self.dirmtime = None
         self.temp_dir = temp_dir
 
     def __repr__(self):
@@ -247,7 +248,7 @@ class Coffer():
                 # ~ **self.kwargs
             ) as tff:
                 tff.extractall(self.dirpath, filter='data')
-        self._dirctime = self._dirmtime = time.time_ns()
+        self.dirctime = self.dirmtime = time.time_ns()
         return self
 
     def _write_store(self):
@@ -266,7 +267,7 @@ class Coffer():
             for member in self.getmembers():
                 tff.add(member.path, arcname=member.name)
 
-        self._dirctime = self._dirmtime = time.time_ns()
+        self.dirctime = self.dirmtime = time.time_ns()
 
     def getmembers(self):
         """Get members or the store"""
@@ -286,8 +287,8 @@ class Coffer():
                 self._write_store()
         shutil.rmtree(self.dirpath)
         self.dirpath = None
-        self._dirctime = None
-        self._dirmtime = None
+        self.dirctime = None
+        self.dirmtime = None
         self._flock_release()
         if os.path.isfile(self._lockfile.lock_file) is True:
             os.remove(self._lockfile.lock_file)
@@ -320,7 +321,7 @@ class Coffer():
                 ffile.close()
                 ffile = None
                 if mode.startswith(('w', 'a', 'x')):
-                    self._dirmtime = time.time_ns()
+                    self.dirmtime = time.time_ns()
             finally:
                 if fffile is not None:
                     fffile.close()
@@ -377,14 +378,15 @@ class Coffer():
                 if finfo.subdir is not None:
                     os.makedirs(os.path.join(self.dirpath, finfo.subdir), exist_ok=True)
 
+                mtime = os.path.getmtime(fname)
+                atime = os.path.getatime(fname)
+
                 with _open(fname, 'rb') as ff, self.secure_open(finfo.path, mode='wb', **self.secure_params) as sf:
                     sf.write(ff.read())
 
-                mtime = os.path.getmtime(fname)
-                atime = os.path.getatime(fname)
                 os.utime(finfo.path, (atime, mtime))
 
-            self._dirmtime = time.time_ns()
+            self.dirmtime = time.time_ns()
 
             if self.auto_flush is True:
                 self._flush()
@@ -420,7 +422,7 @@ class Coffer():
         """Delete file in store without lock"""
         self._check_can_write()
         os.remove(arcinfo.path)
-        self._dirmtime = time.time_ns()
+        self.dirmtime = time.time_ns()
 
     def delete(self, arcname=None):
         """Delete file in store"""
@@ -479,7 +481,7 @@ class Coffer():
     def modified(self):
         """Archive has been updated but not flushed."""
         self._check_not_closed()
-        return self._dirctime < self._dirmtime
+        return self.dirctime < self.dirmtime
 
     @property
     def closed(self):
@@ -526,7 +528,7 @@ class Coffer():
         with self.secure_open(arcinfo.path, mode='wb', **self.secure_params) as f:
             self._imp_pickle.dump(data, f)
 
-        self._dirmtime = time.time_ns()
+        self.dirmtime = time.time_ns()
 
     def pickle_load(self, arcname=None):
         """Load pickle from coffer"""
@@ -554,7 +556,6 @@ class Coffer():
 
         if plg.category == 'coffer':
             # These plugins have total control on coffer and locks
-
             plg.coffer_file = self
 
             yield plg
@@ -563,11 +564,9 @@ class Coffer():
                 if self.auto_flush is True:
                     self._flush()
 
-        with self._lock:
-
-            if plg.category == 'file':
+        elif plg.category == 'file':
+            with self._lock:
                 # These plugins have access to a pickle storage
-
                 finfo = CofferInfo(plg.arcname, store_path=self.dirpath)
                 if os.path.isfile(finfo.path) is True:
                     plg.store_load(self._pickle_load(finfo))
@@ -576,12 +575,11 @@ class Coffer():
 
                 if plg.modified is True:
                     self._pickle_dump(plg.store_dump(), finfo)
-
                     if self.auto_flush is True:
                         self._flush()
 
-            elif plg.category == 'other':
-
+        elif plg.category == 'other':
+            with self._lock:
                 plg.crypt_open = self.crypt_open
 
                 yield plg

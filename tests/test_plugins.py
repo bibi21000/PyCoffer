@@ -181,23 +181,111 @@ def test_plugin_crypt(random_path, coffer_conf):
     with open(datad, 'rb') as f:
         assert data == f.read()
 
-def test_plugin_rsync(caplog, random_path, random_name):
+def test_plugin_rsync_lib(caplog, random_path, random_name):
     caplog.set_level(logging.DEBUG, logger="pycoffer")
     key = utils.random(SecretBox.KEY_SIZE)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
 
+    data = randbytes(4523)
+    data2 = randbytes(4523)
+    os.makedirs(os.path.join(random_path, 'rsync_%s'%random_name))
+    os.makedirs(os.path.join(random_path, 'rsync_%s'%random_name, 'test1'))
+    os.makedirs(os.path.join(random_path, 'rsync_%s'%random_name, 'test1', 'test11'))
+    os.makedirs(os.path.join(random_path, 'rsync_%s'%random_name, 'test2'))
+    dataf1 = os.path.join(random_path, 'rsync_%s'%random_name, 'file1.data')
+    dataf2 = os.path.join(random_path, 'rsync_%s'%random_name, 'test1', 'file1.data')
+    dataf3 = os.path.join(random_path, 'rsync_%s'%random_name, 'test1', 'test11', 'file1.data')
+    dataf4 = os.path.join(random_path, 'rsync_%s'%random_name, 'test2', 'file1.data')
+    with open(dataf1, 'wb') as f:
+        f.write(data)
+    with open(dataf2, 'wb') as f:
+        f.write(data)
+    with open(dataf3, 'wb') as f:
+        f.write(data)
+    with open(dataf4, 'wb') as f:
+        f.write(data)
+
     with Coffer(dataf, mode='ab', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
         with ff.plugin('rsync') as plg:
-            plg.rsync('src', 'target')
+            ret = plg.rsync(os.path.join(random_path, 'rsync_%s'%random_name), 'target')
+            print(ret)
+        membs = ff.getmembers()
+        print(membs)
 
-def test_plugin_rsync_cli(coffer_conf):
+    tarpath = os.path.join(random_path, "extract_rsync_%s"%random_name)
+    with Coffer(dataf, mode='rb', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+        ff.extractall(path=tarpath)
+
+    with open(os.path.join(tarpath, 'target', 'file1.data'), 'rb') as f:
+        assert data == f.read()
+    with open(os.path.join(tarpath, 'target', 'test1', 'file1.data'), 'rb') as f:
+        assert data == f.read()
+    with open(os.path.join(tarpath, 'target', 'test1', 'test11', 'file1.data'), 'rb') as f:
+        assert data == f.read()
+    with open(os.path.join(tarpath, 'target', 'test2', 'file1.data'), 'rb') as f:
+        assert data == f.read()
+
+    with open(dataf3, 'wb') as f:
+        f.write(data2)
+
+    with Coffer(dataf, mode='ab', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+        with ff.plugin('rsync') as plg:
+            ret = plg.rsync(os.path.join(random_path, 'rsync_%s'%random_name), 'target', dry=True)
+            print(ret)
+            assert len(ret) == 5
+            assert ret[3] == 'found target/test1/test11/file1.data'
+        membs = ff.getmembers()
+        print(membs)
+
+    with Coffer(dataf, mode='ab', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+        with ff.plugin('rsync') as plg:
+            ret = plg.rsync(os.path.join(random_path, 'rsync_%s'%random_name), 'target')
+            print(ret)
+            assert len(ret) == 1
+            assert ret[0] == 'update target/test1/test11/file1.data'
+        membs = ff.getmembers()
+        print(membs)
+
+    tarpath = os.path.join(random_path, "extract_rsync2_%s"%random_name)
+    with Coffer(dataf, mode='rb', container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
+        ff.extractall(path=tarpath)
+
+    with open(os.path.join(tarpath, 'target', 'file1.data'), 'rb') as f:
+        assert data == f.read()
+    with open(os.path.join(tarpath, 'target', 'test1', 'file1.data'), 'rb') as f:
+        assert data == f.read()
+    with open(os.path.join(tarpath, 'target', 'test1', 'test11', 'file1.data'), 'rb') as f:
+        assert data2 == f.read()
+    with open(os.path.join(tarpath, 'target', 'test2', 'file1.data'), 'rb') as f:
+        assert data == f.read()
+
+def test_plugin_rsync_cli(coffer_conf, random_path, random_name):
     confcoff = Config(coffer_conf, chkmode=False)
     cofferfactory = confcoff.coffer('test')
+
+    data = randbytes(4523)
+    data2 = randbytes(4523)
+    os.makedirs(os.path.join(random_path, 'rsync_%s'%random_name))
+    os.makedirs(os.path.join(random_path, 'rsync_%s'%random_name, 'test1'))
+    os.makedirs(os.path.join(random_path, 'rsync_%s'%random_name, 'test1', 'test11'))
+    os.makedirs(os.path.join(random_path, 'rsync_%s'%random_name, 'test2'))
+    dataf1 = os.path.join(random_path, 'rsync_%s'%random_name, 'file1.data')
+    dataf2 = os.path.join(random_path, 'rsync_%s'%random_name, 'test1', 'file1.data')
+    dataf3 = os.path.join(random_path, 'rsync_%s'%random_name, 'test1', 'test11', 'file1.data')
+    dataf4 = os.path.join(random_path, 'rsync_%s'%random_name, 'test2', 'file1.data')
+    with open(dataf1, 'wb') as f:
+        f.write(data)
+    with open(dataf2, 'wb') as f:
+        f.write(data)
+    with open(dataf3, 'wb') as f:
+        f.write(data)
+    with open(dataf4, 'wb') as f:
+        f.write(data)
 
     runner = CliRunner()
 
     result = runner.invoke(pycoffer.plugins.rsync_cli.rsync, ['--conf', coffer_conf, '--coffer', 'test',
-        '--source', 'source', '--target', 'target'])
+        '--source', os.path.join(random_path, 'rsync_%s'%random_name), '--target', 'test3'])
     assert result.exit_code == 0
     # ~ assert 'file1.data' in result.output
 

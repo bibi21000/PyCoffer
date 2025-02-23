@@ -17,6 +17,7 @@ venv:
 	./venv/bin/pip install -e .
 	./venv/bin/pip install .[test]
 	./venv/bin/pip install .[cli]
+	./venv/bin/pip install .[fido]
 	./venv/bin/pip install .[build]
 	./venv/bin/pip install .[doc]
 	./venv/bin/pip install ../FernetFile -e .

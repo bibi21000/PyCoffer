@@ -64,6 +64,7 @@ binaries = ["nuitka"]
 fernet = ["fernetfile"]
 nacl = ["naclfile"]
 aes = ["aesfile"]
+fido = ["fido2[pcsc]"]
 
 [project.urls]
 HomePage = "https://github.com/bibi21000/PyCoffer"
