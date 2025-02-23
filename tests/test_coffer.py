@@ -99,6 +99,8 @@ def test_store_basic(caplog, random_path, random_name):
 
     with Coffer(dataf, "rb", container_class=TarZstdAesFile,
             container_params={'aes_key':key}) as ff:
+        with pytest.raises(io.UnsupportedOperation):
+            ff.delete('file3%s.data'%random_name)
         with pytest.raises(OSError):
             data = ff.read('file3%s.data'%random_name)
 
