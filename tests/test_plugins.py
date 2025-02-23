@@ -73,7 +73,10 @@ def test_plugin_password(caplog, random_path, random_name):
 
     with Coffer(dataf, "rb", container_class=TarZstdNaclFile, container_params={'secret_key':key}) as ff:
         with ff.plugin('password') as plg:
-            assert plg.get((None,'test')).username == 'username'
+            pwd =  plg.get((None,'test'))
+            assert pwd.username == 'username'
+            pwd =  plg.get(pwd)
+            assert pwd.username == 'username'
 
 # ~ def test_plugin_password_coffer(random_path, random_name):
     # ~ fname = os.path.join(random_path, 'config.ini')
