@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 
-## [0.1.3] - 2025-02-22
+## [0.1.4] - 2025-02-22
 
 ### Changed
 
