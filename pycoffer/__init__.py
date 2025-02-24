@@ -373,7 +373,7 @@ class Coffer():
                     raise FileExistsError('File already exists %s' % self.filename)
 
                 if file_exists is True:
-                    self._delete(arcinfo=finfo)
+                    self.delete_raw(arcinfo=finfo)
 
                 if finfo.subdir is not None:
                     os.makedirs(os.path.join(self.dirpath, finfo.subdir), exist_ok=True)
@@ -418,7 +418,7 @@ class Coffer():
             finfo = CofferInfo(arcname, store_path=self.dirpath)
         self.extractall(path=path, members=[finfo])
 
-    def _delete(self, arcinfo=None):
+    def delete_raw(self, arcinfo=None):
         """Delete file in store without lock"""
         self._check_can_write()
         os.remove(arcinfo.path)
@@ -431,7 +431,7 @@ class Coffer():
                 finfo = arcname
             else:
                 finfo = CofferInfo(arcname, store_path=self.dirpath)
-            self._delete(arcinfo=finfo)
+            self.delete_raw(arcinfo=finfo)
 
             if self.auto_flush is True:
                 self._flush()

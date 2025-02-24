@@ -77,7 +77,7 @@ class Rsync(CofferPlugin, CliInterface):
                     if dry is True:
                         dry_ret.append("found %s"%finfo.name)
                     else:
-                        self.coffer_file._delete(arcinfo=finfo)
+                        self.coffer_file.delete_raw(arcinfo=finfo)
 
             if dry is False:
                 if finfo.subdir is not None:

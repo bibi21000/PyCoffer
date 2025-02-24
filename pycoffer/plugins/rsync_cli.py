@@ -22,4 +22,6 @@ def cli():
 def rsync(conf, coffer, source, target, dry):
     with main_lib.open_coffer(conf, coffer, 'a') as ff:
         with ff.plugin('rsync') as plg:
-            plg.rsync(source, target, dry)
+            ret = plg.rsync(source, target, dry)
+            if dry is True:
+                print(ret)
