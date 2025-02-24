@@ -111,6 +111,10 @@ class OtherPlugin(Plugin):
         self.crypt_open = None
         """The open crypted method"""
 
+class AuthPlugin(Plugin):
+    """The Auth plugin class
+    """
+    category = 'auth'
 
 class FilePlugin(Plugin):
     """The File plugin class

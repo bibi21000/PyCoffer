@@ -26,6 +26,8 @@ Plugins
 
 .. program-output:: /home/runner/.local/bin/pycoffer password --help
 
+.. program-output:: /home/runner/.local/bin/pycoffer rsync --help
+
 Tools
 ---------------------
 
