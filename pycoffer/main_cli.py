@@ -89,6 +89,8 @@ def check():
 def system():
     from .plugins import Plugin
     import platform
+    from importlib import metadata
+    print('Version : %s' % metadata.version('pycoffer'))
     cryptors = [c.__name__ for c in Plugin.collect(group='cofferfile.cryptor')]
     print('Cryptors : %s' % cryptors)
     coffers = [c.__name__ for c in Plugin.collect(group='cofferfile.coffer')]
