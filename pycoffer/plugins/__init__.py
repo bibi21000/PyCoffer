@@ -145,3 +145,9 @@ class CliInterface():
     def cli(cls):
         """Load the click interface"""
         raise NotImplementedError
+
+class AuthInterface():
+    """The Auth plugin interfacce
+    Used to collect plugins with auth
+    """
+    pass

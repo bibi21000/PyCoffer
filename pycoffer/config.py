@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-"""CLI programm
+"""Config lib
 
 """
 __author__ = 'bibi21000 aka Sébastien GALLET'
@@ -22,6 +22,8 @@ class Config():
         self.filename = filename
         self.parser = configparser.ConfigParser()
         self.parser.read(filename)
+        # ~ with open(filename, 'r') as f:
+            # ~ self.parser = self._imp_yaml.safe_load(f)
 
     @classmethod
     @reify
@@ -29,6 +31,13 @@ class Config():
         """Lazy loader for base64"""
         import importlib
         return importlib.import_module('base64')
+
+    @classmethod
+    @reify
+    def _imp_yaml(cls):
+        """Lazy loader for yaml"""
+        import importlib
+        return importlib.import_module('yaml')
 
     def check_perms(self, exc=True):
         """Check user right on config file. Must be 600 !!!"""

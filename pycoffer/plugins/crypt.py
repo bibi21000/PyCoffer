@@ -10,7 +10,7 @@ from cofferfile.decorator import reify
 from . import OtherPlugin, CliInterface
 
 class Crypt(OtherPlugin, CliInterface):
-    desc = "Encrypt/ decrypt external files with key's coffer"
+    desc = "Encrypt/decrypt external files with key's coffer"
 
     @classmethod
     @reify

@@ -9,37 +9,37 @@ pycoffer.coffers.bank module
 
 .. automodule:: pycoffer.coffers.bank
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pycoffer.coffers.market module
 ------------------------------
 
 .. automodule:: pycoffer.coffers.market
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pycoffer.coffers.null module
 ----------------------------
 
 .. automodule:: pycoffer.coffers.null
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pycoffer.coffers.store module
 -----------------------------
 
 .. automodule:: pycoffer.coffers.store
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
 
 .. automodule:: pycoffer.coffers
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:

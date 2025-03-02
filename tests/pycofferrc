@@ -8,6 +8,11 @@ default_hidden = yes
 type = bank
 coffer_key = wgNtDOJjDoGyXQeV8msoKA==
 secure_key = P1JwKYoon26kUsDZbp/LP8JRRfoS8Btwx7oVQraQ8Ak=
+fido_app = pycoffer
+fido_app_name = PyCoffer
+fido_ident = pycoffer
+fido_secure =
+fido_coffer =
 
 [game]
 key = 45

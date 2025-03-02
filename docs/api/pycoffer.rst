@@ -18,45 +18,53 @@ pycoffer.config module
 
 .. automodule:: pycoffer.config
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pycoffer.main module
 --------------------
 
 .. automodule:: pycoffer.main
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pycoffer.main\_cli module
 -------------------------
 
 .. automodule:: pycoffer.main_cli
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pycoffer.main\_lib module
 -------------------------
 
 .. automodule:: pycoffer.main_lib
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 pycoffer.main\_static module
 ----------------------------
 
 .. automodule:: pycoffer.main_static
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
+
+pycoffer.malloc module
+----------------------
+
+.. automodule:: pycoffer.malloc
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
 
 .. automodule:: pycoffer
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:

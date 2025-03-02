@@ -13,6 +13,7 @@ import struct
 import shutil
 import base64
 import logging
+import secrets
 
 from Crypto.Random import get_random_bytes
 from nacl import utils
@@ -27,6 +28,7 @@ from pycoffer.plugins import Plugin, PluginInfo
 import pycoffer.plugins.password_cli
 import pycoffer.plugins.crypt_cli
 import pycoffer.plugins.rsync_cli
+import pycoffer.plugins.fido
 from pycoffer.config import Config
 from naclfile.zstd import NaclFile as ZstdNaclFile, open as naclz_open
 from naclfile.tar import TarFile as TarZstdNaclFile
@@ -329,4 +331,3 @@ def test_plugin_rsync_cli(coffer_conf, random_path, random_name):
         '--source', os.path.join(random_path, 'rsync_%s'%random_name), '--target', 'test3'])
     assert result.exit_code == 0
     # ~ assert 'file1.data' in result.output
-
