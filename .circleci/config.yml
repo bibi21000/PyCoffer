@@ -44,7 +44,7 @@ jobs:
           command: pytest --cov-report xml --junitxml=pytest.<< parameters.python >>.junit.xml -o junit_family=legacy
       - run:
           name: Run pip-audit
-          command: 	pip-audit --requirement requirements-audit.txt --skip-editable --format junit >pip-audit.xml
+          command: pip-audit --requirement requirements-audit.txt --skip-editable --format junit >pip-audit.<< parameters.python >>.junit.xml || true
       - run:
           name: Run ruff
           command: ruff check --respect-gitignore --output-format junit --output-file ruff.<< parameters.python >>.junit.xml pycoffer/ || true
@@ -79,7 +79,7 @@ jobs:
           command: pytest -n auto --ignore=tests/test_benchmark.py --cov-report xml --junitxml=pytest.<< parameters.python >>.junit.xml -o junit_family=legacy
       - run:
           name: Run pip-audit
-          command: 	pip-audit --requirement requirements-audit.txt --skip-editable --format junit >pip-audit.xml
+          command: pip-audit --requirement requirements-audit.txt --skip-editable --format junit >pip-audit.<< parameters.python >>.junit.xml || true
       - run:
           name: Run ruff
           command: ruff check --respect-gitignore --output-format junit --output-file ruff.<< parameters.python >>.junit.xml pycoffer/ || true
