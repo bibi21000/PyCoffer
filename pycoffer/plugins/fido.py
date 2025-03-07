@@ -91,10 +91,24 @@ class Fido(OtherPlugin, CliInterface):
 
     @classmethod
     @reify
+    def _imp_fido2_ctap2(cls):
+        """Lazy loader for lib fido2.ctap2"""
+        import importlib
+        return importlib.import_module('fido2.ctap2')
+
+    @classmethod
+    @reify
     def _imp_fido2_ctap2_extensions(cls):
         """Lazy loader for lib fido2.ctap2.extensions"""
         import importlib
         return importlib.import_module('fido2.ctap2.extensions')
+
+    @classmethod
+    @reify
+    def _imp_fido2_ctap2_pin(cls):
+        """Lazy loader for lib fido2.ctap2.pin"""
+        import importlib
+        return importlib.import_module('fido2.ctap2.pin')
 
     @classmethod
     @reify
@@ -197,7 +211,11 @@ class Fido(OtherPlugin, CliInterface):
         )
 
         # HmacSecret result:
-        if result.extension_results is None or not result.extension_results.get(
+        if hasattr(result, 'client_extension_results'):
+            client_extension_results = result.client_extension_results
+        else:
+            client_extension_results = result.extension_results
+        if client_extension_results is None or not client_extension_results.get(
             "hmacCreateSecret"
         ):
             raise RuntimeError("Failed to create credential with HmacSecret")
@@ -238,11 +256,120 @@ class Fido(OtherPlugin, CliInterface):
             0
         )  # Only one cred in allowList, only one response.
 
-        if assertion_result.extension_results is None:
+        if hasattr(assertion_result, 'client_extension_results'):
+            client_extension_results = assertion_result.client_extension_results
+        else:
+            client_extension_results = assertion_result.extension_results
+        if client_extension_results is None:
             raise RuntimeError("Can't get HmacSecret")
-        output1 = assertion_result.extension_results["hmacGetSecret"]["output1"]
+        output1 = client_extension_results["hmacGetSecret"]["output1"]
         output2 = None
         if len(salts) > 1:
-            output2 = assertion_result.extension_results["hmacGetSecret"]["output2"]
+            output2 = client_extension_results["hmacGetSecret"]["output2"]
 
         return output1, output2
+
+    @classmethod
+    def list_rps(cls, device, pin, app='pycoffer', app_name="PyCoffer"):
+        """List all FIDO credentials on your key that have the HMAC_SECRET extension enabled
+        experimental
+        """
+        client, _ = cls.get_client(device, origin=app)
+
+        print(client.info)
+        # Check if credential management is supported
+        if "credentialMgmtPreview" not in client.info.options and "credMgmt" not in client.info.options:
+            raise TypeError("Key does %s not allow credentialMgmt"%device)
+
+        client_pin = cls._imp_fido2_ctap2_pin.ClientPin(client._backend.ctap2)
+        client_token = client_pin.get_pin_token(
+            pin,
+            cls._imp_fido2_ctap2_pin.ClientPin.PERMISSION.CREDENTIAL_MGMT
+        )
+
+        # Initialize credential management
+        cred_mgmt = cls._imp_fido2_ctap2.CredentialManagement(
+            client._backend.ctap2,
+            client_pin.protocol,
+            client_token
+        )
+
+        # ~ # Get all Relying Parties (RPs)
+        # ~ rp_list = cred_mgmt.enumerate_rps()
+
+        # ~ if len(rp_list) == 0:
+            # ~ print("No credential RPs found on this Key.")
+
+        # ~ print(f"\nFound {len(rp_list)} Relying Parties with credentials:")
+
+        hmac_creds_count = 0
+        total_creds_count = 0
+
+        # Iterate through each RP
+        # ~ for rp_index, (_, rp_info) in cred_mgmt.enumerate_rps():
+        for rp in cred_mgmt.enumerate_rps():
+            print('rp', rp)
+            rp_id = rp_info["id"]
+            rp_name = rp_info.get("name", rp_id)
+
+            print(f"\n{rp_index+1}. RP: {rp_name} ({rp_id})")
+
+            # Iterate through credentials
+            for cred_index, (cred_id, user_info, public_key, cred_info) in cred_mgmt.enumerate_creds(rp_id):
+                total_creds_count += 1
+
+                # Extract user info
+                user_name = user_info.get("name", "Unknown")
+                user_display_name = user_info.get("displayName", user_name)
+                user_id_b64 = base64.b64encode(user_info["id"]).decode("utf-8")
+
+                # Check if credential has HMAC_SECRET extension
+                extensions = cred_info.get("extensions", {})
+                has_hmac = "hmacSecret" in extensions and extensions["hmacSecret"]
+
+                if has_hmac:
+                    hmac_creds_count += 1
+
+                # Get creation date if available
+                creation_date = "Unknown"
+                if "creation_date" in cred_info:
+                    timestamp = cred_info["creation_date"]
+                    creation_date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+
+                # Format credential ID for display
+                cred_id_short = cred_id.hex()[:16] + "..." + cred_id.hex()[-4:]
+
+                print(f"  {rp_index+1}.{cred_index+1}. {user_display_name}")
+                print(f"      ID: {cred_id_short}")
+                print(f"      User: {user_name}")
+                print(f"      User ID: {user_id_b64[:10]}...")
+                print(f"      Created: {creation_date}")
+                print(f"      HMAC_SECRET: {'✓' if has_hmac else '✗'}")
+
+                # Test HMAC_SECRET functionality if credential has it
+                if has_hmac:
+                    try:
+                        # Create a salt
+                        test_salt = b"test_salt_000000000000000000000000"
+
+                        # Get assertion with HMAC_SECRET
+                        assertions = client.get_assertion(
+                            rp_id,
+                            b"challenge",
+                            [{"type": "public-key", "id": cred_id}],
+                            pin=pin,
+                            extensions={"hmacGetSecret": {"salt1": test_salt}}
+                        )
+
+                        assertion = assertions.get_response(0)
+                        if "hmacGetSecret" in assertion.auth_data.extensions:
+                            hmac_secret = assertion.auth_data.extensions["hmacGetSecret"]["output1"]
+                            print(f"      HMAC Test: Success (first 8 bytes: {hmac_secret[:8].hex()})")
+                        else:
+                            print("      HMAC Test: Failed (no extension in response)")
+
+                    except Exception as e:
+                        print(f"      HMAC Test: Failed ({str(e)[:50]}...)")
+
+        print(f"\nSummary: Found {total_creds_count} total credentials, {hmac_creds_count} with HMAC_SECRET")
+

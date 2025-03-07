@@ -66,6 +66,8 @@ nacl = ["naclfile"]
 aes = ["aesfile"]
 # apt install libpcsclite-dev python3-dev
 fido = ["fido2[pcsc]"]
+# fido = ["fido2[pcsc] >= 2"]
+# fido = ["fido2[pcsc] @ git+https://github.com/Yubico/python-fido2.git@2.0.0-beta.1"]
 
 [project.urls]
 HomePage = "https://github.com/bibi21000/PyCoffer"

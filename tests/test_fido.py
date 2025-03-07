@@ -36,13 +36,14 @@ from naclfile.tar import TarFile as TarZstdNaclFile
 import pytest
 from click.testing import CliRunner
 
-KEY = b'qELXlwOZCyYlo9wU1hTYi8k51BRjyqc3phMamdhHVDOS0hVAaRgjgeM863mZlCtvAGJh5+jBgkhzTDzvhsNn1Jj/v1vy8itABp1IbJi2o+tiD9e9rVLwfOVxUmQ0zAW2'
+# ~ KEY = b'qELXlwOZCyYlo9wU1hTYi8k51BRjyqc3phMamdhHVDOS0hVAaRgjgeM863mZlCtvAGJh5+jBgkhzTDzvhsNn1Jj/v1vy8itABp1IbJi2o+tiD9e9rVLwfOVxUmQ0zAW2'
 # ~ KEY = b'SOEAFaPFfZ102Uf37/Qo9rQMlRXpqgO8aT4pri+Z3pHBqz2BABIb4Yw8CbqS0PRjOf6qXVwhxJnbHavk0G3GDgxPLmGFlu7yNXzjoC5CehXdlCUOpvBL2Hwfz7AmvAsW'
 
 KEYPRV = b'HE7dpYn3/s+1JbEnm/EgMMBNGI2Y4chha523Gi7zPes='
 KEYS = [
 b'aEaYz4Gboh25FScc4osEPiAw0lw9J6yNKddKdVWQ8ifvsJ6mex58KSplhJELOiHK/SfmfHlllzbLdBd1WpqXhMd1FkdGE+gRivKaOUElLuET2AK2egJW+AiRDb4/eAG7',
 b'cxs3A5gRquOOkSB0Nv0TfYt/7s8rf7ht+jiLgL7CgOddod75BNhPNTn2uPbUP6N7y2e7Fz/Yu63+7YrDx+4APtnMXu8Y50Qr02ANim5guwWpGfoaDhI83RgsMGuKbUZY',
+b'2XATMTyui01FTmtsWRsE8uWus7LVRZUfEXoV2zMl2Cg=',
 ]
 
 try:
@@ -56,12 +57,13 @@ except (ImportError,):
 @pytest.mark.skip(reason="Manual test to register keys.")
 def notest_plugin_fido_keys(random_path, random_name):
     import fido2.client
-    keyprv = secrets.token_bytes(32)
-    print("keyprv", base64.b64encode(keyprv))
+    # ~ keyprv = secrets.token_bytes(32)
+    # ~ print("keyprv", base64.b64encode(keyprv))
+    keyprv = base64.b64decode(KEYPRV)
     for key in pycoffer.plugins.fido.Fido.get_devices():
         ident_prv, ident = pycoffer.plugins.fido.Fido.register(key, ident=keyprv)
-        assert len(ident) == 96
-        print("ident %s"%dev, base64.b64encode(ident))
+        # ~ assert len(ident) == 96
+        print("ident %s"%key, base64.b64encode(ident))
     assert False
 
 @pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
@@ -77,6 +79,15 @@ def test_plugin_fido_lib(random_path, random_name):
                 continue
         assert len(hkey[0]) == 43
         assert len(hkey[1]) == 43
+
+@pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
+# ~ @pytest.mark.skip(reason="Work in progress.")
+def test_plugin_fido_list(caplog, random_path, random_name):
+    caplog.set_level(logging.DEBUG)
+    import fido2.client
+    for key in pycoffer.plugins.fido.Fido.get_devices():
+        pycoffer.plugins.fido.Fido.list_rps(key, '1405')
+    assert False
 
 @pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
 def test_plugin_fido_hmac(random_path, random_name):
@@ -192,3 +203,25 @@ def test_plugin_fido_nacl_crypt(random_path, random_name):
     assert uncrypted == text
 
     # ~ assert False
+
+def test_plugin_fido_virtual(random_path, random_name, fido):
+    device, ctap2 = fido
+    rps = list(pycoffer.plugins.fido.Fido.list_rps(device, '1405'))
+    # ~ import fido2.client
+    # ~ from . import fido2_emulator
+    # ~ device = fido2_emulator.VirtualCtapDevice()
+    # ~ client = pycoffer.plugins.fido.Fido.get_client(device)
+    # ~ print(device)
+    # ~ rps = list(pycoffer.plugins.fido.Fido.list_rps(device, '1405'))
+    # ~ ident_prv, ident = pycoffer.plugins.fido.Fido.register(device, ident='test'.encode())
+    # ~ hkey = pycoffer.plugins.fido.Fido.derive(key, ident, salt)
+    # ~ keyprv = secrets.token_bytes(32)
+    # ~ print("keyprv", base64.b64encode(keyprv))
+    # ~ keyprv = base64.b64decode(KEYPRV)
+    # ~ for key in pycoffer.plugins.fido.Fido.get_devices():
+        # ~ ident_prv, ident = pycoffer.plugins.fido.Fido.register(key, ident=keyprv)
+        # ~ assert len(ident) == 96
+        # ~ print("ident %s"%key, base64.b64encode(ident))
+    # ~ assert False
+    # ~ pycoffer.plugins.fido.Fido.get_devices()
+
