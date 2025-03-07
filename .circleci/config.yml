@@ -46,8 +46,8 @@ jobs:
           name: Run pip-audit
           command: 	pip-audit --requirement requirements-audit.txt --skip-editable --format junit >pip-audit.xml
       - run:
-          name: Run pip-audit
-          command: pip-audit --requirement requirements-audit.txt --skip-editable --format junit >pip-audit.<< parameters.python >>.junit.xml || true
+          name: Run ruff
+          command: ruff check --respect-gitignore --output-format junit --output-file ruff.<< parameters.python >>.junit.xml pycoffer/ || true
       - run:
           name: Upload tests result
           command: codecovcli do-upload --report-type test_results --file pytest.<< parameters.python >>.junit.xml --file ruff.<< parameters.python >>.junit.xml --file pip-audit.<< parameters.python >>.junit.xml
@@ -74,13 +74,12 @@ jobs:
             pip list --exclude-editable --format freeze >requirements-audit.txt
             pip install .[test]
             pip install codecov-cli
-            pip install pip-audit@git+https://github.com/bibi21000/pip-audit@format_junit
       - run:
           name: Run tests
           command: pytest -n auto --ignore=tests/test_benchmark.py --cov-report xml --junitxml=pytest.<< parameters.python >>.junit.xml -o junit_family=legacy
       - run:
           name: Run pip-audit
-          command: pip-audit --requirement requirements-audit.txt --skip-editable --format junit >pip-audit.<< parameters.python >>.junit.xml || true
+          command: 	pip-audit --requirement requirements-audit.txt --skip-editable --format junit >pip-audit.xml
       - run:
           name: Run ruff
           command: ruff check --respect-gitignore --output-format junit --output-file ruff.<< parameters.python >>.junit.xml pycoffer/ || true
