@@ -27,7 +27,7 @@ from getpass import getpass
 
 from cofferfile.decorator import reify
 
-from . import OtherPlugin, CliInterface
+from . import AuthPlugin, CliInterface, AuthInterface
 
 try:
     from fido2.client import UserInteraction
@@ -53,7 +53,7 @@ except ImportError:
     class CliInteraction():
         pass
 
-class Fido(OtherPlugin, CliInterface):
+class Fido(AuthPlugin, CliInterface, AuthInterface):
     desc = "Use FIDO "
 
     @classmethod
@@ -61,7 +61,7 @@ class Fido(OtherPlugin, CliInterface):
     def _imp_lib_cli(cls):
         """Lazy loader for lib cli"""
         import importlib
-        return importlib.import_module('pycoffer.plugins.crypt_cli')
+        return importlib.import_module('pycoffer.plugins.fido_cli')
 
     @classmethod
     def cli(cls):
@@ -164,6 +164,7 @@ class Fido(OtherPlugin, CliInterface):
             'product_name': '%s'%device.product_name,
             'serial_number': '%s'%device.serial_number,
             'usb_id': '%04x:%04x'%(device.descriptor.vid, device.descriptor.pid),
+            'path': '%s'%(device.descriptor.path),
 
         }
         ret['capabilities'] = {

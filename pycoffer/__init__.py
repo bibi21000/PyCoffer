@@ -584,6 +584,11 @@ class Coffer():
 
                 yield plg
 
+        elif plg.category == 'auth':
+            with self._lock:
+
+                yield plg
+
 
 def open(filename, mode="rb", secret_key=None,
         chunk_size=CHUNK_SIZE,
