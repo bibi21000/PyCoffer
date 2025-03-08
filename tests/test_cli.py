@@ -82,6 +82,8 @@ def test_config_generate(random_path, random_name):
 
     assert Config.Defaults() == {'ext': '.pcof'}
 
+    assert Config.Defaults(filename='tests/pycofferrc') == {'ext': '.pcof'}
+
     assert Config.generate('test', type='bank', location='rrrrd') is not None
 
     assert Config.generate('test', type='bank', backup='.back') is not None
