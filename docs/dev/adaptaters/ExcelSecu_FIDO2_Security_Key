@@ -1,0 +1,36 @@
+   * - | ExcelSecu FIDO2 Security Key
+       | (1ea8:fc26)
+       | Firmware : None
+     - | WINK:True
+       | LOCK:False
+       | CBOR:True
+       | NMSG:False
+     - | U2F_V2
+       | FIDO_2_0
+       | FIDO_2_1_PRE
+     - | credProtect
+       | hmac-secret
+     - | rk:True
+       | up:True
+       | uv:False
+       | plat:False
+       | uvToken:False
+       | clientPin:True
+       | credentialMgmtPreview:True
+       | userVerificationMgmtPreview:False
+     - | usb
+     - | (alg:-7 type:public-key)
+     - | 
+     - | 1
+     - | 2048
+     - | 8
+     - | 96
+     - | None
+     - | False
+     - | 4
+     - | None
+     - | 0
+     - | None
+     - | None
+     - | None
+     - | 

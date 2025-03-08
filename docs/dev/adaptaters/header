@@ -1,0 +1,27 @@
+Adaptaters informations
+========================
+
+.. list-table:: FIDO adaptaters
+   :header-rows: 1
+
+   * - Product name
+     - Capabilities
+     - Versions
+     - Extensions
+     - Options
+     - Transports
+     - Algorithms
+     - Certifications
+     - Pin_uv_protocols
+     - Max_msg_size
+     - Max_creds_in_list
+     - Max_cred_id_length
+     - Max_large_blob
+     - Force_pin_change
+     - Min_pin_length
+     - Max_cred_blob_length
+     - Max_rpids_for_min_pin
+     - Preferred_platform_uv_attempts
+     - UV_modality
+     - Remaining_disc_creds
+     - Vendor_prototype_config_commands

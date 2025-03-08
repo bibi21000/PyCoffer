@@ -7,5 +7,6 @@ Developer manual
    coffer
    plugin
    static
+   adaptaters
    benchmark
    changelog
