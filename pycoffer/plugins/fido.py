@@ -1,29 +1,8 @@
 # -*- encoding: utf-8 -*-
-"""Encrypt/Decrypt external files using keys of coffer
+"""Use FIDO keys as key store
 """
-
 __author__ = 'bibi21000 aka Sébastien GALLET'
 __email__ = 'bibi21000@gmail.com'
-
-from getpass import getpass
-
-# ~ from fido2.server import Fido2Server
-# ~ from fido2.utils import websafe_encode, websafe_decode
-# ~ import sys
-# ~ from fido2.hid import CtapHidDevice
-# ~ from fido2.client import Fido2Client, UserInteraction
-# ~ from getpass import getpass
-# ~ import ctypes
-# ~ from fido2.hid import CtapHidDevice, CAPABILITY
-# ~ from fido2.ctap2 import Ctap2
-# ~ from fido2.ctap2.extensions import HmacSecretExtension
-# ~ from fido2.ctap import CtapError
-# ~ from fido2.ctap2.pin import ClientPin
-# ~ from fido2.ctap2.credman import CredentialManagement
-# ~ from fido2.client import Fido2Client
-# ~ from fido2.hid import DiscoverableHIDDevice
-# ~ from fido2.ctap2 import CredentialManagement
-# ~ from fido2.pcsc import CtapPcscDevice
 
 from cofferfile.decorator import reify
 
@@ -41,6 +20,7 @@ try:
 
         def request_pin(self, permissions, rd_id):
             if not self._pin:
+                from getpass import getpass
                 self._pin = getpass("Enter PIN: ")
             return self._pin
 
@@ -81,13 +61,6 @@ class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
         """Lazy loader for lib fido2.client"""
         import importlib
         return importlib.import_module('fido2.client')
-
-    @classmethod
-    @reify
-    def _imp_fido2_server(cls):
-        """Lazy loader for lib fido2.server"""
-        import importlib
-        return importlib.import_module('fido2.server')
 
     @classmethod
     @reify
@@ -138,14 +111,6 @@ class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
         """
         import importlib
         return importlib.import_module('secrets')
-
-    @classmethod
-    @reify
-    def _imp_base64(cls):
-        """Lazy loader for base64
-        """
-        import importlib
-        return importlib.import_module('base64')
 
     @classmethod
     @reify
