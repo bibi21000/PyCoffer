@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Use yaml for configuration files instead of configparser
+
 ### Removed
 
 

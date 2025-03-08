@@ -7,7 +7,7 @@ __email__ = 'bibi21000@gmail.com'
 
 import os
 import sys
-import configparser
+# ~ import configparser
 
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points  # noqa
@@ -20,10 +20,10 @@ class Config():
 
     def __init__(self, filename, chkmode=True):
         self.filename = filename
-        self.parser = configparser.ConfigParser()
-        self.parser.read(filename)
-        # ~ with open(filename, 'r') as f:
-            # ~ self.parser = self._imp_yaml.safe_load(f)
+        # ~ self.parser = configparser.ConfigParser()
+        # ~ self.parser.read(filename)
+        with open(filename, 'r') as f:
+            self.parser = self._imp_yaml.safe_load(f)
 
     @classmethod
     @reify
@@ -31,6 +31,13 @@ class Config():
         """Lazy loader for base64"""
         import importlib
         return importlib.import_module('base64')
+
+    @classmethod
+    @reify
+    def _imp_copy(cls):
+        """Lazy loader for copy"""
+        import importlib
+        return importlib.import_module('copy')
 
     @classmethod
     @reify
@@ -59,9 +66,9 @@ class Config():
         """Return defaults from configuration file"""
         ret = {}
         if parser is not None:
-            for (each_key, each_val) in parser.items('DEFAULT'):
-                if each_key.startswith('default_'):
-                    ret[each_key.replace('default_','')] = each_val
+            if 'DEFAULT' in ret:
+                ret = parser['DEFAULT']
+            ret = {}
         if 'ext' not in ret:
             ret['ext'] = '.pcof'
         return ret
@@ -69,9 +76,11 @@ class Config():
     @classmethod
     def Defaults(cls, filename=None):
         """Return defaults from configuration file"""
-        parser = configparser.ConfigParser()
-        if filename is not None:
-            parser.read(filename)
+        if filename is None or os.path.isfile(filename) is False:
+            parser = {}
+        else:
+            with open(filename, 'r') as f:
+                parser = cls._imp_yaml.safe_load(f)
         return cls._get_defaults(parser)
 
     def coffer(self, section=None):
@@ -125,11 +134,12 @@ class Config():
             defaults = self._get_defaults(self.parser)
         else:
             # From class ... if we have filename, we could load defaults
-            parser = configparser.ConfigParser()
-            if filename is not None:
-                parser.read(filename)
+            if filename is None:
+                parser = {}
+            else:
+                with open(filename, 'r') as f:
+                    parser = self._imp_yaml.safe_load(f)
             defaults = self._get_defaults(parser)
-        ret = []
 
         if type is None:
             if 'type' in defaults:
@@ -140,16 +150,17 @@ class Config():
         if len(crpt) != 1:
             raise IndexError("Problem loading %s : found %s matches"%(type, len(crpt)))
         cls = tuple(crpt)[0].load()
-        ret.append('[%s]' % coffer_name)
-        ret.append('type = %s' % type)
+        ret = {coffer_name : {}}
+        ret[coffer_name]['name'] = coffer_name
+        ret[coffer_name]['type'] = type
         if backup is not None:
-            ret.append('backup = %s' % backup)
+            ret[coffer_name]['backup'] = backup
         keys = cls.gen_params()
         for k in keys:
-            ret.append('%s = %s' % (k, self._imp_base64.b64encode(keys[k]).decode()))
+            ret[coffer_name][k] = self._imp_base64.b64encode(keys[k]).decode()
             # ~ ret.append('%s = %s' % (k, keys[k].decode()))
         if location is not None:
-            ret.append('location = %s' % location)
+            ret[coffer_name]['location'] = location
         elif 'location' in defaults:
-            ret.append('location = %s' % defaults['location'])
+            ret[coffer_name]['location'] = defaults['location']
         return ret

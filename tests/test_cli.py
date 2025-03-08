@@ -134,8 +134,8 @@ def test_main_generate_bank(random_path, coffer_conf):
     runner = CliRunner()
     result = runner.invoke(main_cli.generate, ['--coffer', 'test', '--type', 'bank', '--location', random_path])
     assert result.exit_code == 0
-    assert 'type = bank' in result.output
-    assert '[test]' in result.output
+    assert 'type: bank' in result.output
+    assert 'name: test' in result.output
     assert 'coffer_key' in result.output
     assert 'secure_key' in result.output
 

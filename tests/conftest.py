@@ -24,11 +24,11 @@ def coffer_conf():
     import tempfile
     tmpdir = tempfile.TemporaryDirectory()
     from pycoffer.config import Config
+    import yaml
     conf = Config.generate('test', type='null', location=os.path.join(tmpdir.name, 'test.coffer'))
     conffile = os.path.join(tmpdir.name, 'test.conf')
     with open(conffile, 'wt') as f:
-        for li in conf:
-            f.write(li + '\n')
+        yaml.safe_dump(conf, f)
 
     yield conffile
 

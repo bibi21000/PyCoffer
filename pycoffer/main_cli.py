@@ -31,10 +31,10 @@ def cli():
 def generate(coffer, type, location, backup):
     import os
     from .config import Config
+    import yaml
     if location is None:
         location = os.getcwd()
-    for line in Config.generate(coffer, type=type, location=location, backup=backup):
-        print(line)
+    print(yaml.dump(Config.generate(coffer, type=type, location=location, backup=backup)))
 
 @cli.command(help='List files in coffer.')
 @main_lib.opt_configuration

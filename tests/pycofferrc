@@ -1,20 +1,17 @@
-[DEFAULT]
-default_backup = .backup
-default_coffer = confidential
-default_location = ~/
-default_hidden = yes
+---
+DEFAULT:
+  default_backup: ".backup"
+  default_coffer: "confidential"
+  default_location: "~/"
+  default_hidden: "yes"
+confidential:
+  type: "bank"
+  coffer_key: "wgNtDOJjDoGyXQeV8msoKA=="
+  secure_key: "P1JwKYoon26kUsDZbp/LP8JRRfoS8Btwx7oVQraQ8Ak="
+  fido_app: "pycoffer"
+  fido_app_name: "PyCoffer"
+  fido_ident: "pycoffer"
+game:
+  key: "45"
+  location: "Documents/game.coffer"
 
-[confidential]
-type = bank
-coffer_key = wgNtDOJjDoGyXQeV8msoKA==
-secure_key = P1JwKYoon26kUsDZbp/LP8JRRfoS8Btwx7oVQraQ8Ak=
-fido_app = pycoffer
-fido_app_name = PyCoffer
-fido_ident = pycoffer
-fido_secure =
-fido_coffer =
-
-[game]
-key = 45
-paranoid =
-location = Documents/game.coffer
