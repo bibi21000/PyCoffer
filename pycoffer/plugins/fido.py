@@ -239,7 +239,7 @@ class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
         """Register a key and return params as a tuple of dict"""
         private, cert = cls.generate_config(user_ident=user_ident, user_name=user_name,
             user_display_name=user_display_name, rp_id=rp_id, rp_name=rp_name)
-        print(private, cert)
+
         rp = cls.get_rp(rp_id=private['rp_id'], rp_name=private['rp_name'])
 
         user = cls._imp_fido2_webauthn.PublicKeyCredentialUserEntity(
@@ -294,13 +294,15 @@ class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
         return private, cert
 
     @classmethod
-    def check(cls, device, cred_id: bytes, rp_id: str):
+    def check(cls, device, cred_id, rp_id: str):
         """Check we can derive from this device using cred_id and rp_id"""
         salt = cls._imp_secrets.token_bytes(32)
+        if isinstance(cred_id, list) is False:
+            cred_id = [cred_id]
         try:
-            key1, key2 = cls.derive_from_credential(device, cred_id=cred_id, rp_id=rp_id, salt1=salt)
+            key1, key2 = cls.derive(device, cred_id=cred_id, rp_id=rp_id, salt1=salt)
             return key1 != None
-        except (cls._imp_fido2_ctap.CtapError, cls._imp_fido2_client.ClientError, IndexError):
+        except ValueError:
             return False
 
     @classmethod
@@ -355,7 +357,6 @@ class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
         output2 = None
         if len(salts) > 1:
             output2 = client_extension_results["hmacGetSecret"]["output2"]
-        print(output1, output2)
         return output1, output2
 
     @classmethod
