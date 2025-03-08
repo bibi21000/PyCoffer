@@ -80,6 +80,72 @@ def test_plugin_fido_lib(random_path, random_name):
         assert len(hkey[0]) == 43
         assert len(hkey[1]) == 43
 
+FORMAT = "|%-40s|%-20s|%-20s|%-20s|%-45s|%-10s|%-30s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-30s|\n"
+def format_line(f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21):
+    return FORMAT%(f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21)
+
+def fill_list(list, size):
+    while len(list) < size:
+        list.append('')
+    return list
+
+def row(list, new=False):
+    ret = []
+    if new :
+        new = '*'
+    else:
+        new = ' '
+    if len(list) > 0:
+        ret.append("   %s - | %s\n"%(new, list[0]))
+    else:
+        ret.append("   %s - | \n"%new)
+    for v in list[1:]:
+        ret.append("       | %s\n"%v)
+    return ret
+
+@pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
+def test_plugin_fido_info(caplog, random_path, random_name):
+    caplog.set_level(logging.DEBUG)
+    import fido2.client
+    for key in pycoffer.plugins.fido.Fido.get_devices(extension=None):
+        infos = pycoffer.plugins.fido.Fido.get_infos(key)
+        filename = infos['product_name'].replace(' ', '_')
+        capabilities = ['%s:%s'%(k,v) for k,v in infos['capabilities'].items()]
+        certifications = ['%s:%s'%(k,v) for k,v in infos['info'].certifications.items()] if infos['info'].certifications is not None else []
+        options = ['%s:%s'%(k,v) for k,v in infos['info'].options.items()]
+        versions = infos['info'].versions
+        extensions = infos['info'].extensions
+        pin_uv_protocols = [ '%s'%i for i in infos['info'].pin_uv_protocols]
+        transports = infos['info'].transports
+        vendor_prototype_config_commands = infos['info'].vendor_prototype_config_commands if infos['info'].vendor_prototype_config_commands is not None else []
+        algorithms = []
+        if infos['info'].algorithms is not None:
+            for a in infos['info'].algorithms:
+                algorithms.append('(' + ' '.join(['%s:%s'%(k,v) for k,v in a.items()]) +')')
+        max_size = max([len(capabilities),len(certifications),len(options),len(pin_uv_protocols),len(vendor_prototype_config_commands)])
+        with open(os.path.join("docs/dev/adaptaters", filename),'wt') as ff:
+            ff.writelines(row([infos['product_name'], "(%s)" % (infos['usb_id']), "Firmware : %s"%infos['info'].firmware_version], new=True))
+            ff.writelines(row(capabilities))
+            ff.writelines(row(versions))
+            ff.writelines(row(extensions))
+            ff.writelines(row(options))
+            ff.writelines(row(transports))
+            ff.writelines(row(algorithms))
+            ff.writelines(row(certifications))
+            ff.writelines(row(pin_uv_protocols))
+            ff.writelines(row([infos['info'].max_msg_size]))
+            ff.writelines(row([infos['info'].max_creds_in_list]))
+            ff.writelines(row([infos['info'].max_cred_id_length]))
+            ff.writelines(row([infos['info'].max_large_blob]))
+            ff.writelines(row([infos['info'].force_pin_change]))
+            ff.writelines(row([infos['info'].min_pin_length]))
+            ff.writelines(row([infos['info'].max_cred_blob_length]))
+            ff.writelines(row([infos['info'].max_rpids_for_min_pin]))
+            ff.writelines(row([infos['info'].preferred_platform_uv_attempts]))
+            ff.writelines(row([infos['info'].uv_modality]))
+            ff.writelines(row([infos['info'].remaining_disc_creds]))
+            ff.writelines(row(vendor_prototype_config_commands))
+
 @pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
 # ~ @pytest.mark.skip(reason="Work in progress.")
 def test_plugin_fido_list(caplog, random_path, random_name):
@@ -202,9 +268,7 @@ def test_plugin_fido_nacl_crypt(random_path, random_name):
     uncrypted = cryp2._decrypt(crypted)
     assert uncrypted == text
 
-    # ~ assert False
-
-def test_plugin_fido_virtual(random_path, random_name, fido):
+def notest_plugin_fido_virtual(random_path, random_name, fido):
     device, ctap2 = fido
     rps = list(pycoffer.plugins.fido.Fido.list_rps(device, '1405'))
     # ~ import fido2.client

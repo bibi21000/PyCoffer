@@ -149,6 +149,38 @@ class Fido(OtherPlugin, CliInterface):
         return cls._imp_fido2_webauthn.PublicKeyCredentialRpEntity(id=app, name=app_name)
 
     @classmethod
+    def get_infos(cls, device, **kwargs):
+        """Locate a CTAP device suitable for use.
+
+        If running on Windows as non-admin, the predicate check will be skipped and
+        a webauthn.dll based client will be returned.
+
+        Extra kwargs will be passed to the constructor of Fido2Client.
+
+        The client will be returned, with the CTAP2 Info, if available.
+        """
+        ret = {
+            'device': '%s'%device,
+            'product_name': '%s'%device.product_name,
+            'serial_number': '%s'%device.serial_number,
+            'usb_id': '%04x:%04x'%(device.descriptor.vid, device.descriptor.pid),
+
+        }
+        ret['capabilities'] = {
+            'WINK': cls._imp_fido2_hid.CAPABILITY(device.capabilities).supported(cls._imp_fido2_hid.CAPABILITY.WINK),
+            'LOCK': cls._imp_fido2_hid.CAPABILITY(device.capabilities).supported(cls._imp_fido2_hid.CAPABILITY.LOCK),
+            'CBOR': cls._imp_fido2_hid.CAPABILITY(device.capabilities).supported(cls._imp_fido2_hid.CAPABILITY.CBOR),
+            'NMSG': cls._imp_fido2_hid.CAPABILITY(device.capabilities).supported(cls._imp_fido2_hid.CAPABILITY.NMSG),
+        }
+
+        if device.capabilities & cls._imp_fido2_hid.CAPABILITY.CBOR:
+            ctap2 = cls._imp_fido2_ctap2.Ctap2(device)
+            ret['info'] = ctap2.get_info()
+        else:
+            ret['info'] = None
+        return ret
+
+    @classmethod
     def get_client(cls, device, origin='local', **kwargs):
         """Locate a CTAP device suitable for use.
 
@@ -172,11 +204,14 @@ class Fido(OtherPlugin, CliInterface):
         return client, client.info
 
     @classmethod
-    def get_devices(cls):
+    def get_devices(cls, extension="hmac-secret"):
         for dev in cls._imp_fido2_hid.CtapHidDevice.list_devices():
-            _, info = cls.get_client(dev)
-            if "hmac-secret" in info.extensions:
+            if extension is None:
                 yield dev
+            else:
+                _, info = cls.get_client(dev)
+                if extension in info.extensions:
+                    yield dev
 
     @classmethod
     def register(cls, device, ident=None, name='coffer', display_name=None, app='pycoffer', app_name="PyCoffer"):
