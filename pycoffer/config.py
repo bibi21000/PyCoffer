@@ -27,20 +27,6 @@ class Config():
 
     @classmethod
     @reify
-    def _imp_base64(cls):
-        """Lazy loader for base64"""
-        import importlib
-        return importlib.import_module('base64')
-
-    @classmethod
-    @reify
-    def _imp_copy(cls):
-        """Lazy loader for copy"""
-        import importlib
-        return importlib.import_module('copy')
-
-    @classmethod
-    @reify
     def _imp_yaml(cls):
         """Lazy loader for yaml"""
         import importlib
@@ -95,13 +81,13 @@ class Config():
         else:
             ret['backup'] = None
         if 'coffer_key' in self.parser[section]:
-            ret['coffer_key'] = self._imp_base64.b64decode(self.parser[section]['coffer_key'])
+            ret['coffer_key'] = self.parser[section]['coffer_key']
             # ~ ret['coffer_key'] = self.parser[section]['coffer_key']
         # ~ else:
             # ~ ret['coffer_key'] = None
         if 'secure_key' in self.parser[section]:
             # ~ ret['secure_key'] = self.parser[section]['secure_key']
-            ret['secure_key'] = self._imp_base64.b64decode(self.parser[section]['secure_key'])
+            ret['secure_key'] = self.parser[section]['secure_key']
         # ~ else:
             # ~ ret['secure_key'] = None
         if 'location' in self.parser[section]:
@@ -157,7 +143,7 @@ class Config():
             ret[coffer_name]['backup'] = backup
         keys = cls.gen_params()
         for k in keys:
-            ret[coffer_name][k] = self._imp_base64.b64encode(keys[k]).decode()
+            ret[coffer_name][k] = keys[k]
             # ~ ret.append('%s = %s' % (k, keys[k].decode()))
         if location is not None:
             ret[coffer_name]['location'] = location

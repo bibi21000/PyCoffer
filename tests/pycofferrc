@@ -6,8 +6,10 @@ DEFAULT:
   hidden: "yes"
 confidential:
   type: "bank"
-  coffer_key: "wgNtDOJjDoGyXQeV8msoKA=="
-  secure_key: "P1JwKYoon26kUsDZbp/LP8JRRfoS8Btwx7oVQraQ8Ak="
+  coffer_key: !!binary |
+    F52xW+Qti6npTbhDiYnNKQ==
+  secure_key: !!binary |
+    n1T/WuZSV7yXzntdVT/nOllXNDBIotMp2Y4/7GEea8Q=
   fido_app: "pycoffer"
   fido_app_name: "PyCoffer"
   fido_ident: "pycoffer"
