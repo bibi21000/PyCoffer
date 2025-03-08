@@ -27,7 +27,7 @@ from getpass import getpass
 
 from cofferfile.decorator import reify
 
-from . import AuthPlugin, CliInterface, AuthInterface
+from . import AuthPlugin, CliInterface, AuthInterface, ConfigInterface
 
 try:
     from fido2.client import UserInteraction
@@ -53,7 +53,7 @@ except ImportError:
     class CliInteraction():
         pass
 
-class Fido(AuthPlugin, CliInterface, AuthInterface):
+class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
     desc = "Use FIDO "
 
     @classmethod
@@ -88,6 +88,13 @@ class Fido(AuthPlugin, CliInterface, AuthInterface):
         """Lazy loader for lib fido2.server"""
         import importlib
         return importlib.import_module('fido2.server')
+
+    @classmethod
+    @reify
+    def _imp_fido2_ctap(cls):
+        """Lazy loader for lib fido2.ctap"""
+        import importlib
+        return importlib.import_module('fido2.ctap')
 
     @classmethod
     @reify
@@ -133,6 +140,22 @@ class Fido(AuthPlugin, CliInterface, AuthInterface):
         return importlib.import_module('secrets')
 
     @classmethod
+    @reify
+    def _imp_base64(cls):
+        """Lazy loader for base64
+        """
+        import importlib
+        return importlib.import_module('base64')
+
+    @classmethod
+    @reify
+    def _imp_string(cls):
+        """Lazy loader for string
+        """
+        import importlib
+        return importlib.import_module('string')
+
+    @classmethod
     def verify_rp_id(self, rp_id: str, origin: str) -> bool:
         """Checks if a Webauthn RP ID is usable for a given origin.
 
@@ -143,10 +166,40 @@ class Fido(AuthPlugin, CliInterface, AuthInterface):
         return True
 
     @classmethod
-    def get_rp(cls, app: str = 'pycoffer', app_name: str = "PyCoffer") -> bool:
+    def get_rp(cls, rp_id: str = 'pycoffer', rp_name: str = "PyCoffer"):
         """Get local RP.
         """
-        return cls._imp_fido2_webauthn.PublicKeyCredentialRpEntity(id=app, name=app_name)
+        return cls._imp_fido2_webauthn.PublicKeyCredentialRpEntity(id=rp_id.encode(), name=rp_name)
+
+    @classmethod
+    def get_ident(cls, size=32) -> str:
+        """Get string random ident.
+        """
+        alphabet = self._imp_string.ascii_letters + self._imp_string.digits
+        return ''.join(self._imp_secrets.choice(alphabet) for i in range(size))
+
+    @classmethod
+    def generate_config(cls, user_ident: str = None, user_name: str = 'pycoffer', user_display_name: str = "PyCoffer keys",
+        rp_id: str = None, rp_name: str = "PyCoffer"
+    ):
+        """Generate configs.
+        """
+        if user_ident is None:
+            user_ident = cls.get_ident(32)
+        if rp_id is None:
+            rp_id = cls.get_ident(32)
+        private = {
+            'rp_id': rp_id,
+            'rp_name': rp_name,
+            'user_ident': user_ident,
+            'user_name': user_name,
+            'user_display_name': user_display_name,
+        }
+        cert = {
+            'rp_id': rp_id,
+            'credential_id': None,
+        }
+        return private, cert
 
     @classmethod
     def get_infos(cls, device, **kwargs):
@@ -215,21 +268,24 @@ class Fido(AuthPlugin, CliInterface, AuthInterface):
                     yield dev
 
     @classmethod
-    def register(cls, device, ident=None, name='coffer', display_name=None, app='pycoffer', app_name="PyCoffer"):
-        """Generate params for a new store : keys, ... as a dict"""
-        rp = cls.get_rp(app=app, app_name=app_name)
+    def register(cls, device, user_ident: str = None, user_name: str = 'pycoffer',
+        user_display_name: str = "PyCoffer keys", rp_id: str = None, rp_name: str = "PyCoffer",
+    ):
+        """Register a key and return params as a tuple of dict"""
+        private, cert = cls.generate_config(user_ident=user_ident, user_name=user_name,
+            user_display_name=user_display_name, rp_id=rp_id, rp_name=rp_name)
+        print(private, cert)
+        rp = cls.get_rp(rp_id=private['rp_id'], rp_name=private['rp_name'])
 
-        if ident is None:
-            ident = cls._imp_secrets.token_bytes(32)
         user = cls._imp_fido2_webauthn.PublicKeyCredentialUserEntity(
-            id=ident,
-            name=name,
-            display_name=display_name
+            id=private['user_ident'].encode(),
+            name=private['user_name'],
+            display_name=private['user_display_name']
         )
 
         challenge = cls._imp_secrets.token_bytes(32)
 
-        client, _ = cls.get_client(device, origin=app)
+        client, _ = cls.get_client(device, origin=private['rp_id'])
 
         result = client.make_credential(
             cls._imp_fido2_webauthn.PublicKeyCredentialCreationOptions(
@@ -256,34 +312,66 @@ class Fido(AuthPlugin, CliInterface, AuthInterface):
         ):
             raise RuntimeError("Failed to create credential with HmacSecret")
 
-        credential = result.attestation_object.auth_data.credential_data
+        if hasattr(result, 'attestation_object'):
+            attestation_object = result.attestation_object
+        else:
+            attestation_object = result.response.attestation_object
+        if client_extension_results is None or not client_extension_results.get(
+            "hmacCreateSecret"
+        ):
+            raise RuntimeError("Failed to create credential with HmacSecret")
+        credential = attestation_object.auth_data.credential_data
         if credential is None:
             raise RuntimeError("Can't get credential with HmacSecret")
 
-        return ident, credential.credential_id
+        cert['credential_id'] = credential.credential_id
+
+        return private, cert
 
     @classmethod
-    def derive(cls, device, ident, salt1, salt2=None, app='pycoffer', app_name="PyCoffer"):
-        """Generate params for a new store : keys, ... as a dict"""
+    def check(cls, device, cred_id: bytes, rp_id: str):
+        """Check we can derive from this device using cred_id and rp_id"""
+        salt = cls._imp_secrets.token_bytes(32)
+        try:
+            key1, key2 = cls.derive_from_credential(device, cred_id=cred_id, rp_id=rp_id, salt1=salt)
+            return key1 != None
+        except (cls._imp_fido2_ctap.CtapError, cls._imp_fido2_client.ClientError, IndexError):
+            return False
+
+    @classmethod
+    def derive(cls, device, cred_id, rp_id: str, salt1: bytes, salt2: bytes=None):
+        """Derive salts from a list of credentials"""
+        if isinstance(cred_id, list) is False:
+            cred_id = [cred_id]
+        for crid in cred_id:
+            try:
+                key1, key2 = cls.derive_from_credential(device, cred_id=crid, rp_id=rp_id, salt1=salt1, salt2=salt2)
+                return key1, key2
+            except (cls._imp_fido2_ctap.CtapError, cls._imp_fido2_client.ClientError, IndexError):
+                pass
+        raise ValueError("Can't find valid credential in list")
+
+    @classmethod
+    def derive_from_credential(cls, device, cred_id: bytes, rp_id: str, salt1: bytes, salt2: bytes=None):
+        """Derive salts from a credential"""
         # Prepare parameters for getAssertion
         challenge = cls._imp_secrets.token_bytes(32)
         allow_list = [
             cls._imp_fido2_webauthn.PublicKeyCredentialDescriptor(
                 type=cls._imp_fido2_webauthn.PublicKeyCredentialType.PUBLIC_KEY,
-                id=ident
+                id=cred_id
             )
         ]
 
-        client, _ = cls.get_client(device, origin=app)
+        client, _ = cls.get_client(device, origin=rp_id)
         salts = {"salt1": salt1}
         if salt2 is not None:
             salts['salt2'] = salt2
 
-        rp = cls.get_rp(app=app, app_name=app_name)
         # Authenticate the credential
         assertion_result = client.get_assertion(
             options=cls._imp_fido2_webauthn.PublicKeyCredentialRequestOptions(
-                rp_id=rp.id,
+                rp_id=rp_id.encode(),
                 challenge=challenge,
                 allow_credentials=allow_list,
                 extensions={"hmacGetSecret": salts},
@@ -302,15 +390,15 @@ class Fido(AuthPlugin, CliInterface, AuthInterface):
         output2 = None
         if len(salts) > 1:
             output2 = client_extension_results["hmacGetSecret"]["output2"]
-
+        print(output1, output2)
         return output1, output2
 
     @classmethod
-    def list_rps(cls, device, pin, app='pycoffer', app_name="PyCoffer"):
+    def list_rps(cls, device, pin):
         """List all FIDO credentials on your key that have the HMAC_SECRET extension enabled
         experimental
         """
-        client, _ = cls.get_client(device, origin=app)
+        client, _ = cls.get_client(device)
 
         print(client.info)
         # Check if credential management is supported

@@ -151,3 +151,13 @@ class AuthInterface():
     Used to collect plugins with auth
     """
     pass
+
+class ConfigInterface():
+    """The CLI plugin interfacce
+    Used to collect plugins with cli
+    """
+    @classmethod
+    def generate_config(cls):
+        """Return a tuple of private_config and cert_config"""
+        raise NotImplementedError
+

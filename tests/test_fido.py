@@ -34,14 +34,15 @@ from naclfile.tar import TarFile as TarZstdNaclFile
 import pytest
 from click.testing import CliRunner
 
-# ~ KEY = b'qELXlwOZCyYlo9wU1hTYi8k51BRjyqc3phMamdhHVDOS0hVAaRgjgeM863mZlCtvAGJh5+jBgkhzTDzvhsNn1Jj/v1vy8itABp1IbJi2o+tiD9e9rVLwfOVxUmQ0zAW2'
-# ~ KEY = b'SOEAFaPFfZ102Uf37/Qo9rQMlRXpqgO8aT4pri+Z3pHBqz2BABIb4Yw8CbqS0PRjOf6qXVwhxJnbHavk0G3GDgxPLmGFlu7yNXzjoC5CehXdlCUOpvBL2Hwfz7AmvAsW'
-
-KEYPRV = b'HE7dpYn3/s+1JbEnm/EgMMBNGI2Y4chha523Gi7zPes='
-KEYS = [
-b'aEaYz4Gboh25FScc4osEPiAw0lw9J6yNKddKdVWQ8ifvsJ6mex58KSplhJELOiHK/SfmfHlllzbLdBd1WpqXhMd1FkdGE+gRivKaOUElLuET2AK2egJW+AiRDb4/eAG7',
-b'cxs3A5gRquOOkSB0Nv0TfYt/7s8rf7ht+jiLgL7CgOddod75BNhPNTn2uPbUP6N7y2e7Fz/Yu63+7YrDx+4APtnMXu8Y50Qr02ANim5guwWpGfoaDhI83RgsMGuKbUZY',
-b'2XATMTyui01FTmtsWRsE8uWus7LVRZUfEXoV2zMl2Cg=',
+RP_ID = 'pycoffertest'
+RP_NAME = 'Pycoffer keys'
+USER_IDENT = 'testuserpycoffer'
+USER_NAME = 'pycoffer'
+CREDS = [
+b'\xeak\x14\xcd\xd1/\xf7\xa9\xc5\x97t\xcc\xbfD\xb3U#\xb6\x8f\x12\xad\xd4C"\nd\xe0\xab\xfd\xfc\xcd\xa3d[\x8f\xec\xff\xb2\xb0\xa3\x14\x94WH\xc9|\xe8\xc2\xc7\xcb\xf9\xf9\xbbU\xc1\xf0\xa1\x15\xd8\xb9\xc3\xd9Ud5\xaer^(\xbdX\x12\xddP\xfe\x9b\xd3W\x0f:\xa2\xc5\xbf\xd1Li\x8c\xc4.\xa6\x83$\x1fC&E',
+b'\xb3\x12"Fo1\xe9\xc2i\xf9\x0f\x88\xca\xb5\xb9\xd7o\x94\x9e\xcf\xbc\xbf\xc4\xb6d\x84\xe7\xd4\x95\x03\x8bO',
+b'\xb6\xda!\xd2\rR\xa3\xa8o\xf7?F>\x88\xee({Ed\x05\xd7\xb2\x97\x89\xb20V4\x9e\x9a\xb3v\x86@\\oUb\xb8\x80\xdf\xb2P\x0b]j\xa2\xb2\xc8h!\x1b\x98\x1b\\\xaf J\x1e\x98\xd9O8\xba\x83\x97\x0f3\xf9\xf0x\xac\x1a l\xe8~\xea\n\x92\xfe\\\xfc\xc3\xa7O\x9f\xfe{\xacK\xdbV\xa1\\\x8a',
+b"\xf1\xbd\xc6\x03\x89\x8b\x12\xf1e%\xe4\xf4\x9ejM\x1e\x86\x16\xe8\x95\xba\x1f\x97V\x8d[\x8d]\xa2d;k\xbfp5\xd7\xbf*Ykx\xb4z\xf63C\xe6'\xa1n\xaa\xf6\x80\xbdM_2\x06/#\xac\x94\x85\xc39\xeb\x8c\x13\xb1\xcc\xe9\x87W\x10M[RH_\xaa\xfe\x044\t\xa2\xa4\x9c\x19e\x88j@\xcc\xb5\xae\x96",
 ]
 
 try:
@@ -53,28 +54,53 @@ except (ImportError,):
 
 @pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
 @pytest.mark.skip(reason="Manual test to register keys.")
-def notest_plugin_fido_keys(random_path, random_name):
+def test_plugin_fido_register(random_path, random_name):
     import fido2.client
     # ~ keyprv = secrets.token_bytes(32)
     # ~ print("keyprv", base64.b64encode(keyprv))
-    keyprv = base64.b64decode(KEYPRV)
     for key in pycoffer.plugins.fido.Fido.get_devices():
-        ident_prv, ident = pycoffer.plugins.fido.Fido.register(key, ident=keyprv)
+        private, cert = pycoffer.plugins.fido.Fido.register(key, user_ident=USER_IDENT, user_name=USER_NAME, rp_id=RP_ID, rp_name=RP_NAME)
         # ~ assert len(ident) == 96
-        print("ident %s"%key, base64.b64encode(ident))
+        print("private %s"%key, private)
+        print("cert %s"%key, cert)
     assert False
 
 @pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
-def test_plugin_fido_lib(random_path, random_name):
+@pytest.mark.skip(reason="Manual test to register keys.")
+def test_plugin_fido_register_and_check(random_path, random_name):
+    import fido2.client
+    # ~ keyprv = secrets.token_bytes(32)
+    # ~ print("keyprv", base64.b64encode(keyprv))
+    for key in pycoffer.plugins.fido.Fido.get_devices():
+        private, cert = pycoffer.plugins.fido.Fido.register(key, user_ident=USER_IDENT, user_name=USER_NAME, rp_id=RP_ID, rp_name=RP_NAME)
+        # ~ assert len(ident) == 96
+        print("private %s"%key, private)
+        print("cert %s"%key, cert)
+        assert pycoffer.plugins.fido.Fido.check(key, cred_id=cert['credential_id'], rp_id=RP_ID)
+
+    assert False
+
+@pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
+def test_plugin_fido_check(random_path, random_name):
+    import fido2.client
+    for key in pycoffer.plugins.fido.Fido.get_devices():
+        print("key %s"%key)
+        registered = False
+        for cred in CREDS:
+            print("cred %s"%cred)
+            ret = pycoffer.plugins.fido.Fido.check(key, cred_id=cred, rp_id=RP_ID)
+            print(ret)
+            if ret is True:
+                registered = True
+                break
+        assert registered is True
+
+@pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
+def test_plugin_fido_derive(random_path, random_name):
     import fido2.client
     for key in pycoffer.plugins.fido.Fido.get_devices():
         salt = secrets.token_bytes(32)
-        for KEY in KEYS:
-            ident = base64.b64decode(KEY)
-            try:
-                hkey = pycoffer.plugins.fido.Fido.derive(key, ident, salt, salt)
-            except (fido2.client.ClientError, IndexError):
-                continue
+        hkey = pycoffer.plugins.fido.Fido.derive(key, CREDS, RP_ID, salt, salt)
         assert len(hkey[0]) == 43
         assert len(hkey[1]) == 43
 
@@ -161,13 +187,12 @@ def test_plugin_fido_hmac(random_path, random_name):
     aessalt = secrets.token_bytes(16)
     salt = secrets.token_bytes(32)
     key = list(pycoffer.plugins.fido.Fido.get_devices())[0]
-    for KEY in KEYS:
-        ident = base64.b64decode(KEY)
+    for ident in CREDS:
         try:
-            hkey = pycoffer.plugins.fido.Fido.derive(key, ident, salt)
+            hkey = pycoffer.plugins.fido.Fido.derive_from_credential(key, ident, RP_ID, salt)
             _, res = aesfile.AesCryptor.derive(hkey[0], salt=aessalt)
             salts.append(res)
-            hkey = pycoffer.plugins.fido.Fido.derive(key, ident, salt)
+            hkey = pycoffer.plugins.fido.Fido.derive_from_credential(key, ident, RP_ID, salt)
             _, res = aesfile.AesCryptor.derive(hkey[0], salt=aessalt)
             salts.append(res)
             break
@@ -191,22 +216,17 @@ def test_plugin_fido_aes_crypt(random_path, random_name):
     aessalt = secrets.token_bytes(16)
     salt = secrets.token_bytes(32)
     for key in pycoffer.plugins.fido.Fido.get_devices():
-        for KEY in KEYS:
-            ident = base64.b64decode(KEY)
-            if KEY == KEYS[0]:
-                try:
-                    hkey = pycoffer.plugins.fido.Fido.derive(key, ident, salt)
-                    _, res = aesfile.AesCryptor.derive(hkey[0], salt=aessalt)
-                    salts.append(res)
-                except (fido2.client.ClientError, IndexError):
-                    continue
+        for ident in CREDS:
             try:
-                hkey = pycoffer.plugins.fido.Fido.derive(key, ident, salt)
+                hkey = pycoffer.plugins.fido.Fido.derive_from_credential(key, ident, RP_ID, salt)
                 _, res = aesfile.AesCryptor.derive(hkey[0], salt=aessalt)
                 salts.append(res)
-                break
             except (fido2.client.ClientError, IndexError):
                 continue
+    hkey = pycoffer.plugins.fido.Fido.derive(key, CREDS, RP_ID, salt)
+    _, res = aesfile.AesCryptor.derive(hkey[0], salt=aessalt)
+    salts.append(res)
+
     assert len(salts) == 3
     text = secrets.token_bytes(3268)
     cryp0 = aesfile.AesCryptor(aes_key=salts[0])
@@ -232,22 +252,17 @@ def test_plugin_fido_nacl_crypt(random_path, random_name):
     naclsalt = secrets.token_bytes(16)
     salt = secrets.token_bytes(32)
     for key in pycoffer.plugins.fido.Fido.get_devices():
-        for KEY in KEYS:
-            ident = base64.b64decode(KEY)
-            if KEY == KEYS[0]:
-                try:
-                    hkey = pycoffer.plugins.fido.Fido.derive(key, ident, salt)
-                    _, res = naclfile.NaclCryptor.derive(hkey[0], salt=naclsalt)
-                    salts.append(res)
-                except (fido2.client.ClientError, IndexError):
-                    continue
+        for ident in CREDS:
             try:
-                hkey = pycoffer.plugins.fido.Fido.derive(key, ident, salt)
+                hkey = pycoffer.plugins.fido.Fido.derive_from_credential(key, ident, RP_ID, salt)
                 _, res = naclfile.NaclCryptor.derive(hkey[0], salt=naclsalt)
                 salts.append(res)
-                break
             except (fido2.client.ClientError, IndexError):
                 continue
+    hkey = pycoffer.plugins.fido.Fido.derive(key, CREDS, RP_ID, salt)
+    _, res = naclfile.NaclCryptor.derive(hkey[0], salt=naclsalt)
+    salts.append(res)
+
     assert len(salts) == 3
     assert len(salts[0]) == SecretBox.KEY_SIZE
     assert len(salts[1]) == SecretBox.KEY_SIZE
@@ -298,6 +313,10 @@ def test_fido_cli_check(coffer_conf):
     assert result.exit_code == 0
 
     result = runner.invoke(pycoffer.plugins.fido_cli.fido, ['--all'])
+    # ~ assert 'file1.data' in result.output
+    assert result.exit_code == 0
+
+    result = runner.invoke(pycoffer.plugins.fido_cli.fido, ['--all', '--details'])
     # ~ assert 'file1.data' in result.output
     assert result.exit_code == 0
 
