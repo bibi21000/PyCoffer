@@ -1,0 +1,23 @@
+
+|
+
+Add your adaptater to this list :
+
+- install PyCoffer from github with test dependencies
+
+- launch test_plugin_fido_info
+
+    ..code ::
+
+        ./venv/bin/pytest tests/test_fido.py -k test_plugin_fido_info
+
+- this will generate a new file in docs/dev/adaptaters :
+
+    ..code ::
+
+        ExcelSecu_FIDO2_Security_Key
+        FS_ePass_FIDO
+        ...
+        NEOWAVE_NEOWAVE_Winkeo_FIDO2
+
+- submit this file in a PR
