@@ -131,14 +131,14 @@ jobs:
 workflows:
   sample:
     jobs:
-      - build-and-test:
-          matrix:
-            parameters:
-                python : ['3.9', '3.10', '3.11']
+      #~ - build-and-test:
+          #~ matrix:
+            #~ parameters:
+                #~ python : ['3.9', '3.10', '3.11']
       - build-and-cov:
           matrix:
             parameters:
-                python : ['3.12']
+                python : ['3.9', '3.10', '3.11', '3.12']
 #      - testpypi_publish:
 #          requires:
 #            - build-and-test
