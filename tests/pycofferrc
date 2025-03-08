@@ -1,9 +1,9 @@
 ---
 DEFAULT:
-  default_backup: ".backup"
-  default_coffer: "confidential"
-  default_location: "~/"
-  default_hidden: "yes"
+  backup: ".backup"
+  coffer: "confidential"
+  location: "~/"
+  hidden: "yes"
 confidential:
   type: "bank"
   coffer_key: "wgNtDOJjDoGyXQeV8msoKA=="
