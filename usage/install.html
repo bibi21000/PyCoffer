@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>PyCoffer installation &#8212; PyCoffer  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PyCoffer Long Time Backup" href="rescue.html" />
+    <link rel="prev" title="User manual" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="pycoffer-installation">
+<h1>PyCoffer installation<a class="headerlink" href="#pycoffer-installation" title="Link to this heading">¶</a></h1>
+<p>Install pycoffer, preferably in a virtual environment :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pycoffer</span><span class="p">[</span><span class="n">cli</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Create your configuration file with your favorite editor.
+It is a classical INI file for the ConfigParser.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vim</span> <span class="o">~/.</span><span class="n">pycofferrc</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">DEFAULT</span><span class="p">]</span>
+<span class="n">default_backup</span> <span class="o">=</span> <span class="o">.</span><span class="n">backup</span>
+<span class="n">default_coffer</span> <span class="o">=</span> <span class="n">confidential</span>
+<span class="n">default_location</span> <span class="o">=</span> <span class="o">~/</span>
+<span class="n">default_hidden</span> <span class="o">=</span> <span class="n">yes</span>
+<span class="n">default_type</span> <span class="o">=</span> <span class="n">bank</span>
+</pre></div>
+</div>
+<p>Change user rights on that file. Must be only readable and writable by owner :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">chmod</span> <span class="mi">600</span> <span class="o">~/.</span><span class="n">pycofferrc</span>
+</pre></div>
+</div>
+<p>Generate config for your coffer :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">generate</span> <span class="o">--</span><span class="n">coffer</span> <span class="n">personal</span> <span class="o">--</span><span class="n">location</span> <span class="o">~/.</span><span class="n">personal</span><span class="o">.</span><span class="n">pcof</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">personal</span><span class="p">]</span>
+<span class="nb">type</span> <span class="o">=</span> <span class="n">bank</span>
+<span class="n">backup</span> <span class="o">=</span> <span class="o">.</span><span class="n">backup</span>
+<span class="n">coffer_key</span> <span class="o">=</span> <span class="n">dVEzSkJxQ0o4MzkwRHhSSndiTVNhUUYyT1dtMWxHdjdUdlJYSGs5cEdBZz0</span><span class="o">=</span>
+<span class="n">secure_key</span> <span class="o">=</span> <span class="n">i2Expb5pIkBdRjI8SGnr3h7MCbnyL0iaycqAJeHZy5k</span><span class="o">=</span>
+<span class="n">location</span> <span class="o">=</span> <span class="o">/</span><span class="n">home</span><span class="o">/&lt;</span><span class="n">user</span><span class="o">&gt;/.</span><span class="n">personal</span><span class="o">.</span><span class="n">pcof</span>
+</pre></div>
+</div>
+<p>Add it to your pycofferrc file :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vim</span> <span class="o">~/.</span><span class="n">pycofferrc</span>
+</pre></div>
+</div>
+<p>It should looks like :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">DEFAULT</span><span class="p">]</span>
+<span class="n">default_backup</span> <span class="o">=</span> <span class="o">.</span><span class="n">backup</span>
+<span class="n">default_coffer</span> <span class="o">=</span> <span class="n">confidential</span>
+<span class="n">default_location</span> <span class="o">=</span> <span class="o">~/</span>
+<span class="n">default_hidden</span> <span class="o">=</span> <span class="n">yes</span>
+<span class="n">default_type</span> <span class="o">=</span> <span class="n">bank</span>
+
+<span class="p">[</span><span class="n">personal</span><span class="p">]</span>
+<span class="nb">type</span> <span class="o">=</span> <span class="n">bank</span>
+<span class="n">backup</span> <span class="o">=</span> <span class="o">.</span><span class="n">backup</span>
+<span class="n">coffer_key</span> <span class="o">=</span> <span class="n">dVEzSkJxQ0o4MzkwRHhSSndiTVNhUUYyT1dtMWxHdjdUdlJYSGs5cEdBZz0</span><span class="o">=</span>
+<span class="n">secure_key</span> <span class="o">=</span> <span class="n">i2Expb5pIkBdRjI8SGnr3h7MCbnyL0iaycqAJeHZy5k</span><span class="o">=</span>
+<span class="n">location</span> <span class="o">=</span> <span class="o">/</span><span class="n">home</span><span class="o">/&lt;</span><span class="n">user</span><span class="o">&gt;/.</span><span class="n">personal</span><span class="o">.</span><span class="n">pcof</span>
+</pre></div>
+</div>
+<p>Check for default coffer and configuration :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">add</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span> <span class="n">pycoffer</span> <span class="n">add</span> <span class="p">[</span><span class="n">OPTIONS</span><span class="p">]</span>
+
+  <span class="n">Add</span> <span class="n">file</span><span class="o">/</span><span class="n">directory</span> <span class="ow">in</span> <span class="n">coffer</span><span class="o">.</span>
+
+<span class="n">Options</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">c</span><span class="p">,</span> <span class="o">--</span><span class="n">conf</span> <span class="n">TEXT</span>    <span class="n">The</span> <span class="n">pycoffer</span> <span class="n">configuration</span> <span class="n">file</span><span class="o">.</span>  <span class="p">[</span><span class="n">default</span><span class="p">:</span>
+                     <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">sebastien</span><span class="o">/.</span><span class="n">pycofferrc</span><span class="p">]</span>
+  <span class="o">-</span><span class="n">f</span><span class="p">,</span> <span class="o">--</span><span class="n">coffer</span> <span class="n">TEXT</span>  <span class="n">The</span> <span class="n">coffer</span> <span class="n">name</span><span class="o">.</span>  <span class="p">[</span><span class="n">default</span><span class="p">:</span> <span class="n">personal</span><span class="p">]</span>
+  <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="o">--</span><span class="n">source</span> <span class="n">TEXT</span>  <span class="n">The</span> <span class="n">file</span><span class="o">/</span><span class="n">directory</span> <span class="n">to</span> <span class="n">add</span> <span class="n">to</span> <span class="n">coffer</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">t</span><span class="p">,</span> <span class="o">--</span><span class="n">target</span> <span class="n">TEXT</span>  <span class="n">The</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">coffer</span><span class="o">.</span> <span class="n">If</span> <span class="kc">None</span><span class="p">,</span> <span class="n">the</span> <span class="n">basename</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">replace</span>          <span class="n">Replace</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">coffer</span> <span class="k">if</span> <span class="n">already</span> <span class="n">exists</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">help</span>             <span class="n">Show</span> <span class="n">this</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>All is correct, you are now ready to use your coffer :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">add</span> <span class="o">--</span><span class="n">source</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span>
+</pre></div>
+</div>
+<p>Check file is in coffer :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">ls</span>
+</pre></div>
+</div>
+<p>Extract it :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">extract</span> <span class="o">--</span><span class="n">file</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span> <span class="o">--</span><span class="n">path</span> <span class="n">test</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Check it is here :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ls</span> <span class="n">test</span><span class="o">/</span><span class="n">README</span><span class="o">.</span><span class="n">md</span>
+</pre></div>
+</div>
+<p>Now import your chrome passwords :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">password</span> <span class="n">import</span><span class="o">-</span><span class="n">chrome</span> <span class="o">-</span><span class="n">i</span> <span class="n">chrome</span><span class="o">-</span><span class="n">exported</span><span class="o">-</span><span class="n">password</span><span class="o">.</span><span class="n">csv</span>
+</pre></div>
+</div>
+<p>List your password informations in coffer (not show passwords) :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">password</span> <span class="n">ls</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Name</span> <span class="n">Username</span> <span class="n">Url</span> <span class="n">Owner</span>
+<span class="mf">127.0.0.1</span> <span class="n">user1</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="o">/</span> <span class="n">chrome</span>
+<span class="n">example</span><span class="o">.</span><span class="n">com</span> <span class="n">user1</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">/</span> <span class="n">chrome</span>
+<span class="n">toto</span><span class="o">.</span><span class="n">com</span> <span class="n">user</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">totoaucongo</span><span class="o">.</span><span class="n">com</span><span class="o">/</span> <span class="n">chrome</span>
+<span class="n">tata</span><span class="o">.</span><span class="n">com</span> <span class="n">user2</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">tataenalabama</span><span class="o">.</span><span class="n">com</span><span class="o">/</span> <span class="n">chrome</span>
+</pre></div>
+</div>
+<p>Show a password from coffer :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">password</span> <span class="n">show</span> <span class="o">--</span><span class="n">name</span> <span class="n">example</span><span class="o">.</span><span class="n">com</span> <span class="o">--</span><span class="n">owner</span> <span class="n">chrome</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Owner</span> <span class="n">Name</span> <span class="n">Username</span> <span class="n">Url</span> <span class="n">Password</span>
+<span class="n">chrome</span> <span class="n">example</span><span class="o">.</span><span class="n">com</span> <span class="n">user1</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">/</span> <span class="n">azerty</span>
+</pre></div>
+</div>
+<p>Crypt a file using key from coffer. You need an existing coffer to encrypt external files :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">crypt</span> <span class="o">--</span><span class="n">source</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span> <span class="o">--</span><span class="n">target</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span><span class="o">.</span><span class="n">crypt</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ls</span> <span class="n">README</span><span class="o">.</span><span class="n">md</span><span class="o">*</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">README</span><span class="o">.</span><span class="n">md</span>  <span class="n">README</span><span class="o">.</span><span class="n">md</span><span class="o">.</span><span class="n">crypt</span>
+</pre></div>
+</div>
+<p>Finally, you can export all data from your coffer :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pycoffer</span> <span class="n">extract</span> <span class="o">--</span><span class="nb">all</span> <span class="o">--</span><span class="n">path</span> <span class="n">testall</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ls</span> <span class="o">-</span><span class="n">lisa</span> <span class="n">testall</span><span class="o">/</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">plugins</span>  <span class="n">README</span><span class="o">.</span><span class="n">md</span>
+</pre></div>
+</div>
+<p>You can see a hidden directory .plugins. This is where passwords are saved
+in a pickle file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ls</span> <span class="o">-</span><span class="n">lisa</span> <span class="n">testall</span><span class="o">/.</span><span class="n">plugins</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">passwd</span>
+</pre></div>
+</div>
+<p>And now, what to do with your coffer ?</p>
+<p>You can safely copy it on cloud or on USB memory card.</p>
+<p>As long as you don’t copy your keys (or configuration file) on the same
+support, your informations are secured.</p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">PyCoffer</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User manual</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">PyCoffer installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rescue.html">PyCoffer Long Time Backup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html">PyCoffer usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/modules.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">User manual</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">User manual</a></li>
+      <li>Next: <a href="rescue.html" title="next chapter">PyCoffer Long Time Backup</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/usage/install.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
