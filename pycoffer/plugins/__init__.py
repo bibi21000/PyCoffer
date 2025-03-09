@@ -116,6 +116,11 @@ class AuthPlugin(Plugin):
     """
     category = 'auth'
 
+    @classmethod
+    def authorize(cls, config):
+        """Put info in config to authorize access"""
+        raise NotImplementedError
+
 class FilePlugin(Plugin):
     """The File plugin class
     These plugins have access to a pickle arcname to store their datas.
@@ -160,4 +165,5 @@ class ConfigInterface():
     def generate_config(cls):
         """Return a tuple of private_config and cert_config"""
         raise NotImplementedError
+
 

@@ -35,7 +35,7 @@ def test_config(random_path, random_name):
         f.write(b'')
     confcoff = config.Config(fname, chkmode=False)
 
-    assert confcoff.get_defaults() == {'ext': '.pcof'}
+    assert confcoff.get_defaults() == {'auth': 'file', 'ext': '.pcof'}
 
     with pytest.raises(PermissionError):
         assert confcoff.check_perms() is False
@@ -80,9 +80,9 @@ def test_config_generate(random_path, random_name):
         'test%s'%random_name,
         type='market')
 
-    assert Config.Defaults() == {'ext': '.pcof'}
+    assert Config.Defaults() == {'auth': 'file', 'ext': '.pcof'}
 
-    assert Config.Defaults(filename='tests/pycofferrc') == {'ext': '.pcof'}
+    assert Config.Defaults(filename='tests/pycofferrc') == {'auth': 'file', 'ext': '.pcof'}
 
     assert Config.generate('test', type='bank', location='rrrrd') is not None
 

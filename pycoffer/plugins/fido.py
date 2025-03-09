@@ -144,29 +144,6 @@ class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
         return ''.join(cls._imp_secrets.choice(alphabet) for i in range(size))
 
     @classmethod
-    def generate_config(cls, user_ident: str = None, user_name: str = 'pycoffer', user_display_name: str = "PyCoffer keys",
-        rp_id: str = None, rp_name: str = "PyCoffer"
-    ):
-        """Generate configs.
-        """
-        if user_ident is None:
-            user_ident = cls.get_ident(32)
-        if rp_id is None:
-            rp_id = cls.get_ident(32)
-        private = {
-            'rp_id': rp_id,
-            'rp_name': rp_name,
-            'user_ident': user_ident,
-            'user_name': user_name,
-            'user_display_name': user_display_name,
-        }
-        cert = {
-            'rp_id': rp_id,
-            'credential_id': None,
-        }
-        return private, cert
-
-    @classmethod
     def get_infos(cls, device, **kwargs):
         """Locate a CTAP device suitable for use.
 
@@ -300,26 +277,32 @@ class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
         if isinstance(cred_id, list) is False:
             cred_id = [cred_id]
         try:
-            key1, key2 = cls.derive(device, cred_id=cred_id, rp_id=rp_id, salt1=salt)
+            key1, key2 = cls.derive(cred_id=cred_id, rp_id=rp_id, salt1=salt)
             return key1 != None
         except ValueError:
             return False
 
     @classmethod
-    def derive(cls, device, cred_id, rp_id: str, salt1: bytes, salt2: bytes=None):
+    def derive(cls, cred_id, rp_id: str, salt1: bytes, salt2: bytes=None):
         """Derive salts from a list of credentials"""
         if isinstance(cred_id, list) is False:
             cred_id = [cred_id]
-        for crid in cred_id:
-            try:
-                key1, key2 = cls.derive_from_credential(device, cred_id=crid, rp_id=rp_id, salt1=salt1, salt2=salt2)
-                return key1, key2
-            except (cls._imp_fido2_ctap.CtapError, cls._imp_fido2_client.ClientError, IndexError):
-                pass
+        for device in cls.get_devices():
+            for crid in cred_id:
+                try:
+                    key1, key2 = cls.derive_from_device(device, cred_id=crid, rp_id=rp_id, salt1=salt1, salt2=salt2)
+                    return key1, key2
+                except cls._imp_fido2_client.ClientError as e:
+                    if e.code == cls._imp_fido2_client.ClientError.ERR.DEVICE_INELIGIBLE:
+                        pass
+                    else:
+                        raise
+                except (cls._imp_fido2_ctap.CtapError, IndexError):
+                    pass
         raise ValueError("Can't find valid credential in list")
 
     @classmethod
-    def derive_from_credential(cls, device, cred_id: bytes, rp_id: str, salt1: bytes, salt2: bytes=None):
+    def derive_from_device(cls, device, cred_id: bytes, rp_id: str, salt1: bytes, salt2: bytes=None):
         """Derive salts from a credential"""
         # Prepare parameters for getAssertion
         challenge = cls._imp_secrets.token_bytes(32)
@@ -463,3 +446,55 @@ class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
 
         print(f"\nSummary: Found {total_creds_count} total credentials, {hmac_creds_count} with HMAC_SECRET")
 
+    @classmethod
+    def generate_config(cls, user_ident: str = None, user_name: str = 'pycoffer', user_display_name: str = "PyCoffer keys",
+        rp_id: str = None, rp_name: str = "PyCoffer", conf_orig = None
+    ):
+        """Generate configs.
+        if conf_orig is not None, certs data will be merged inside.
+        """
+        if user_ident is None:
+            user_ident = cls.get_ident(32)
+        if rp_id is None:
+            rp_id = cls.get_ident(32)
+        private = {
+            'rp_id': rp_id,
+            'rp_name': rp_name,
+            'user_ident': user_ident,
+            'user_name': user_name,
+            'user_display_name': user_display_name,
+        }
+        cert = {
+            'rp_id': rp_id,
+            'credential_id': [],
+        }
+        if conf_orig is not None:
+            conf_orig['fido_rp_id'] = rp_id
+            conf_orig['fido_credential_id'] = []
+            if 'coffer_key' in conf_orig and conf_orig['coffer_key'] is not None:
+                conf_orig['fido_coffer'] = cls._imp_secrets.token_bytes(32)
+            if 'secure_key' in conf_orig and conf_orig['secure_key'] is not None:
+                conf_orig['fido_secure'] = cls._imp_secrets.token_bytes(32)
+
+        return private, cert
+
+    @classmethod
+    def authorize(cls, config):
+        """Put info in config to authorize access"""
+        if 'fido_rp_id' not in config:
+            raise ValueError("Can't find rp_id in config")
+        if 'fido_credential_id' not in config:
+            raise ValueError("Can't find credential_id in config")
+        if 'fido_coffer' not in config:
+            config['fido_coffer'] = None
+        if 'fido_secure' not in config:
+            config['fido_secure'] = None
+        if config['fido_coffer'] is None and config['fido_secure'] is None:
+            raise ValueError("No fido config for coffer and secure found")
+
+        key1, key2 = cls.derive(config['fido_credential_id'], config['fido_rp_id'],
+            config['fido_coffer'], config['fido_secure']
+        )
+        config['coffer_key'] = key1
+        config['secure_key'] = key2
+        return config

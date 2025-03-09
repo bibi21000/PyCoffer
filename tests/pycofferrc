@@ -16,4 +16,6 @@ confidential:
 game:
   key: "45"
   location: "Documents/game.coffer"
-
+fido:
+  type: "bank"
+  auth: "fido"

@@ -57,6 +57,8 @@ class Config():
             ret = {}
         if 'ext' not in ret:
             ret['ext'] = '.pcof'
+        if 'auth' not in ret:
+            ret['auth'] = 'file'
         return ret
 
     @classmethod
@@ -80,16 +82,25 @@ class Config():
             ret['backup'] = self.parser[section]['backup']
         else:
             ret['backup'] = None
-        if 'coffer_key' in self.parser[section]:
-            ret['coffer_key'] = self.parser[section]['coffer_key']
-            # ~ ret['coffer_key'] = self.parser[section]['coffer_key']
-        # ~ else:
-            # ~ ret['coffer_key'] = None
-        if 'secure_key' in self.parser[section]:
-            # ~ ret['secure_key'] = self.parser[section]['secure_key']
-            ret['secure_key'] = self.parser[section]['secure_key']
-        # ~ else:
-            # ~ ret['secure_key'] = None
+        if 'auth' in self.parser[section]:
+            ret['auth'] = self.parser[section]['auth']
+        else:
+            ret['auth'] = 'file'
+        if ret['auth'] == 'file':
+            if 'coffer_key' in self.parser[section]:
+                ret['coffer_key'] = self.parser[section]['coffer_key']
+                # ~ ret['coffer_key'] = self.parser[section]['coffer_key']
+            # ~ else:
+                # ~ ret['coffer_key'] = None
+            if 'secure_key' in self.parser[section]:
+                # ~ ret['secure_key'] = self.parser[section]['secure_key']
+                ret['secure_key'] = self.parser[section]['secure_key']
+            # ~ else:
+                # ~ ret['secure_key'] = None
+        else:
+            for k in self.parser[section]:
+                if k.startswith("%s_"%ret['auth']):
+                    ret[k] = self.parser[section][k]
         if 'location' in self.parser[section]:
             if os.path.isdir(self.parser[section]['location']):
                 ret['location'] = os.path.join(self.parser[section]['location'], '.'+section)
@@ -110,7 +121,7 @@ class Config():
         return ret
 
     @classmethod
-    def generate(self, coffer_name=None, type=None, location=None, backup=None, filename=None):
+    def generate(self, coffer_name=None, type=None, location=None, auth='file', backup=None, filename=None):
         """Return a coffer configuration as a list of lines"""
         if coffer_name is None:
             raise ValueError("Youd need to provide a coffer_name")
@@ -139,6 +150,7 @@ class Config():
         ret = {coffer_name : {}}
         ret[coffer_name]['name'] = coffer_name
         ret[coffer_name]['type'] = type
+        ret[coffer_name]['auth'] = auth
         if backup is not None:
             ret[coffer_name]['backup'] = backup
         keys = cls.gen_params()

@@ -98,11 +98,10 @@ def test_plugin_fido_check(random_path, random_name):
 @pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
 def test_plugin_fido_derive(random_path, random_name):
     import fido2.client
-    for key in pycoffer.plugins.fido.Fido.get_devices():
-        salt = secrets.token_bytes(32)
-        hkey = pycoffer.plugins.fido.Fido.derive(key, CREDS, RP_ID, salt, salt)
-        assert len(hkey[0]) == 43
-        assert len(hkey[1]) == 43
+    salt = secrets.token_bytes(32)
+    hkey = pycoffer.plugins.fido.Fido.derive(CREDS, RP_ID, salt, salt)
+    assert len(hkey[0]) == 43
+    assert len(hkey[1]) == 43
 
 FORMAT = "|%-40s|%-20s|%-20s|%-20s|%-45s|%-10s|%-30s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-8s|%-30s|\n"
 def format_line(f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21):
@@ -189,10 +188,10 @@ def test_plugin_fido_hmac(random_path, random_name):
     key = list(pycoffer.plugins.fido.Fido.get_devices())[0]
     for ident in CREDS:
         try:
-            hkey = pycoffer.plugins.fido.Fido.derive_from_credential(key, ident, RP_ID, salt)
+            hkey = pycoffer.plugins.fido.Fido.derive_from_device(key, ident, RP_ID, salt)
             _, res = aesfile.AesCryptor.derive(hkey[0], salt=aessalt)
             salts.append(res)
-            hkey = pycoffer.plugins.fido.Fido.derive_from_credential(key, ident, RP_ID, salt)
+            hkey = pycoffer.plugins.fido.Fido.derive_from_device(key, ident, RP_ID, salt)
             _, res = aesfile.AesCryptor.derive(hkey[0], salt=aessalt)
             salts.append(res)
             break
@@ -218,12 +217,12 @@ def test_plugin_fido_aes_crypt(random_path, random_name):
     for key in pycoffer.plugins.fido.Fido.get_devices():
         for ident in CREDS:
             try:
-                hkey = pycoffer.plugins.fido.Fido.derive_from_credential(key, ident, RP_ID, salt)
+                hkey = pycoffer.plugins.fido.Fido.derive_from_device(key, ident, RP_ID, salt)
                 _, res = aesfile.AesCryptor.derive(hkey[0], salt=aessalt)
                 salts.append(res)
             except (fido2.client.ClientError, IndexError):
                 continue
-    hkey = pycoffer.plugins.fido.Fido.derive(key, CREDS, RP_ID, salt)
+    hkey = pycoffer.plugins.fido.Fido.derive(CREDS, RP_ID, salt)
     _, res = aesfile.AesCryptor.derive(hkey[0], salt=aessalt)
     salts.append(res)
 
@@ -254,12 +253,12 @@ def test_plugin_fido_nacl_crypt(random_path, random_name):
     for key in pycoffer.plugins.fido.Fido.get_devices():
         for ident in CREDS:
             try:
-                hkey = pycoffer.plugins.fido.Fido.derive_from_credential(key, ident, RP_ID, salt)
+                hkey = pycoffer.plugins.fido.Fido.derive_from_device(key, ident, RP_ID, salt)
                 _, res = naclfile.NaclCryptor.derive(hkey[0], salt=naclsalt)
                 salts.append(res)
             except (fido2.client.ClientError, IndexError):
                 continue
-    hkey = pycoffer.plugins.fido.Fido.derive(key, CREDS, RP_ID, salt)
+    hkey = pycoffer.plugins.fido.Fido.derive(CREDS, RP_ID, salt)
     _, res = naclfile.NaclCryptor.derive(hkey[0], salt=naclsalt)
     salts.append(res)
 
@@ -336,3 +335,21 @@ def test_plugin_fido_lib(random_path, random_name):
     pycoffer.plugins.fido.Fido.get_rp('test', 'test')
     pycoffer.plugins.fido.Fido.get_ident()
     pycoffer.plugins.fido.Fido.generate_config()
+    fname = 'tests/pycofferrc'
+    coffer = 'fido_test'
+    confcoff = Config(fname, chkmode=False).generate(coffer_name=coffer, type='bank', auth='fido')[coffer]
+    fidoconfig = pycoffer.plugins.fido.Fido.generate_config(user_ident=USER_IDENT, rp_id=RP_ID, conf_orig=confcoff)
+
+@pytest.mark.skipif(FIDO < 1, reason="Need FIDO device")
+def test_plugin_fido_auth(random_path, random_name):
+    fname = 'tests/pycofferrc'
+    coffer = 'fido_test'
+    confcoff = Config(fname, chkmode=False).generate(coffer_name=coffer, type='bank', auth='fido')[coffer]
+    print(confcoff)
+    fidoconfig = pycoffer.plugins.fido.Fido.generate_config(user_ident=USER_IDENT, rp_id=RP_ID, conf_orig=confcoff)
+    confcoff['fido_credential_id'] = CREDS
+    print(confcoff)
+    authconfig = pycoffer.plugins.fido.Fido.authorize(confcoff)
+    print(authconfig)
+
+    # ~ assert False
