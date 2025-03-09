@@ -328,3 +328,7 @@ def test_fido_cli_credential(coffer_conf):
     result = runner.invoke(pycoffer.plugins.fido_cli.credentials, [])
     # ~ assert 'file1.data' in result.output
     assert result.exit_code == 0
+
+def test_plugin_fido_lib(random_path, random_name):
+    import inspect
+    method_names = inspect.getmembers(pycoffer.plugins.fido.Fido, predicate=inspect.ismodule)
