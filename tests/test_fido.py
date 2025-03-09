@@ -320,27 +320,11 @@ def test_fido_cli_check(coffer_conf):
     # ~ assert 'file1.data' in result.output
     assert result.exit_code == 0
 
-    # ~ result = runner.invoke(pycoffer.plugins.password_cli.ls, ['--conf', coffer_conf, '--coffer', 'test'])
-    # ~ assert result.exit_code == 0
-    # ~ assert 'https://test.url' in result.output
+def test_fido_cli_credential(coffer_conf):
+    confcoff = Config(coffer_conf, chkmode=False)
 
-    # ~ result = runner.invoke(pycoffer.plugins.password_cli.delete, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'testname'])
-    # ~ assert result.exit_code == 0
-    # ~ assert "" == result.output
+    runner = CliRunner()
 
-    # ~ result = runner.invoke(pycoffer.plugins.password_cli.ls, ['--conf', coffer_conf, '--coffer', 'test'])
-    # ~ assert result.exit_code == 0
-    # ~ assert 'https://test.url' not in result.output
-
-    # ~ result = runner.invoke(pycoffer.plugins.password_cli.import_chrome, ['--conf', coffer_conf, '--coffer', 'test', '--file', 'tests/chrome-password.csv'])
-    # ~ assert result.exit_code == 0
-
-    # ~ result = runner.invoke(pycoffer.plugins.password_cli.ls, ['--conf', coffer_conf, '--coffer', 'test'])
-    # ~ assert result.exit_code == 0
-    # ~ assert 'www.totoaucongo.com' in result.output
-
-    # ~ result = runner.invoke(pycoffer.plugins.password_cli.show, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'tata.com', '--owner', 'chrome'])
-    # ~ assert result.exit_code == 0
-
-#    result = runner.invoke(pycoffer.plugins.password_cli.clip, ['--conf', coffer_conf, '--coffer', 'test', '--name', 'tata.com', '--owner', 'chrome'])
-#    assert result.exit_code == 0
+    result = runner.invoke(pycoffer.plugins.fido_cli.credentials, [])
+    # ~ assert 'file1.data' in result.output
+    assert result.exit_code == 0

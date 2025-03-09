@@ -28,6 +28,8 @@ Plugins
 
 .. program-output:: /home/runner/.local/bin/pycoffer rsync --help
 
+.. program-output:: /home/runner/.local/bin/pycoffer fido --help
+
 Tools
 ---------------------
 

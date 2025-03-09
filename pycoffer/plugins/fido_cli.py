@@ -10,24 +10,22 @@ import click
 from pycoffer import main_lib
 from pycoffer import main_cli
 
-# ~ @click.group(help='Manage passwords in coffer.')
-# ~ @click.command(help='Manage passwords in coffer.')
-# ~ def password():
-    # ~ pass
-
 @click.group()
 def cli():
     pass
 
-@cli.command(help='Crypt file with keys of coffer.')
+@cli.group(help='Use fido as keystore.')
+def fido():
+    pass
+
+@cli.command(help='Check if credentials are available on connected keys.')
 @main_lib.opt_configuration
 @main_lib.opt_coffer
-@click.option('-s', "--source", help='The source clear file to encrypt.')
-@click.option('-t', "--target", help='The target encrypted file.')
-def crypt(conf, coffer, source, target):
-    with main_lib.open_coffer(conf, coffer, 'r') as ff:
-        with ff.plugin('crypt') as plg:
-            plg.encrypt(source, target)
+def credentials(conf, coffer):
+    pass
+    # ~ with main_lib.open_coffer(conf, coffer, 'r') as ff:
+        # ~ with ff.plugin('crypt') as plg:
+            # ~ plg.encrypt(source, target)
 
 @main_cli.check.command(help='Check fidos adaptaters.')
 @click.option("--all", is_flag=True, show_default=True, default=False, help="List all devices. Otherwise list only compatible devices.")
