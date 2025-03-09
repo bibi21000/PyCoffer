@@ -11,7 +11,7 @@ from pycoffer import main_lib
 
 @click.group()
 def cli():
-    pass
+    pass # pragma: no cover
 
 @cli.command(help='Rsync directory with keys of coffer using mtime (to do).')
 @main_lib.opt_configuration

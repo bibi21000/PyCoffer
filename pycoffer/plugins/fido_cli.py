@@ -12,11 +12,11 @@ from pycoffer import main_cli
 
 @click.group()
 def cli():
-    pass
+    pass # pragma: no cover
 
 @cli.group(help='Use fido as keystore.')
 def fido():
-    pass
+    pass # pragma: no cover
 
 @fido.command(help='Check if credentials are available on connected keys.')
 @main_lib.opt_configuration

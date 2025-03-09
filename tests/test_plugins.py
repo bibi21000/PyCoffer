@@ -330,4 +330,8 @@ def test_plugin_rsync_cli(coffer_conf, random_path, random_name):
     result = runner.invoke(pycoffer.plugins.rsync_cli.rsync, ['--conf', coffer_conf, '--coffer', 'test',
         '--source', os.path.join(random_path, 'rsync_%s'%random_name), '--target', 'test3'])
     assert result.exit_code == 0
+
+    result = runner.invoke(pycoffer.plugins.rsync_cli.rsync, ['--conf', coffer_conf, '--coffer', 'test',
+        '--source', os.path.join(random_path, 'rsync_%s'%random_name), '--target', 'test3', '--dry'])
+    assert result.exit_code == 0
     # ~ assert 'file1.data' in result.output

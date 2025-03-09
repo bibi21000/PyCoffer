@@ -9,14 +9,9 @@ import click
 
 from pycoffer import main_lib
 
-# ~ @click.group(help='Manage passwords in coffer.')
-# ~ @click.command(help='Manage passwords in coffer.')
-# ~ def password():
-    # ~ pass
-
 @click.group()
 def cli():
-    pass
+    pass # pragma: no cover
 
 @cli.command(help='Crypt file with keys of coffer.')
 @main_lib.opt_configuration

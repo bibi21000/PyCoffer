@@ -11,11 +11,11 @@ from pycoffer import main_lib
 
 @click.group()
 def cli():
-    pass
+    pass # pragma: no cover
 
 @cli.group(help='Manage passwords in coffer.')
 def password():
-    pass
+    pass # pragma: no cover
 
 @password.command(help='List passwords in coffer.')
 @main_lib.opt_configuration
