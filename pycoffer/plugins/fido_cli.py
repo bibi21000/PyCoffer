@@ -18,7 +18,7 @@ def cli():
 def fido():
     pass
 
-@cli.command(help='Check if credentials are available on connected keys.')
+@fido.command(help='Check if credentials are available on connected keys.')
 @main_lib.opt_configuration
 @main_lib.opt_coffer
 def credentials(conf, coffer):
