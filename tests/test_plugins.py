@@ -41,6 +41,7 @@ def test_plugin(random_path, random_name):
     print(Plugin.collect_cli())
     assert repr(PluginInfo()).startswith('<PluginInfo')
     assert repr(Plugin.Info()).startswith('<PluginInfo')
+    assert repr(Plugin.Info) is not None
 
     key = utils.random(SecretBox.KEY_SIZE)
     dataf = os.path.join(random_path, 'test%s.stzf'%random_name)
