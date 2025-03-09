@@ -140,8 +140,8 @@ class Fido(AuthPlugin, CliInterface, AuthInterface, ConfigInterface):
     def get_ident(cls, size=32) -> str:
         """Get string random ident.
         """
-        alphabet = self._imp_string.ascii_letters + self._imp_string.digits
-        return ''.join(self._imp_secrets.choice(alphabet) for i in range(size))
+        alphabet = cls._imp_string.ascii_letters + cls._imp_string.digits
+        return ''.join(cls._imp_secrets.choice(alphabet) for i in range(size))
 
     @classmethod
     def generate_config(cls, user_ident: str = None, user_name: str = 'pycoffer', user_display_name: str = "PyCoffer keys",

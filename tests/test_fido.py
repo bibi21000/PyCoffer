@@ -332,3 +332,7 @@ def test_fido_cli_credential(coffer_conf):
 def test_plugin_fido_lib(random_path, random_name):
     import inspect
     method_names = inspect.getmembers(pycoffer.plugins.fido.Fido, predicate=inspect.ismodule)
+    pycoffer.plugins.fido.Fido.verify_rp_id('test', 'test')
+    pycoffer.plugins.fido.Fido.get_rp('test', 'test')
+    pycoffer.plugins.fido.Fido.get_ident()
+    pycoffer.plugins.fido.Fido.generate_config()
