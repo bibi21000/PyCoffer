@@ -25,6 +25,7 @@ Adaptaters informations
      - UV modality
      - Remaining disc creds
      - Vendor prototype config commands
+     - Trade names
    * - | Yubico YubiKey OTP+FIDO+CCID
        | (1050:0407)
        | Firmware : 329473
@@ -47,7 +48,7 @@ Adaptaters informations
        | alwaysUv:False
        | credMgmt:True
        | authnrCfg:True
-       | clientPin:False
+       | clientPin:True
        | largeBlobs:True
        | pinUvAuthToken:True
        | setMinPINLength:True
@@ -73,6 +74,7 @@ Adaptaters informations
      - | None
      - | 100
      - | 
+     - | Yubikey 5 NFC
    * - | ExcelSecu FIDO2 Security Key
        | (1ea8:fc25)
        | Firmware : 256
@@ -121,6 +123,7 @@ Adaptaters informations
      - | None
      - | 50
      - | 
+     - | SpearID FIDO2.fi
    * - | ExcelSecu FIDO2 Security Key
        | (1ea8:fc26)
        | Firmware : None
@@ -157,6 +160,7 @@ Adaptaters informations
      - | None
      - | None
      - | 
+     - | Thetis FIDO2 BioFP+
    * - | FS ePass FIDO
        | (096e:0853)
        | Firmware : None
@@ -191,6 +195,7 @@ Adaptaters informations
      - | None
      - | None
      - | 
+     - | FEITIAN ePass FIDO2 NFC
    * - | NEOWAVE NEOWAVE Winkeo FIDO2
        | (1e0d:f1d0)
        | Firmware : None
@@ -222,6 +227,7 @@ Adaptaters informations
      - | None
      - | None
      - | 
+     - | NEOWAVE Winkeo-A FIDO2
 
 |
 
