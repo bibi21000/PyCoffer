@@ -16,9 +16,10 @@ help:
 
 dev/adaptaters.rst:
 	cat dev/adaptaters/header >dev/adaptaters.rst
-	cat dev/adaptaters/ExcelSecu_FIDO2_Security_Key >>dev/adaptaters.rst
-	cat dev/adaptaters/FS_ePass_FIDO >>dev/adaptaters.rst
-	cat dev/adaptaters/NEOWAVE_NEOWAVE_Winkeo_FIDO2 >>dev/adaptaters.rst
+	cat dev/adaptaters/ExcelSecu_FIDO2_Security_Key_1ea8_fc25 >>dev/adaptaters.rst
+	cat dev/adaptaters/ExcelSecu_FIDO2_Security_Key_1ea8_fc26 >>dev/adaptaters.rst
+	cat dev/adaptaters/FS_ePass_FIDO_096e_0853 >>dev/adaptaters.rst
+	cat dev/adaptaters/NEOWAVE_NEOWAVE_Winkeo_FIDO2_1e0d_f1d0 >>dev/adaptaters.rst
 	cat dev/adaptaters/footer >>dev/adaptaters.rst
 
 # Catch-all target: route all unknown targets to Sphinx using the new

@@ -1,0 +1,48 @@
+   * - | ExcelSecu FIDO2 Security Key
+       | (1ea8:fc25)
+       | Firmware : 256
+     - | WINK:True
+       | LOCK:False
+       | CBOR:True
+       | NMSG:False
+     - | U2F_V2
+       | FIDO_2_0
+       | FIDO_2_1
+       | FIDO_2_1_PRE
+     - | credBlob
+       | credProtect
+       | hmac-secret
+       | largeBlobKey
+       | minPinLength
+     - | rk:True
+       | up:True
+       | plat:False
+       | alwaysUv:False
+       | credMgmt:True
+       | authnrCfg:True
+       | clientPin:False
+       | largeBlobs:True
+       | pinUvAuthToken:True
+       | setMinPINLength:True
+       | makeCredUvNotRqd:True
+       | credentialMgmtPreview:True
+     - | usb
+       | nfc
+       | ble
+     - | (alg:-7 type:public-key)
+       | (alg:-8 type:public-key)
+     - | FIDO:1
+     - | 2
+       | 1
+     - | 2048
+     - | 8
+     - | 96
+     - | 2048
+     - | False
+     - | 4
+     - | 32
+     - | 6
+     - | None
+     - | None
+     - | 50
+     - | 
