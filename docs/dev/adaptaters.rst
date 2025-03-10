@@ -25,6 +25,54 @@ Adaptaters informations
      - UV modality
      - Remaining disc creds
      - Vendor prototype config commands
+   * - | Yubico YubiKey OTP+FIDO+CCID
+       | (1050:0407)
+       | Firmware : 329473
+     - | WINK:True
+       | LOCK:False
+       | CBOR:True
+       | NMSG:False
+     - | U2F_V2
+       | FIDO_2_0
+       | FIDO_2_1_PRE
+       | FIDO_2_1
+     - | credProtect
+       | hmac-secret
+       | largeBlobKey
+       | credBlob
+       | minPinLength
+     - | rk:True
+       | up:True
+       | plat:False
+       | alwaysUv:False
+       | credMgmt:True
+       | authnrCfg:True
+       | clientPin:False
+       | largeBlobs:True
+       | pinUvAuthToken:True
+       | setMinPINLength:True
+       | makeCredUvNotRqd:True
+       | credentialMgmtPreview:True
+     - | nfc
+       | usb
+     - | (alg:-7 type:public-key)
+       | (alg:-8 type:public-key)
+       | (alg:-35 type:public-key)
+     - | 
+     - | 2
+       | 1
+     - | 1280
+     - | 8
+     - | 128
+     - | 4096
+     - | False
+     - | 4
+     - | 32
+     - | 1
+     - | None
+     - | None
+     - | 100
+     - | 
    * - | ExcelSecu FIDO2 Security Key
        | (1ea8:fc25)
        | Firmware : 256
@@ -47,7 +95,7 @@ Adaptaters informations
        | alwaysUv:False
        | credMgmt:True
        | authnrCfg:True
-       | clientPin:False
+       | clientPin:True
        | largeBlobs:True
        | pinUvAuthToken:True
        | setMinPINLength:True
