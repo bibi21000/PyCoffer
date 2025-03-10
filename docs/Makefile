@@ -16,6 +16,7 @@ help:
 
 dev/adaptaters.rst:
 	cat dev/adaptaters/header >dev/adaptaters.rst
+	cat dev/adaptaters/Yubico_YubiKey_OTP+FIDO+CCID_1050_0407 >>dev/adaptaters.rst
 	cat dev/adaptaters/ExcelSecu_FIDO2_Security_Key_1ea8_fc25 >>dev/adaptaters.rst
 	cat dev/adaptaters/ExcelSecu_FIDO2_Security_Key_1ea8_fc26 >>dev/adaptaters.rst
 	cat dev/adaptaters/FS_ePass_FIDO_096e_0853 >>dev/adaptaters.rst
