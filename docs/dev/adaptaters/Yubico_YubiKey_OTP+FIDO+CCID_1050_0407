@@ -20,7 +20,7 @@
        | alwaysUv:False
        | credMgmt:True
        | authnrCfg:True
-       | clientPin:False
+       | clientPin:True
        | largeBlobs:True
        | pinUvAuthToken:True
        | setMinPINLength:True
@@ -46,3 +46,4 @@
      - | None
      - | 100
      - | 
+     - | Yubikey 5 NFC
