@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pycoffer.plugins package &#8212; PyCoffer  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="pycoffer.coffers package" href="pycoffer.coffers.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="pycoffer-plugins-package">
+<h1>pycoffer.plugins package<a class="headerlink" href="#pycoffer-plugins-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-pycoffer.plugins.crypt">
+<span id="pycoffer-plugins-crypt-module"></span><h2>pycoffer.plugins.crypt module<a class="headerlink" href="#module-pycoffer.plugins.crypt" title="Link to this heading">¶</a></h2>
+<p>Encrypt/Decrypt external files using keys of coffer</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.crypt.Crypt">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.crypt.</span></span><span class="sig-name descname"><span class="pre">Crypt</span></span><a class="headerlink" href="#pycoffer.plugins.crypt.Crypt" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.OtherPlugin" title="pycoffer.plugins.OtherPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">OtherPlugin</span></code></a>, <a class="reference internal" href="#pycoffer.plugins.CliInterface" title="pycoffer.plugins.CliInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">CliInterface</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.crypt.Crypt.cli">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.crypt.Crypt.cli" title="Link to this definition">¶</a></dt>
+<dd><p>Lazy loader for click</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.crypt.Crypt.decrypt">
+<span class="sig-name descname"><span class="pre">decrypt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.crypt.Crypt.decrypt" title="Link to this definition">¶</a></dt>
+<dd><p>Decrypt source in target</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.crypt.Crypt.desc">
+<span class="sig-name descname"><span class="pre">desc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;Encrypt/decrypt</span> <span class="pre">external</span> <span class="pre">files</span> <span class="pre">with</span> <span class="pre">key's</span> <span class="pre">coffer&quot;</span></em><a class="headerlink" href="#pycoffer.plugins.crypt.Crypt.desc" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.crypt.Crypt.encrypt">
+<span class="sig-name descname"><span class="pre">encrypt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.crypt.Crypt.encrypt" title="Link to this definition">¶</a></dt>
+<dd><p>Encrypt source in target</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pycoffer.plugins.crypt_cli">
+<span id="pycoffer-plugins-crypt-cli-module"></span><h2>pycoffer.plugins.crypt_cli module<a class="headerlink" href="#module-pycoffer.plugins.crypt_cli" title="Link to this heading">¶</a></h2>
+<p>Crypt plugin Click interface</p>
+</section>
+<section id="module-pycoffer.plugins.fido">
+<span id="pycoffer-plugins-fido-module"></span><h2>pycoffer.plugins.fido module<a class="headerlink" href="#module-pycoffer.plugins.fido" title="Link to this heading">¶</a></h2>
+<p>Use FIDO keys as key store</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.CliInteraction">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.fido.</span></span><span class="sig-name descname"><span class="pre">CliInteraction</span></span><a class="headerlink" href="#pycoffer.plugins.fido.CliInteraction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.fido.</span></span><span class="sig-name descname"><span class="pre">Fido</span></span><a class="headerlink" href="#pycoffer.plugins.fido.Fido" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.AuthPlugin" title="pycoffer.plugins.AuthPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthPlugin</span></code></a>, <a class="reference internal" href="#pycoffer.plugins.CliInterface" title="pycoffer.plugins.CliInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">CliInterface</span></code></a>, <a class="reference internal" href="#pycoffer.plugins.AuthInterface" title="pycoffer.plugins.AuthInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthInterface</span></code></a>, <a class="reference internal" href="#pycoffer.plugins.ConfigInterface" title="pycoffer.plugins.ConfigInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigInterface</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.authorize">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">authorize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.authorize" title="Link to this definition">¶</a></dt>
+<dd><p>Put info in config to authorize access</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.check">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cred_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.check" title="Link to this definition">¶</a></dt>
+<dd><p>Check we can derive from this device using cred_id and rp_id</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.cli">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.cli" title="Link to this definition">¶</a></dt>
+<dd><p>Lazy loader for click</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.derive">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">derive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cred_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">salt1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">salt2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.derive" title="Link to this definition">¶</a></dt>
+<dd><p>Derive salts from a list of credentials</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.derive_from_device">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">derive_from_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cred_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">salt1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">salt2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.derive_from_device" title="Link to this definition">¶</a></dt>
+<dd><p>Derive salts from a credential</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.desc">
+<span class="sig-name descname"><span class="pre">desc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Use</span> <span class="pre">FIDO</span> <span class="pre">'</span></em><a class="headerlink" href="#pycoffer.plugins.fido.Fido.desc" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.generate_config">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_ident</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pycoffer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_display_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'PyCoffer</span> <span class="pre">keys'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'PyCoffer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf_orig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.generate_config" title="Link to this definition">¶</a></dt>
+<dd><p>Generate configs.
+if conf_orig is not None, certs data will be merged inside.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.get_client">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.get_client" title="Link to this definition">¶</a></dt>
+<dd><p>Locate a CTAP device suitable for use.</p>
+<p>If running on Windows as non-admin, the predicate check will be skipped and
+a webauthn.dll based client will be returned.</p>
+<p>Extra kwargs will be passed to the constructor of Fido2Client.</p>
+<p>The client will be returned, with the CTAP2 Info, if available.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.get_devices">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_devices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hmac-secret'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.get_devices" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.get_ident">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ident</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.get_ident" title="Link to this definition">¶</a></dt>
+<dd><p>Get string random ident.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.get_infos">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_infos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.get_infos" title="Link to this definition">¶</a></dt>
+<dd><p>Locate a CTAP device suitable for use.</p>
+<p>If running on Windows as non-admin, the predicate check will be skipped and
+a webauthn.dll based client will be returned.</p>
+<p>Extra kwargs will be passed to the constructor of Fido2Client.</p>
+<p>The client will be returned, with the CTAP2 Info, if available.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.get_rp">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_rp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rp_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pycoffer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'PyCoffer'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.get_rp" title="Link to this definition">¶</a></dt>
+<dd><p>Get local RP.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.list_rps">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_rps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.list_rps" title="Link to this definition">¶</a></dt>
+<dd><p>List all FIDO credentials on your key that have the HMAC_SECRET extension enabled
+experimental</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.register">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_ident</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pycoffer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_display_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'PyCoffer</span> <span class="pre">keys'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rp_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'PyCoffer'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.register" title="Link to this definition">¶</a></dt>
+<dd><p>Register a key and return params as a tuple of dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.fido.Fido.verify_rp_id">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_rp_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rp_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#pycoffer.plugins.fido.Fido.verify_rp_id" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if a Webauthn RP ID is usable for a given origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rp_id</strong> – The RP ID to validate.</p></li>
+<li><p><strong>origin</strong> – The origin of the request.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the RP ID is usable by the origin, False if not.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pycoffer.plugins.fido_cli">
+<span id="pycoffer-plugins-fido-cli-module"></span><h2>pycoffer.plugins.fido_cli module<a class="headerlink" href="#module-pycoffer.plugins.fido_cli" title="Link to this heading">¶</a></h2>
+<p>FIDO plugin Click interface</p>
+</section>
+<section id="module-pycoffer.plugins.password">
+<span id="pycoffer-plugins-password-module"></span><h2>pycoffer.plugins.password module<a class="headerlink" href="#module-pycoffer.plugins.password" title="Link to this heading">¶</a></h2>
+<p>Store passswords in coffer</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.password.</span></span><span class="sig-name descname"><span class="pre">Password</span></span><a class="headerlink" href="#pycoffer.plugins.password.Password" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.FilePlugin" title="pycoffer.plugins.FilePlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilePlugin</span></code></a>, <a class="reference internal" href="#pycoffer.plugins.CliInterface" title="pycoffer.plugins.CliInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">CliInterface</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.Info">
+<span class="sig-name descname"><span class="pre">Info</span></span><a class="headerlink" href="#pycoffer.plugins.password.Password.Info" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#pycoffer.plugins.password.PasswordInfo" title="pycoffer.plugins.password.PasswordInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordInfo</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datainfo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.Password.add" title="Link to this definition">¶</a></dt>
+<dd><p>Add or replace info in store</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.arcname">
+<span class="sig-name descname"><span class="pre">arcname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'.plugins/passwd'</span></em><a class="headerlink" href="#pycoffer.plugins.password.Password.arcname" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the picke for data. Should be in .plugins/ directory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.cli">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.Password.cli" title="Link to this definition">¶</a></dt>
+<dd><p>Lazy loader for click</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datainfo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.Password.delete" title="Link to this definition">¶</a></dt>
+<dd><p>“Delete data at key</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.desc">
+<span class="sig-name descname"><span class="pre">desc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Manage</span> <span class="pre">password</span> <span class="pre">in</span> <span class="pre">coffer'</span></em><a class="headerlink" href="#pycoffer.plugins.password.Password.desc" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.Password.get" title="Link to this definition">¶</a></dt>
+<dd><p>Get data for key</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.getmembers">
+<span class="sig-name descname"><span class="pre">getmembers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.Password.getmembers" title="Link to this definition">¶</a></dt>
+<dd><p>List public data about passwords in coffer</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.import_chrome">
+<span class="sig-name descname"><span class="pre">import_chrome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.Password.import_chrome" title="Link to this definition">¶</a></dt>
+<dd><p>Import chrome passwords from filename</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.store_dump">
+<span class="sig-name descname"><span class="pre">store_dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.Password.store_dump" title="Link to this definition">¶</a></dt>
+<dd><p>Dump data in store in coffer</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.Password.store_load">
+<span class="sig-name descname"><span class="pre">store_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.Password.store_load" title="Link to this definition">¶</a></dt>
+<dd><p>Load data from store in coffer</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.PasswordInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.password.</span></span><span class="sig-name descname"><span class="pre">PasswordInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.PasswordInfo" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.password.PasswordInfoPublic" title="pycoffer.plugins.password.PasswordInfoPublic"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordInfoPublic</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.PasswordInfo.to_public">
+<span class="sig-name descname"><span class="pre">to_public</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.PasswordInfo.to_public" title="Link to this definition">¶</a></dt>
+<dd><p>Remove sensible data</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.password.PasswordInfoPublic">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.password.</span></span><span class="sig-name descname"><span class="pre">PasswordInfoPublic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">owner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.password.PasswordInfoPublic" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.PluginInfo" title="pycoffer.plugins.PluginInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PluginInfo</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-pycoffer.plugins.password_cli">
+<span id="pycoffer-plugins-password-cli-module"></span><h2>pycoffer.plugins.password_cli module<a class="headerlink" href="#module-pycoffer.plugins.password_cli" title="Link to this heading">¶</a></h2>
+<p>Password plugin Click interface</p>
+</section>
+<section id="module-pycoffer.plugins.rsync">
+<span id="pycoffer-plugins-rsync-module"></span><h2>pycoffer.plugins.rsync module<a class="headerlink" href="#module-pycoffer.plugins.rsync" title="Link to this heading">¶</a></h2>
+<p>Synchronise files</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.rsync.Rsync">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.rsync.</span></span><span class="sig-name descname"><span class="pre">Rsync</span></span><a class="headerlink" href="#pycoffer.plugins.rsync.Rsync" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.CofferPlugin" title="pycoffer.plugins.CofferPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">CofferPlugin</span></code></a>, <a class="reference internal" href="#pycoffer.plugins.CliInterface" title="pycoffer.plugins.CliInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">CliInterface</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.rsync.Rsync.cli">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.rsync.Rsync.cli" title="Link to this definition">¶</a></dt>
+<dd><p>Lazy loader for click</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.rsync.Rsync.desc">
+<span class="sig-name descname"><span class="pre">desc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Rsync'</span></em><a class="headerlink" href="#pycoffer.plugins.rsync.Rsync.desc" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.rsync.Rsync.rsync">
+<span class="sig-name descname"><span class="pre">rsync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.rsync.Rsync.rsync" title="Link to this definition">¶</a></dt>
+<dd><p>Synchronize source in coffer target</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pycoffer.plugins.rsync_cli">
+<span id="pycoffer-plugins-rsync-cli-module"></span><h2>pycoffer.plugins.rsync_cli module<a class="headerlink" href="#module-pycoffer.plugins.rsync_cli" title="Link to this heading">¶</a></h2>
+<p>Crypt plugin Click interface</p>
+</section>
+<section id="module-pycoffer.plugins">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pycoffer.plugins" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.AuthInterface">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.</span></span><span class="sig-name descname"><span class="pre">AuthInterface</span></span><a class="headerlink" href="#pycoffer.plugins.AuthInterface" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Auth plugin interfacce
+Used to collect plugins with auth</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.AuthPlugin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.</span></span><span class="sig-name descname"><span class="pre">AuthPlugin</span></span><a class="headerlink" href="#pycoffer.plugins.AuthPlugin" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.Plugin" title="pycoffer.plugins.Plugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plugin</span></code></a></p>
+<p>The Auth plugin class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.AuthPlugin.authorize">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">authorize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.AuthPlugin.authorize" title="Link to this definition">¶</a></dt>
+<dd><p>Put info in config to authorize access</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.AuthPlugin.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auth'</span></em><a class="headerlink" href="#pycoffer.plugins.AuthPlugin.category" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.CliInterface">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.</span></span><span class="sig-name descname"><span class="pre">CliInterface</span></span><a class="headerlink" href="#pycoffer.plugins.CliInterface" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The CLI plugin interfacce
+Used to collect plugins with cli</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.CliInterface.cli">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.CliInterface.cli" title="Link to this definition">¶</a></dt>
+<dd><p>Load the click interface</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.CofferPlugin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.</span></span><span class="sig-name descname"><span class="pre">CofferPlugin</span></span><a class="headerlink" href="#pycoffer.plugins.CofferPlugin" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.Plugin" title="pycoffer.plugins.Plugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plugin</span></code></a></p>
+<p>The Coffer plugin class
+These plugins have total access to the coffer.
+They should manage locks, …</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.CofferPlugin.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'coffer'</span></em><a class="headerlink" href="#pycoffer.plugins.CofferPlugin.category" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.CofferPlugin.coffer_file">
+<span class="sig-name descname"><span class="pre">coffer_file</span></span><a class="headerlink" href="#pycoffer.plugins.CofferPlugin.coffer_file" title="Link to this definition">¶</a></dt>
+<dd><p>The coffer file</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycoffer.plugins.CofferPlugin.modified">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">modified</span></span><a class="headerlink" href="#pycoffer.plugins.CofferPlugin.modified" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.CofferPlugin.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coffer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.CofferPlugin.run" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.ConfigInterface">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.</span></span><span class="sig-name descname"><span class="pre">ConfigInterface</span></span><a class="headerlink" href="#pycoffer.plugins.ConfigInterface" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The CLI plugin interfacce
+Used to collect plugins with cli</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.ConfigInterface.generate_config">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.ConfigInterface.generate_config" title="Link to this definition">¶</a></dt>
+<dd><p>Return a tuple of private_config and cert_config</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.FilePlugin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.</span></span><span class="sig-name descname"><span class="pre">FilePlugin</span></span><a class="headerlink" href="#pycoffer.plugins.FilePlugin" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.Plugin" title="pycoffer.plugins.Plugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plugin</span></code></a></p>
+<p>The File plugin class
+These plugins have access to a pickle arcname to store their datas.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.FilePlugin.arcname">
+<span class="sig-name descname"><span class="pre">arcname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycoffer.plugins.FilePlugin.arcname" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the picke for data. Should be in .plugins/ directory.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.FilePlugin.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'file'</span></em><a class="headerlink" href="#pycoffer.plugins.FilePlugin.category" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pycoffer.plugins.FilePlugin.modified">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">modified</span></span><a class="headerlink" href="#pycoffer.plugins.FilePlugin.modified" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.FilePlugin.store_dump">
+<span class="sig-name descname"><span class="pre">store_dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.FilePlugin.store_dump" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.FilePlugin.store_load">
+<span class="sig-name descname"><span class="pre">store_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.FilePlugin.store_load" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.OtherPlugin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.</span></span><span class="sig-name descname"><span class="pre">OtherPlugin</span></span><a class="headerlink" href="#pycoffer.plugins.OtherPlugin" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycoffer.plugins.Plugin" title="pycoffer.plugins.Plugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plugin</span></code></a></p>
+<p>The Other plugin class
+These plugins have access to the crypting method</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.OtherPlugin.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'other'</span></em><a class="headerlink" href="#pycoffer.plugins.OtherPlugin.category" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.OtherPlugin.crypt_open">
+<span class="sig-name descname"><span class="pre">crypt_open</span></span><a class="headerlink" href="#pycoffer.plugins.OtherPlugin.crypt_open" title="Link to this definition">¶</a></dt>
+<dd><p>The open crypted method</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.Plugin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.</span></span><span class="sig-name descname"><span class="pre">Plugin</span></span><a class="headerlink" href="#pycoffer.plugins.Plugin" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The base class for plugins</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.Plugin.Info">
+<span class="sig-name descname"><span class="pre">Info</span></span><a class="headerlink" href="#pycoffer.plugins.Plugin.Info" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#pycoffer.plugins.PluginInfo" title="pycoffer.plugins.PluginInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PluginInfo</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.Plugin.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pycoffer.plugins.Plugin.category" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.Plugin.collect">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cofferfile.plugin'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.Plugin.collect" title="Link to this definition">¶</a></dt>
+<dd><p>Collect plugins</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.Plugin.collect_cli">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">collect_cli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cofferfile.plugin'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.Plugin.collect_cli" title="Link to this definition">¶</a></dt>
+<dd><p>Collect plugins with cli interface</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pycoffer.plugins.Plugin.desc">
+<span class="sig-name descname"><span class="pre">desc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Description'</span></em><a class="headerlink" href="#pycoffer.plugins.Plugin.desc" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pycoffer.plugins.PluginInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pycoffer.plugins.</span></span><span class="sig-name descname"><span class="pre">PluginInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mtime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.PluginInfo" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data used with plugin. Better to use class than free data</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pycoffer.plugins.PluginInfo.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycoffer.plugins.PluginInfo.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Convert to dict</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">PyCoffer</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage/index.html">User manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/index.html">Developer manual</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pycoffer.html">pycoffer package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="pycoffer.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycoffer.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycoffer.html#module-pycoffer.config">pycoffer.config module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycoffer.html#module-pycoffer.main">pycoffer.main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycoffer.html#module-pycoffer.main_cli">pycoffer.main_cli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycoffer.html#module-pycoffer.main_lib">pycoffer.main_lib module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycoffer.html#module-pycoffer.main_static">pycoffer.main_static module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycoffer.html#pycoffer-malloc-module">pycoffer.malloc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pycoffer.html#module-pycoffer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">API</a><ul>
+  <li><a href="pycoffer.html">pycoffer package</a><ul>
+      <li>Previous: <a href="pycoffer.coffers.html" title="previous chapter">pycoffer.coffers package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/api/pycoffer.plugins.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
